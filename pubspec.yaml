@@ -40,6 +40,17 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+    - asset/images/
+    - asset/images/background/
+    - asset/images/character/
+    - asset/images/group/
+    - asset/images/item/
+    - asset/images/login/
+    - asset/images/profile/
+    - asset/lottie/
+    - asset/main_bgm.wav
+
   fonts:
     - family: NotoSans
       fonts:
