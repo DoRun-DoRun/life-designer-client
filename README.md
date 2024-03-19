@@ -22,7 +22,9 @@ Dorun Flutter App은 React Native 기반의 갓생살기 앱을 마이그레이�
 4. flutter run
 
 # 기여
+
 Dorun FLutter App은 기여를 환영합니다! 버그를 발견하거나 새로운 기능을 추가하고 싶다면 이슈를 제출하거나 Pull Request를 보내주세요!
 
 # 라이선스
+
 이 프로젝트는 MIT 라이선스에 따라 배포됩니다. 자세한 내용은 LICENSE 파일을 참조하세요.
