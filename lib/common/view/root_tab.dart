@@ -1,4 +1,8 @@
 import 'package:dorun_app_flutter/common/constant/colors.dart';
+import 'package:dorun_app_flutter/features/profile/view/profile_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_screen.dart';
+import 'package:dorun_app_flutter/features/search/view/search_screen.dart';
+import 'package:dorun_app_flutter/features/statistics/view/statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../layout/default_layout.dart';
@@ -41,14 +45,6 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: '갓생살기',
-      child: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: controller,
-        children: [
-          //TODO: Components
-        ],
-      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_COLOR,
         unselectedItemColor: BODY_TEXT_COLOR,
@@ -60,7 +56,32 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         },
         currentIndex: index,
         items: [
-          //TODO: Components
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: '홈',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_outlined),
+            label: '둘러보기',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long_outlined),
+            label: '통계',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outlined),
+            label: 'MY',
+          ),
+        ],
+      ),
+      child: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: controller,
+        children: [
+          RoutineScreen(),
+          SearchScreen(),
+          StatisticsScreen(),
+          ProfileScreen()
         ],
       ),
     );
