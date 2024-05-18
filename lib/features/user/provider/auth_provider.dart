@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../common/view/root_tab.dart';
 import '../model/user_model.dart';
 
 final authProvider = ChangeNotifierProvider<AuthProvider>((ref) {
@@ -23,7 +24,11 @@ class AuthProvider extends ChangeNotifier {
   }
 
   List<GoRoute> get routes => [
-    //TODO: Routings
+    GoRoute(
+      path: '/',
+      name: RootTab.routeName,
+      builder: (_, __) => RootTab(),
+    ),
   ];
 
   void logout(){
