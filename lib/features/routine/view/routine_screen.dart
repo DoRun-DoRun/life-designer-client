@@ -1,3 +1,4 @@
+import 'package:dorun_app_flutter/features/routine/view/routine_creator_screen.dart';
 import 'package:flutter/material.dart';
 
 class RoutineScreen extends StatelessWidget {
@@ -51,7 +52,10 @@ class RoutineScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // 플로팅 액션 버튼 클릭 이벤트 처리
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RoutineCreatorScreen()),
+          );
         },
         child: Icon(Icons.add),
       ),
