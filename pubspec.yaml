@@ -25,6 +25,7 @@ dependencies:
   badges: ^3.1.2
   uuid: ^4.3.3
   debounce_throttle: ^2.0.0
+  percent_indicator: ^4.0.1
 
 dev_dependencies:
   flutter_test:
