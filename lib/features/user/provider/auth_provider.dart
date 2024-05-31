@@ -1,3 +1,4 @@
+import 'package:dorun_app_flutter/features/routine/view/routine_detail_screen.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,11 @@ class AuthProvider extends ChangeNotifier {
       path: '/',
       name: RootTab.routeName,
       builder: (_, __) => RootTab(),
+    ),
+    GoRoute(
+      path: '/routine_detail',
+      name: RoutineDetailScreen.routeName,
+      builder: (_, __) => RoutineDetailScreen(),
     ),
   ];
 

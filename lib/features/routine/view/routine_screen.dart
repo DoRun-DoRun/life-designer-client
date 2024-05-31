@@ -2,6 +2,7 @@ import 'package:dorun_app_flutter/features/routine/view/routine_creator_screen.d
 import 'package:flutter/material.dart';
 
 class RoutineScreen extends StatelessWidget {
+  static String get routeName => 'routine';
   const RoutineScreen({super.key});
 
   @override

@@ -5,6 +5,7 @@ import 'package:dorun_app_flutter/features/search/view/search_screen.dart';
 import 'package:dorun_app_flutter/features/statistics/view/statistics_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../../features/routine/view/routine_detail_screen.dart';
 import '../layout/default_layout.dart';
 
 class RootTab extends StatefulWidget {
@@ -78,7 +79,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         physics: NeverScrollableScrollPhysics(),
         controller: controller,
         children: [
-          RoutineScreen(),
+          RoutineDetailScreen(),
           SearchScreen(),
           StatisticsScreen(),
           ProfileScreen()
