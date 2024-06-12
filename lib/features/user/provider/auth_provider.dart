@@ -28,12 +28,12 @@ class AuthProvider extends ChangeNotifier {
     GoRoute(
       path: '/',
       name: RootTab.routeName,
-      builder: (_, __) => RootTab(),
+      builder: (_, __) => const RootTab(),
     ),
     GoRoute(
       path: '/routine_detail',
       name: RoutineDetailScreen.routeName,
-      builder: (_, __) => RoutineDetailScreen(),
+      builder: (_, __) => const RoutineDetailScreen(),
     ),
   ];
 

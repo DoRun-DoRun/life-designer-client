@@ -11,7 +11,7 @@ import '../layout/default_layout.dart';
 class RootTab extends StatefulWidget {
   static String get routeName => 'home';
 
-  const RootTab({Key? key}) : super(key: key);
+  const RootTab({super.key});
 
   @override
   State<RootTab> createState() => _RootTabState();
@@ -56,7 +56,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           controller.animateTo(index);
         },
         currentIndex: index,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: '홈',
@@ -78,7 +78,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
       child: TabBarView(
         physics: NeverScrollableScrollPhysics(),
         controller: controller,
-        children: [
+        children: const [
           RoutineDetailScreen(),
           SearchScreen(),
           StatisticsScreen(),

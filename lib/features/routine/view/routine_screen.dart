@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class RoutineScreen extends StatelessWidget {
   static String get routeName => 'routine';
+
   const RoutineScreen({super.key});
 
   @override
@@ -11,7 +12,7 @@ class RoutineScreen extends StatelessWidget {
       appBar: AppBar(
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications),
             onPressed: () {
               // 알림 버튼 클릭 이벤트 처리
             },
@@ -23,24 +24,24 @@ class RoutineScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DateSelector(),
-            SizedBox(height: 16),
-            Text(
+            const DateSelector(),
+            const SizedBox(height: 16),
+            const Text(
               '오늘의 루틴입니다',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               '이제 시작이네요!',
               style: TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             LinearProgressIndicator(
               value: 0.1, // 진행 상태 값
               backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             RoutineCard(
               title: '운동하기',
               time: '09:00 시작',
@@ -55,19 +56,22 @@ class RoutineScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => RoutineCreatorScreen()),
+            MaterialPageRoute(
+                builder: (context) => const RoutineCreatorScreen()),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
 }
 
 class DateSelector extends StatelessWidget {
+  const DateSelector({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       children: [
         Text(
           '4월 13일',
@@ -84,7 +88,8 @@ class RoutineCard extends StatelessWidget {
   final String time;
   final VoidCallback onPressed;
 
-  RoutineCard({
+  const RoutineCard({
+    super.key,
     required this.title,
     required this.time,
     required this.onPressed,
@@ -103,15 +108,16 @@ class RoutineCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(time),
               ],
             ),
             ElevatedButton(
               onPressed: onPressed,
-              child: Text('수행'),
+              child: const Text('수행'),
             ),
           ],
         ),

@@ -8,10 +8,10 @@ class StatisticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('통계'),
+        title: const Text('통계'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,9 +32,10 @@ class StatisticsScreen extends StatelessWidget {
 }
 
 class StatisticsSummary extends StatelessWidget {
+  const StatisticsSummary({super.key});
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         SummaryCard(
@@ -62,7 +63,7 @@ class SummaryCard extends StatelessWidget {
   final String value;
   final IconData icon;
 
-  SummaryCard({
+  const SummaryCard({super.key,
     required this.title,
     required this.value,
     required this.icon,
@@ -76,9 +77,9 @@ class SummaryCard extends StatelessWidget {
         child: Column(
           children: [
             Icon(icon, size: 36),
-            SizedBox(height: 8),
-            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text(value, style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 8),
+            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(value, style: const TextStyle(fontSize: 20)),
           ],
         ),
       ),
@@ -87,6 +88,8 @@ class SummaryCard extends StatelessWidget {
 }
 
 class Calendar extends StatelessWidget {
+  const Calendar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -95,20 +98,20 @@ class Calendar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {},
             ),
-            Text('2024.04', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text('2024.04', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             IconButton(
-              icon: Icon(Icons.arrow_forward),
+              icon: const Icon(Icons.arrow_forward),
               onPressed: () {},
             ),
           ],
         ),
         GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 7,
             childAspectRatio: 1,
           ),
@@ -132,9 +135,11 @@ class Calendar extends StatelessWidget {
 }
 
 class FilterButtons extends StatelessWidget {
+  const FilterButtons({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         FilterButton(text: '완료', isSelected: true),
@@ -149,7 +154,7 @@ class FilterButton extends StatelessWidget {
   final String text;
   final bool isSelected;
 
-  FilterButton({required this.text, required this.isSelected});
+  const FilterButton({super.key, required this.text, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +172,8 @@ class FilterButton extends StatelessWidget {
 }
 
 class WeeklyReport extends StatelessWidget {
+  const WeeklyReport({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -175,13 +182,13 @@ class WeeklyReport extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('주간 리포트 (04.21 - 04.27)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('지난 주에 비해 12% 더 달성했네요!'),
-            SizedBox(height: 16),
+            const Text('주간 리포트 (04.21 - 04.27)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('지난 주에 비해 12% 더 달성했네요!'),
+            const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Column(
                     children: [
                       Text('달성 루틴', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -189,7 +196,7 @@ class WeeklyReport extends StatelessWidget {
                     ],
                   ),
                 ),
-                Expanded(
+                const Expanded(
                   child: Column(
                     children: [
                       Text('실패 루틴', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -197,7 +204,7 @@ class WeeklyReport extends StatelessWidget {
                     ],
                   ),
                 ),
-                Expanded(
+                const Expanded(
                   child: Column(
                     children: [
                       Text('건너뛴 루틴', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -209,7 +216,7 @@ class WeeklyReport extends StatelessWidget {
                   radius: 60.0,
                   lineWidth: 5.0,
                   percent: 0.6,
-                  center: new Text("60%"),
+                  center: const Text("60%"),
                   progressColor: Colors.blue,
                 ),
               ],
@@ -222,18 +229,20 @@ class WeeklyReport extends StatelessWidget {
 }
 
 class RecentRoutine extends StatelessWidget {
+  const RecentRoutine({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('최근 어려웠던 루틴이에요', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        Text('달성률이 낮은 루틴을 모아서 볼 수 있어요.'),
-        SizedBox(height: 16),
+        const Text('최근 어려웠던 루틴이에요', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text('달성률이 낮은 루틴을 모아서 볼 수 있어요.'),
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(5, (index) {
-            return RoutineAdjustmentButton(day: '일');
+            return const RoutineAdjustmentButton(day: '일');
           }),
         ),
       ],
@@ -244,7 +253,7 @@ class RecentRoutine extends StatelessWidget {
 class RoutineAdjustmentButton extends StatelessWidget {
   final String day;
 
-  RoutineAdjustmentButton({required this.day});
+  const RoutineAdjustmentButton({super.key, required this.day});
 
   @override
   Widget build(BuildContext context) {
