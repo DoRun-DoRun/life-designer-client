@@ -6,7 +6,7 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 
-@widgetbook.UseCase(name: 'Default', type: List)
+@widgetbook.UseCase(name: 'Default', type: Widget)
 Widget buildListUseCase(BuildContext context) {
   return Padding(
     padding: const EdgeInsets.all(24.0),
