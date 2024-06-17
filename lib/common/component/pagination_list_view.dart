@@ -6,23 +6,28 @@ import '../model/model_with_id.dart';
 import '../provider/pagination_provider.dart';
 import '../utils/pagination_utils.dart';
 
-typedef PaginationWidgetBuilder<T extends IModelWithId> = Widget Function(BuildContext context, int index, T model);
+typedef PaginationWidgetBuilder<T extends IModelWithId> = Widget Function(
+    BuildContext context, int index, T model);
 
-class PaginationListView<T extends IModelWithId> extends ConsumerStatefulWidget {
-  final StateNotifierProvider<PaginationProvider, CursorPaginationBase> provider;
+class PaginationListView<T extends IModelWithId>
+    extends ConsumerStatefulWidget {
+  final StateNotifierProvider<PaginationProvider, CursorPaginationBase>
+      provider;
   final PaginationWidgetBuilder<T> itemBuilder;
 
   const PaginationListView({
     required this.provider,
     required this.itemBuilder,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  ConsumerState<PaginationListView> createState() => _PaginationListViewState<T>();
+  ConsumerState<PaginationListView> createState() =>
+      _PaginationListViewState<T>();
 }
 
-class _PaginationListViewState<T extends IModelWithId> extends ConsumerState<PaginationListView> {
+class _PaginationListViewState<T extends IModelWithId>
+    extends ConsumerState<PaginationListView> {
   final ScrollController controller = ScrollController();
 
   @override
@@ -53,7 +58,7 @@ class _PaginationListViewState<T extends IModelWithId> extends ConsumerState<Pag
 
     // 완전 처음 로딩일때
     if (state is CursorPaginationLoading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -72,10 +77,10 @@ class _PaginationListViewState<T extends IModelWithId> extends ConsumerState<Pag
           ElevatedButton(
             onPressed: () {
               ref.read(widget.provider.notifier).paginate(
-                forceRefetch: true,
-              );
+                    forceRefetch: true,
+                  );
             },
-            child: Text(
+            child: const Text(
               '다시시도',
             ),
           ),
@@ -90,11 +95,11 @@ class _PaginationListViewState<T extends IModelWithId> extends ConsumerState<Pag
       child: RefreshIndicator(
         onRefresh: () async {
           ref.read(widget.provider.notifier).paginate(
-            forceRefetch: true,
-          );
+                forceRefetch: true,
+              );
         },
         child: ListView.separated(
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           controller: controller,
           itemCount: cp.data.length + 1,
           itemBuilder: (_, index) {
@@ -105,7 +110,9 @@ class _PaginationListViewState<T extends IModelWithId> extends ConsumerState<Pag
                   vertical: 8.0,
                 ),
                 child: Center(
-                  child: cp is CursorPaginationFetchingMore ? CircularProgressIndicator() : Text('마지막 데이터입니다.'),
+                  child: cp is CursorPaginationFetchingMore
+                      ? const CircularProgressIndicator()
+                      : const Text('마지막 데이터입니다.'),
                 ),
               );
             }
@@ -119,7 +126,7 @@ class _PaginationListViewState<T extends IModelWithId> extends ConsumerState<Pag
             );
           },
           separatorBuilder: (_, index) {
-            return SizedBox(height: 16.0);
+            return const SizedBox(height: 16.0);
           },
         ),
       ),

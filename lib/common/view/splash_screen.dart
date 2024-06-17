@@ -5,11 +5,12 @@ import '../constant/colors.dart';
 import '../layout/default_layout.dart';
 
 class SplashScreen extends ConsumerWidget {
+  const SplashScreen({super.key});
+
   static String get routeName => 'splash';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return DefaultLayout(
       backgroundColor: PRIMARY_COLOR,
       child: SizedBox(
@@ -22,7 +23,7 @@ class SplashScreen extends ConsumerWidget {
               width: MediaQuery.of(context).size.width / 2,
             ),
             const SizedBox(height: 16.0),
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               color: Colors.white,
             ),
           ],

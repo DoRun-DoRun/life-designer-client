@@ -63,7 +63,8 @@ class SummaryCard extends StatelessWidget {
   final String value;
   final IconData icon;
 
-  const SummaryCard({super.key,
+  const SummaryCard({
+    super.key,
     required this.title,
     required this.value,
     required this.icon,
@@ -78,7 +79,9 @@ class SummaryCard extends StatelessWidget {
           children: [
             Icon(icon, size: 36),
             const SizedBox(height: 8),
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             Text(value, style: const TextStyle(fontSize: 20)),
           ],
         ),
@@ -101,7 +104,8 @@ class Calendar extends StatelessWidget {
               icon: const Icon(Icons.arrow_back),
               onPressed: () {},
             ),
-            const Text('2024.04', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text('2024.04',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             IconButton(
               icon: const Icon(Icons.arrow_forward),
               onPressed: () {},
@@ -120,10 +124,12 @@ class Calendar extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.all(4.0),
               child: CircleAvatar(
-                backgroundColor: index % 2 == 0 ? Colors.blue : Colors.grey[300],
+                backgroundColor:
+                    index % 2 == 0 ? Colors.blue : Colors.grey[300],
                 child: Text(
                   '${index + 1}',
-                  style: TextStyle(color: index % 2 == 0 ? Colors.white : Colors.black),
+                  style: TextStyle(
+                      color: index % 2 == 0 ? Colors.white : Colors.black),
                 ),
               ),
             );
@@ -161,7 +167,7 @@ class FilterButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {},
       style: ElevatedButton.styleFrom(
-        primary: isSelected ? Colors.blue : Colors.grey[300],
+        backgroundColor: isSelected ? Colors.blue : Colors.grey[300],
       ),
       child: Text(
         text,
@@ -182,7 +188,8 @@ class WeeklyReport extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('주간 리포트 (04.21 - 04.27)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text('주간 리포트 (04.21 - 04.27)',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             const Text('지난 주에 비해 12% 더 달성했네요!'),
             const SizedBox(height: 16),
@@ -191,7 +198,8 @@ class WeeklyReport extends StatelessWidget {
                 const Expanded(
                   child: Column(
                     children: [
-                      Text('달성 루틴', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('달성 루틴',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       Text('24개'),
                     ],
                   ),
@@ -199,7 +207,8 @@ class WeeklyReport extends StatelessWidget {
                 const Expanded(
                   child: Column(
                     children: [
-                      Text('실패 루틴', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('실패 루틴',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       Text('10개'),
                     ],
                   ),
@@ -207,7 +216,8 @@ class WeeklyReport extends StatelessWidget {
                 const Expanded(
                   child: Column(
                     children: [
-                      Text('건너뛴 루틴', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('건너뛴 루틴',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       Text('7개'),
                     ],
                   ),
@@ -236,7 +246,8 @@ class RecentRoutine extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('최근 어려웠던 루틴이에요', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text('최근 어려웠던 루틴이에요',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const Text('달성률이 낮은 루틴을 모아서 볼 수 있어요.'),
         const SizedBox(height: 16),
         Row(

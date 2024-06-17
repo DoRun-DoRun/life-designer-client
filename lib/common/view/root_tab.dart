@@ -1,6 +1,5 @@
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/features/profile/view/profile_screen.dart';
-import 'package:dorun_app_flutter/features/routine/view/routine_screen.dart';
 import 'package:dorun_app_flutter/features/search/view/search_screen.dart';
 import 'package:dorun_app_flutter/features/statistics/view/statistics_screen.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +75,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         ],
       ),
       child: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: controller,
         children: const [
           RoutineDetailScreen(),
