@@ -11,6 +11,7 @@ class ListItem extends StatelessWidget {
   final String? subTitle;
   final String? routinEmoji;
   final IconData? actionIcon;
+  final Color? actionIconColor;
   final bool? isButton;
   final bool? isDone;
   final VoidCallback? onTap;
@@ -22,6 +23,7 @@ class ListItem extends StatelessWidget {
     this.subTitle = '',
     this.routinEmoji = '',
     this.actionIcon = Icons.chevron_right,
+    this.actionIconColor = AppColors.TEXT_INVERT,
     this.isButton = false,
     this.isDone = false,
     this.onTap,
@@ -89,7 +91,7 @@ class ListItem extends StatelessWidget {
                 Icon(
                   actionIcon,
                   size: 32,
-                  color: AppColors.TEXT_INVERT,
+                  color: actionIconColor,
                 ),
             ],
           ),
