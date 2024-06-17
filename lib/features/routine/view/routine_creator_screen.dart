@@ -1,5 +1,8 @@
+import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
+import 'package:dorun_app_flutter/common/component/gap_row.dart';
 import 'package:dorun_app_flutter/common/component/input_box.dart';
+import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,6 +27,17 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
     if (_selectedTime == null) {
       _setStartTime(context);
     }
+  }
+
+  final List<bool> _buttonStates = [
+    false,
+    false,
+  ]; // Initialize with desired number of buttons
+
+  void _handleButtonPress(int index) {
+    setState(() {
+      _buttonStates[index] = !_buttonStates[index];
+    });
   }
 
   Future<void> _setStartTime(BuildContext context) async {
@@ -192,6 +206,28 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
                     hintText: '루틴 목표',
                     onSubmitted: _setRoutineGoal,
                   ),
+                  const Text(
+                    '버튼 테스트 입니다',
+                    style: AppTextStyles.BOLD_20,
+                  ),
+                  GapRow(
+                    gap: AppSpacing.SPACE_8,
+                    children: List.generate(
+                      _buttonStates.length,
+                      (i) => Expanded(
+                        child: CustomButton(
+                          onPressed: () => _handleButtonPress(i),
+                          title: 'Button $i',
+                          backgroundColor: _buttonStates[i]
+                              ? AppColors.BRAND_SUB
+                              : AppColors.BACKGROUND_SUB,
+                          foregroundColor: _buttonStates[i]
+                              ? AppColors.TEXT_BRAND
+                              : AppColors.TEXT_PRIMARY,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
