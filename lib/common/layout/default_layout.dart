@@ -1,3 +1,5 @@
+import 'package:dorun_app_flutter/common/constant/colors.dart';
+import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:flutter/material.dart';
 
 class DefaultLayout extends StatelessWidget {
@@ -19,7 +21,7 @@ class DefaultLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor ?? Colors.white,
+      backgroundColor: backgroundColor ?? AppColors.BACKGROUND_SUB,
       appBar: renderAppBar(),
       body: child,
       bottomNavigationBar: bottomNavigationBar,
@@ -27,21 +29,18 @@ class DefaultLayout extends StatelessWidget {
     );
   }
 
-  AppBar? renderAppBar(){
-    if(title == null){
+  AppBar? renderAppBar() {
+    if (title == null) {
       return null;
-    }else{
+    } else {
       return AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
           title!,
-          style: const TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-          ),
+          style: AppTextStyles.MEDIUM_16,
         ),
-        foregroundColor: Colors.black,
+        // foregroundColor: Colors.black,
       );
     }
   }
