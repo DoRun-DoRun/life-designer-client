@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 
 class RoutineDetailScreen extends StatelessWidget {
-  const RoutineDetailScreen({super.key});
+  final int id;
+  const RoutineDetailScreen({super.key, required this.id});
 
   static String get routeName => 'routine_detail';
 
   void _showAddRoutineModal(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        isScrollControlled: true,  // 모달을 전체 화면으로 확장
+        isScrollControlled: true, // 모달을 전체 화면으로 확장
         builder: (BuildContext bc) {
           return Padding(
-            padding: MediaQuery.of(context).viewInsets,  // 키보드 높이에 따라 패딩 조정
+            padding: MediaQuery.of(context).viewInsets, // 키보드 높이에 따라 패딩 조정
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Wrap(
                 children: <Widget>[
-                  const Text('세부 루틴 추가', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  const Text('세부 루틴 추가',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                   const SizedBox(height: 10),
                   DropdownButton<IconData>(
                     isExpanded: true,
-                    items: <IconData>[Icons.fitness_center, Icons.directions_run, Icons.pool].map((IconData value) {
+                    items: <IconData>[
+                      Icons.fitness_center,
+                      Icons.directions_run,
+                      Icons.pool
+                    ].map((IconData value) {
                       return DropdownMenuItem<IconData>(
                         value: value,
                         child: Icon(value),
@@ -50,8 +57,7 @@ class RoutineDetailScreen extends StatelessWidget {
               ),
             ),
           );
-        }
-    );
+        });
   }
 
   @override
@@ -75,9 +81,9 @@ class RoutineDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              '운동하기',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              '루틴 ID: $id',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text(

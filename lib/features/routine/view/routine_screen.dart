@@ -1,5 +1,11 @@
+import 'package:dorun_app_flutter/common/component/gap_column.dart';
+import 'package:dorun_app_flutter/common/component/list_item.dart';
+import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_creator_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 
 class RoutineScreen extends StatelessWidget {
   static String get routeName => 'routine';
@@ -8,50 +14,18 @@ class RoutineScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              // 알림 버튼 클릭 이벤트 처리
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const DateSelector(),
-            const SizedBox(height: 16),
-            const Text(
-              '오늘의 루틴입니다',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '이제 시작이네요!',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            LinearProgressIndicator(
-              value: 0.1, // 진행 상태 값
-              backgroundColor: Colors.grey[300],
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-            ),
-            const SizedBox(height: 32),
-            RoutineCard(
-              title: '운동하기',
-              time: '09:00 시작',
-              onPressed: () {
-                // 수행 버튼 클릭 이벤트 처리
-              },
-            ),
-          ],
-        ),
-      ),
+    return DefaultLayout(
+      title: '',
+      // appBar: AppBar(
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.notifications),
+      //       onPressed: () {
+      //         // 알림 버튼 클릭 이벤트 처리
+      //       },
+      //     ),
+      //   ],
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -61,6 +35,86 @@ class RoutineScreen extends StatelessWidget {
           );
         },
         child: const Icon(Icons.add),
+      ),
+      // appBar: AppBar(
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.notifications),
+      //       onPressed: () {
+      //         // 알림 버튼 클릭 이벤트 처리
+      //       },
+      //     ),
+      //   ],
+      // ),
+      child: GapColumn(
+        gap: 16,
+        children: [
+          Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24, bottom: 24, right: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const DateSelector(),
+                  const SizedBox(height: 16),
+                  const Text(
+                    '오늘의 루틴입니다',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    '이제 시작이네요!',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+                  LinearProgressIndicator(
+                    value: 0.1, // 진행 상태 값
+                    backgroundColor: Colors.grey[300],
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: GapColumn(
+                gap: AppSpacing.SPACE_16,
+                children: [
+                  ListItem(
+                    id: 0,
+                    title: "운동하기",
+                    subTitle: '09:00',
+                    routinEmoji: '😛',
+                    isButton: true,
+                    onTap: () {
+                      context.push('/routine_edit/0');
+                    },
+                  ),
+                  ListItem(
+                    id: 1,
+                    title: "운동하기",
+                    subTitle: '09:00',
+                    onTap: () {
+                      context.push('/routine_edit/1');
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // RoutineCard(
+          //   title: '운동하기',
+          //   time: '09:00 시작',
+          //   onPressed: () {
+          //     // 수행 버튼 클릭 이벤트 처리
+          //   },
+          // ),
+        ],
       ),
     );
   }
