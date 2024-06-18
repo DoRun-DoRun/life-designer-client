@@ -8,12 +8,12 @@ import 'package:go_router/go_router.dart';
 class ListItem extends StatelessWidget {
   final int id;
   final String title;
-  final String? subTitle;
-  final String? routinEmoji;
-  final IconData? actionIcon;
-  final Color? actionIconColor;
-  final bool? isButton;
-  final bool? isDone;
+  final String subTitle;
+  final String routinEmoji;
+  final IconData actionIcon;
+  final Color actionIconColor;
+  final bool isButton;
+  final bool isDone;
   final VoidCallback? onTap;
 
   const ListItem({
@@ -48,28 +48,28 @@ class ListItem extends StatelessWidget {
                 gap: AppSpacing.SPACE_8,
                 children: [
                   Text(
-                    routinEmoji!,
+                    routinEmoji,
                     style: AppTextStyles.EMOJI,
                   ),
                   Text(
                     title,
                     style: AppTextStyles.MEDIUM_16.copyWith(
-                      color: isDone!
+                      color: isDone
                           ? AppColors.TEXT_INVERT
                           : AppColors.TEXT_PRIMARY,
                     ),
                   ),
                   Text(
-                    subTitle!,
+                    subTitle,
                     style: AppTextStyles.MEDIUM_14.copyWith(
-                      color: isDone!
+                      color: isDone
                           ? AppColors.TEXT_INVERT
                           : AppColors.TEXT_SECONDARY,
                     ),
                   ),
                 ],
               ),
-              if (isButton!)
+              if (isButton)
                 ElevatedButton(
                   onPressed: () => {context.push('/routine_detail/$id')},
                   style: ElevatedButton.styleFrom(

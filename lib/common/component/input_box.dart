@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class InputBox extends StatefulWidget {
   final TextEditingController controller;
-  final String? hintText;
+  final String hintText;
   final ValueChanged<String>? onSubmitted;
 
   const InputBox({
@@ -29,7 +29,7 @@ class InputBoxState extends State<InputBox> {
     super.initState();
     _focusNode.addListener(() {
       setState(() {
-        _isFocused = _focusNode.hasFocus;
+        _isFocused = _focusNode.hasFocus || widget.controller.text != '';
       });
     });
   }
@@ -46,10 +46,11 @@ class InputBoxState extends State<InputBox> {
       gap: AppSpacing.SPACE_8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          _isFocused || widget.controller.text != '' ? widget.hintText! : '',
-          style: AppTextStyles.MEDIUM_12,
-        ),
+        if (_isFocused)
+          Text(
+            widget.hintText,
+            style: AppTextStyles.MEDIUM_12,
+          ),
         TextField(
           controller: widget.controller,
           focusNode: _focusNode,

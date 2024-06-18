@@ -3,7 +3,7 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:flutter/material.dart';
 
-class CustomButton extends StatefulWidget {
+class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
     required this.onPressed,
@@ -20,28 +20,22 @@ class CustomButton extends StatefulWidget {
   final EdgeInsets padding;
 
   @override
-  CustomButtonState createState() => CustomButtonState();
-}
-
-class CustomButtonState extends State<CustomButton> {
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        widget.onPressed();
+        onPressed();
       },
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: widget.backgroundColor,
+          color: backgroundColor,
           borderRadius: AppRadius.ROUNDED_16,
         ),
         child: Padding(
-          padding: widget.padding,
+          padding: padding,
           child: Text(
-            widget.title,
-            style:
-                AppTextStyles.MEDIUM_16.copyWith(color: widget.foregroundColor),
+            title,
+            style: AppTextStyles.MEDIUM_16.copyWith(color: foregroundColor),
           ),
         ),
       ),
