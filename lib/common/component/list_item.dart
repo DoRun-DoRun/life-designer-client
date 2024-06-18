@@ -10,7 +10,7 @@ class ListItem extends StatelessWidget {
   final String title;
   final String subTitle;
   final String routinEmoji;
-  final IconData actionIcon;
+  final IconData? actionIcon;
   final Color actionIconColor;
   final bool isButton;
   final bool isDone;
