@@ -25,19 +25,22 @@ class AuthProvider extends ChangeNotifier {
   }
 
   List<GoRoute> get routes => [
-    GoRoute(
-      path: '/',
-      name: RootTab.routeName,
-      builder: (_, __) => const RootTab(),
-    ),
-    GoRoute(
-      path: '/routine_detail',
-      name: RoutineDetailScreen.routeName,
-      builder: (_, __) => const RoutineDetailScreen(),
-    ),
-  ];
+        GoRoute(
+          path: '/',
+          name: RootTab.routeName,
+          builder: (_, __) => const RootTab(),
+        ),
+        GoRoute(
+          path: '/routine_detail/:id',
+          name: RoutineDetailScreen.routeName,
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return RoutineDetailScreen(id: int.parse(id));
+          },
+        ),
+      ];
 
-  void logout(){
+  void logout() {
     ref.read(userMeProvider.notifier).logout();
   }
 
@@ -61,6 +64,3 @@ class AuthProvider extends ChangeNotifier {
     return null;
   }
 }
-
-
-

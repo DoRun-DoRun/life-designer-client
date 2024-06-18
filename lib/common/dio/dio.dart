@@ -31,8 +31,8 @@ class CustomInterceptor extends Interceptor {
   });
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     if (options.headers['accessToken'] == 'true') {
       options.headers.remove('accessToken');
 
@@ -57,13 +57,7 @@ class CustomInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    return super.onResponse(response, handler);
-  }
-
-  @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
-
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
 
     if (refreshToken == null) {
@@ -99,7 +93,7 @@ class CustomInterceptor extends Interceptor {
         final response = await dio.fetch(options);
 
         return handler.resolve(response);
-      } on DioError catch (e) {
+      } on DioException catch (e) {
         ref.read(authProvider.notifier).logout();
         return handler.reject(e);
       }

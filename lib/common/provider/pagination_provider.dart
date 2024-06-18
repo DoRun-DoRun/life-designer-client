@@ -19,11 +19,11 @@ class _PaginationInfo {
 }
 
 class PaginationProvider<T extends IModelWithId,
-U extends IBasePaginationRepository<T>>
+        U extends IBasePaginationRepository<T>>
     extends StateNotifier<CursorPaginationBase> {
   final U repository;
   final paginationThrottle = Throttle(
-    Duration(seconds: 3),
+    const Duration(seconds: 3),
     initialValue: _PaginationInfo(),
     checkEquality: false,
   );
@@ -34,7 +34,7 @@ U extends IBasePaginationRepository<T>>
     paginate();
 
     paginationThrottle.values.listen(
-          (state) {
+      (state) {
         print(state.forceRefetch);
         _throttledPagination(state);
       },
@@ -91,8 +91,7 @@ U extends IBasePaginationRepository<T>>
         paginationParams = paginationParams.copyWith(
           after: pState.data.last.id,
         );
-      }
-      else {
+      } else {
         if (state is CursorPagination && !forceRefetch) {
           final pState = state as CursorPagination<T>;
 

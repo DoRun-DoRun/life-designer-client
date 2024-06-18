@@ -1,3 +1,10 @@
+import 'package:dorun_app_flutter/common/component/custom_button.dart';
+import 'package:dorun_app_flutter/common/component/gap_column.dart';
+import 'package:dorun_app_flutter/common/component/gap_row.dart';
+import 'package:dorun_app_flutter/common/component/input_box.dart';
+import 'package:dorun_app_flutter/common/constant/colors.dart';
+import 'package:dorun_app_flutter/common/constant/fonts.dart';
+import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +27,17 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
     if (_selectedTime == null) {
       _setStartTime(context);
     }
+  }
+
+  final List<bool> _buttonStates = [
+    false,
+    false,
+  ]; // Initialize with desired number of buttons
+
+  void _handleButtonPress(int index) {
+    setState(() {
+      _buttonStates[index] = !_buttonStates[index];
+    });
   }
 
   Future<void> _setStartTime(BuildContext context) async {
@@ -170,40 +188,83 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
               ],
             ),
           if (_routineGoal == null)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Text('이루고자 하시는 루틴이 무엇인가요?',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: TextField(
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.SPACE_24,
+                vertical: AppSpacing.SPACE_32,
+              ),
+              child: GapColumn(
+                gap: AppSpacing.SPACE_16,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '이루고자 하시는 루틴이 무엇인가요?',
+                    style: AppTextStyles.BOLD_20,
+                  ),
+                  InputBox(
                     controller: _textController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      labelStyle: const TextStyle(color: Colors.black),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    cursorColor: Colors.blue,
+                    hintText: '루틴 목표',
                     onSubmitted: _setRoutineGoal,
                   ),
-                ),
-              ],
+                  const Text(
+                    '버튼 테스트 입니다',
+                    style: AppTextStyles.BOLD_20,
+                  ),
+                  GapRow(
+                    gap: AppSpacing.SPACE_8,
+                    children: List.generate(
+                      _buttonStates.length,
+                      (i) => Expanded(
+                        child: CustomButton(
+                          onPressed: () => _handleButtonPress(i),
+                          title: 'Button $i',
+                          backgroundColor: _buttonStates[i]
+                              ? AppColors.BRAND_SUB
+                              : AppColors.BACKGROUND_SUB,
+                          foregroundColor: _buttonStates[i]
+                              ? AppColors.TEXT_BRAND
+                              : AppColors.TEXT_PRIMARY,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
+          // Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       const Padding(
+          //         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          //         child: Text('이루고자 하시는 루틴이 무엇인가요?',
+          //             style:
+          //                 TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          //       ),
+          //       Padding(
+          //         padding:
+          //             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          //         child: TextField(
+          //           controller: _textController,
+          //           decoration: InputDecoration(
+          //             filled: true,
+          //             fillColor: Colors.grey[200],
+          //             labelStyle: const TextStyle(color: Colors.black),
+          //             enabledBorder: OutlineInputBorder(
+          //               borderSide: const BorderSide(color: Colors.white),
+          //               borderRadius: BorderRadius.circular(8),
+          //             ),
+          //             focusedBorder: OutlineInputBorder(
+          //               borderSide:
+          //                   const BorderSide(color: Colors.white, width: 2),
+          //               borderRadius: BorderRadius.circular(8),
+          //             ),
+          //           ),
+          //           cursorColor: Colors.blue,
+          //           onSubmitted: _setRoutineGoal,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
           if (_routineGoal != null && _selectedTime != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

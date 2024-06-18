@@ -41,16 +41,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  assets:
-    - asset/images/
-    - asset/images/background/
-    - asset/images/character/
-    - asset/images/group/
-    - asset/images/item/
-    - asset/images/login/
-    - asset/images/profile/
-    - asset/lottie/
-    - asset/main_bgm.wav
+  # assets:
+    # - asset/images/
+    # - asset/images/background/
+    # - asset/images/character/
+    # - asset/images/group/
+    # - asset/images/item/
+    # - asset/images/login/
+    # - asset/images/profile/
+    # - asset/lottie/
+    # - asset/main_bgm.wav
 
   fonts:
     - family: NotoSans
@@ -67,3 +67,6 @@ flutter:
           weight: 300
         - asset: asset/fonts/NotoSansKR-Thin.ttf
           weight: 100
+    - family: TossFace
+      fonts:
+      - asset: asset/fonts/TossFaceFontMac.ttf
