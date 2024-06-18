@@ -1,5 +1,6 @@
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
+import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_creator_screen.dart';
@@ -15,17 +16,16 @@ class RoutineScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: '',
-      // appBar: AppBar(
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.notifications),
-      //       onPressed: () {
-      //         // 알림 버튼 클릭 이벤트 처리
-      //       },
-      //     ),
-      //   ],
-      // ),
+      rightIcon: IconButton(
+        icon: const Icon(
+          Icons.notifications,
+          size: 30,
+          color: AppColors.TEXT_SUB,
+        ),
+        onPressed: () {
+          // 알림 버튼 클릭 이벤트 처리
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -36,16 +36,6 @@ class RoutineScreen extends StatelessWidget {
         },
         child: const Icon(Icons.add),
       ),
-      // appBar: AppBar(
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.notifications),
-      //       onPressed: () {
-      //         // 알림 버튼 클릭 이벤트 처리
-      //       },
-      //     ),
-      //   ],
-      // ),
       child: GapColumn(
         gap: 16,
         children: [
