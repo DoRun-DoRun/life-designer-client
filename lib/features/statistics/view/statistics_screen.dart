@@ -7,8 +7,10 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -16,6 +18,15 @@ class StatisticsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ko', ''),
+        Locale('en', ''),
+      ],
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
         length: 2,
@@ -124,7 +135,7 @@ class StatisticsPeriodScreen extends StatelessWidget {
           PaddingContainer(
             child: Column(
               children: [
-                const Calendar(),
+                const CalendarWidget(),
                 const Divider(),
                 GapColumn(
                   gap: 24,
@@ -240,6 +251,7 @@ class StatisticsPeriodScreen extends StatelessWidget {
                 CustomButton(
                   onPressed: () {},
                   title: '자세히 보기',
+                  align: TextAlign.center,
                   backgroundColor: AppColors.BRAND_SUB,
                   foregroundColor: AppColors.TEXT_BRAND,
                 )
@@ -279,7 +291,116 @@ class StatisticsPeriodScreen extends StatelessWidget {
                           "아침 조깅하기",
                           style: AppTextStyles.BOLD_14,
                         ),
-                        Row(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GapColumn(
+                              gap: 4,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CustomIcon(
+                                  text: "07",
+                                  primaryColor: AppColors.TEXT_INVERT,
+                                  size: 28,
+                                ),
+                                Text(
+                                  "월",
+                                  style: AppTextStyles.REGULAR_12,
+                                )
+                              ],
+                            ),
+                            GapColumn(
+                              gap: 4,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CustomIcon(
+                                  text: "07",
+                                  primaryColor: AppColors.TEXT_INVERT,
+                                  size: 28,
+                                ),
+                                Text(
+                                  "월",
+                                  style: AppTextStyles.REGULAR_12,
+                                )
+                              ],
+                            ),
+                            GapColumn(
+                              gap: 4,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CustomIcon(
+                                  text: "07",
+                                  primaryColor: AppColors.TEXT_INVERT,
+                                  size: 28,
+                                ),
+                                Text(
+                                  "월",
+                                  style: AppTextStyles.REGULAR_12,
+                                )
+                              ],
+                            ),
+                            GapColumn(
+                              gap: 4,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CustomIcon(
+                                  text: "07",
+                                  primaryColor: AppColors.TEXT_INVERT,
+                                  size: 28,
+                                ),
+                                Text(
+                                  "월",
+                                  style: AppTextStyles.REGULAR_12,
+                                )
+                              ],
+                            ),
+                            GapColumn(
+                              gap: 4,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CustomIcon(
+                                  text: "07",
+                                  primaryColor: AppColors.TEXT_INVERT,
+                                  size: 28,
+                                ),
+                                Text(
+                                  "월",
+                                  style: AppTextStyles.REGULAR_12,
+                                )
+                              ],
+                            ),
+                            GapColumn(
+                              gap: 4,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CustomIcon(
+                                  text: "07",
+                                  primaryColor: AppColors.TEXT_INVERT,
+                                  size: 28,
+                                ),
+                                Text(
+                                  "월",
+                                  style: AppTextStyles.REGULAR_12,
+                                )
+                              ],
+                            ),
+                            GapColumn(
+                              gap: 4,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CustomIcon(
+                                  text: "07",
+                                  primaryColor: AppColors.TEXT_INVERT,
+                                  size: 28,
+                                ),
+                                Text(
+                                  "월",
+                                  style: AppTextStyles.REGULAR_12,
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -329,56 +450,6 @@ class StatisticsRoutineScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
-  }
-}
-
-class Calendar extends StatelessWidget {
-  const Calendar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {},
-            ),
-            const Text('2024.04',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            IconButton(
-              icon: const Icon(Icons.arrow_forward),
-              onPressed: () {},
-            ),
-          ],
-        ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7,
-            childAspectRatio: 1,
-          ),
-          itemCount: 30,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                backgroundColor:
-                    index % 2 == 0 ? Colors.blue : Colors.grey[300],
-                child: Text(
-                  '${index + 1}',
-                  style: TextStyle(
-                      color: index % 2 == 0 ? Colors.white : Colors.black),
-                ),
-              ),
-            );
-          },
-        ),
-      ],
-    );
   }
 }
 
@@ -495,5 +566,216 @@ class CirclePainter extends CustomPainter {
   @override
   bool shouldRepaint(CirclePainter oldDelegate) {
     return oldDelegate.progress != progress;
+  }
+}
+
+class CalendarWidget extends StatefulWidget {
+  const CalendarWidget({super.key});
+
+  @override
+  CalendarWidgetState createState() => CalendarWidgetState();
+}
+
+class CalendarWidgetState extends State<CalendarWidget> {
+  DateTime _selectedDate = DateTime.now();
+  DateTime _focusedDate = DateTime.now();
+  DateTime _tempSelectedDate = DateTime.now();
+
+  void _onDaySelected(DateTime selectedDay) {
+    setState(() {
+      _selectedDate = selectedDay;
+    });
+  }
+
+  void _onMonthChanged(int increment) {
+    setState(() {
+      _focusedDate =
+          DateTime(_focusedDate.year, _focusedDate.month + increment, 1);
+    });
+  }
+
+  void _showDatePicker(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext builder) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: AppRadius.ROUNDED_16,
+            ),
+            // height: MediaQuery.of(context).copyWith().size.height / 3,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: GapColumn(
+                gap: 24,
+                children: [
+                  SizedBox(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "날짜를 선택해주세요",
+                          style: AppTextStyles.BOLD_20,
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.date,
+                      initialDateTime: _selectedDate,
+                      onDateTimeChanged: (DateTime newDate) {
+                        setState(() {
+                          _tempSelectedDate = newDate;
+                        });
+                      },
+                    ),
+                  ),
+                  CustomButton(
+                    title: "선택",
+                    backgroundColor: AppColors.BRAND_SUB,
+                    foregroundColor: AppColors.TEXT_BRAND,
+                    align: TextAlign.center,
+                    onPressed: () {
+                      setState(() {
+                        _selectedDate = _tempSelectedDate;
+                        _focusedDate = DateTime(
+                            _tempSelectedDate.year, _tempSelectedDate.month, 1);
+                      });
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _buildHeader(),
+        // _buildDaysOfWeek(),
+        _buildCalendar(),
+      ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 30,
+          ),
+          onPressed: () => _onMonthChanged(-1),
+        ),
+        Row(
+          children: [
+            Text(
+              DateFormat('yyyy.MM').format(_focusedDate),
+              style: AppTextStyles.REGULAR_14,
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.calendar_today,
+                size: 24,
+                color: AppColors.TEXT_INVERT,
+              ),
+              onPressed: () {
+                _showDatePicker(context);
+              },
+            ),
+          ],
+        ),
+        IconButton(
+          icon: const Icon(
+            Icons.chevron_right,
+            size: 30,
+          ),
+          onPressed: () => _onMonthChanged(1),
+        ),
+      ],
+    );
+  }
+
+  // Widget _buildDaysOfWeek() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       children: List.generate(7, (index) {
+  //         return Text(
+  //           DateFormat.E().format(DateTime(2022, 1, index + 3)),
+  //           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //         );
+  //       }),
+  //     ),
+  //   );
+  // }
+  Widget _buildCalendar() {
+    final firstDayOfMonth = DateTime(_focusedDate.year, _focusedDate.month, 1);
+    final lastDayOfMonth =
+        DateTime(_focusedDate.year, _focusedDate.month + 1, 0);
+    final daysBefore = firstDayOfMonth.weekday - 1;
+    final daysAfter = 7 - lastDayOfMonth.weekday;
+    final daysInMonth = List.generate(lastDayOfMonth.day, (index) => index + 1);
+
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(), // GridView가 스크롤을 막음
+      shrinkWrap: true, // GridView가 Column 내에서 정상적으로 작동하도록 설정
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+      ),
+      itemCount: daysBefore + daysInMonth.length + daysAfter,
+      itemBuilder: (context, index) {
+        if (index < daysBefore || index >= daysBefore + daysInMonth.length) {
+          return Container();
+        } else {
+          final day = daysInMonth[index - daysBefore];
+          final date = DateTime(_focusedDate.year, _focusedDate.month, day);
+          final isSelected = date == _selectedDate;
+          return GestureDetector(
+            onTap: () => _onDaySelected(date),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.BRAND_SUB : Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    // color: AppColors.TEXT_INVERT,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      day.toString(),
+                      style: AppTextStyles.REGULAR_12,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 }

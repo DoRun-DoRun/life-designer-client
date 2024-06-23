@@ -11,7 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_localization: ^0.2.0
+  intl: ^0.18.1
   cupertino_icons: ^1.0.6
   dio: ^5.4.1
   flutter_secure_storage: ^9.0.0
@@ -26,6 +27,8 @@ dependencies:
   uuid: ^4.3.3
   debounce_throttle: ^2.0.0
   percent_indicator: ^4.0.1
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

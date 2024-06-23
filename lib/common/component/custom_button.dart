@@ -11,6 +11,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor = AppColors.BACKGROUND_SUB,
     this.foregroundColor = AppColors.TEXT_SECONDARY,
     this.padding = const EdgeInsets.all(16.0),
+    this.align = TextAlign.start,
   });
 
   final VoidCallback onPressed;
@@ -18,6 +19,7 @@ class CustomButton extends StatelessWidget {
   final Color backgroundColor;
   final Color foregroundColor;
   final EdgeInsets padding;
+  final TextAlign align;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class CustomButton extends StatelessWidget {
           child: Text(
             title,
             style: AppTextStyles.MEDIUM_16.copyWith(color: foregroundColor),
+            textAlign: align,
           ),
         ),
       ),
