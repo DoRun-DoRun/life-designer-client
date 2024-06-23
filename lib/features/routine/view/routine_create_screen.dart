@@ -126,17 +126,31 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                   },
                 ),
               ),
-              CupertinoButton(
-                  color: Colors.blue,
-                  onPressed: () {
-                    if (tempAlertTime != null) {
-                      setState(() {
-                        _alertTime = tempAlertTime;
-                      });
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: const Text('알림 시간 저장')),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CupertinoButton(
+                      color: Colors.blue,
+                      onPressed: () {
+                        setState(() {
+                          _alertTime = null; // Set to null for no alert
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('알람 없이')),
+                  CupertinoButton(
+                      color: Colors.blue,
+                      onPressed: () {
+                        if (tempAlertTime != null) {
+                          setState(() {
+                            _alertTime = tempAlertTime;
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Text('저장')),
+                ],
+              ),
               const SizedBox(height: 20)
             ],
           ),
@@ -175,10 +189,11 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
         });
       },
       style: OutlinedButton.styleFrom(
-        side: BorderSide(width: 2, color: isSelected ? Colors.blue : Colors.grey),
+        side:
+            BorderSide(width: 2, color: isSelected ? Colors.blue : Colors.grey),
         backgroundColor: isSelected ? Colors.blue : Colors.transparent,
-        shape: const CircleBorder(),  // 원형 버튼으로 변경
-        fixedSize: const Size(40, 40),  // 버튼의 크기를 지정
+        shape: const CircleBorder(), // 원형 버튼으로 변경
+        fixedSize: const Size(40, 40), // 버튼의 크기를 지정
       ),
       child: Text(
         dayLabel,
@@ -210,36 +225,54 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text(
-              getCurrentGuideQuestion(),
-              style: AppTextStyles.BOLD_20,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                getCurrentGuideQuestion(),
+                style: AppTextStyles.BOLD_20,
+              ),
             ),
           ),
-          if (_routineGoal != null && _selectedTime != null && _repeatCycle != null)
+          if (_routineGoal != null &&
+              _selectedTime != null &&
+              _repeatCycle != null)
             Column(
               children: <Widget>[
                 if (_alertTime != null)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Text('알림 시간: ${_alertTime!.format(context)}',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    child: InkWell(
+                      onTap: () => _setAlertTime(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[200],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _alertTime != null
+                                  ? '알림 시간: ${_alertTime?.format(context)}'
+                                  : '알람 없음',
+                              style: const TextStyle(
+                                  fontSize: 16, color: Colors.white),
+                            ),
+                            const Icon(Icons.access_time,
+                                size: 16, color: Colors.white),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                TextButton(
-                  onPressed: () => _setAlertTime(context),
-                  child: Text(
-                    _alertTime != null ? '알림 시간 변경' : '알림 시간 설정',
-                    style: const TextStyle(color: Colors.blue),
-                  ),
-                ),
               ],
             ),
           if (_routineGoal != null && _selectedTime != null)
             Column(
               children: <Widget>[
-                const Text(
-                  '어느 요일에 반복하시나요?',
-                  style: AppTextStyles.BOLD_20,
-                ),
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -264,7 +297,9 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: List.generate(7, (index) {
-                          return _buildDayButton(['월', '화', '수', '목', '금', '토', '일'][index], index);
+                          return _buildDayButton(
+                              ['월', '화', '수', '목', '금', '토', '일'][index],
+                              index);
                         }),
                       ),
                     ),
@@ -275,10 +310,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '몇시에 시작하시나요?',
-                  style: AppTextStyles.BOLD_20,
-                ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text('시작 시간',
@@ -365,10 +396,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                 gap: AppSpacing.SPACE_16,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    '이루고자 하시는 루틴이 무엇인가요?',
-                    style: AppTextStyles.BOLD_20,
-                  ),
                   InputBox(
                     controller: _textController,
                     hintText: '루틴 목표',
@@ -399,7 +426,10 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                 ],
               ),
             ),
-          if (_routineGoal != null && _selectedTime != null)
+          if (_routineGoal != null &&
+              _selectedTime != null &&
+              _repeatCycle != null &&
+              _alertTime != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: ElevatedButton(
@@ -423,7 +453,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                   ),
                   elevation: 0,
                 ),
-                child: const Text('저장하기'),
+                child: const Text('완료하기'),
               ),
             ),
         ],
