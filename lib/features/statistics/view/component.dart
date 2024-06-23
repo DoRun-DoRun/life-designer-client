@@ -56,8 +56,38 @@ class WeeklyRoutine extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CustomIcon(
-                      text: "07",
-                      primaryColor: AppColors.TEXT_INVERT,
+                      icon: Icons.check,
+                      primaryColor: AppColors.BRAND,
+                      size: 28,
+                    ),
+                    Text(
+                      "화",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      icon: Icons.close,
+                      primaryColor: AppColors.BRAND_SUB,
+                      size: 28,
+                    ),
+                    Text(
+                      "수",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      icon: Icons.check,
+                      primaryColor: AppColors.BRAND,
                       size: 28,
                     ),
                     Text(
@@ -71,12 +101,12 @@ class WeeklyRoutine extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CustomIcon(
-                      text: "07",
+                      text: "11",
                       primaryColor: AppColors.TEXT_INVERT,
                       size: 28,
                     ),
                     Text(
-                      "월",
+                      "목",
                       style: AppTextStyles.REGULAR_12,
                     )
                   ],
@@ -86,12 +116,12 @@ class WeeklyRoutine extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CustomIcon(
-                      text: "07",
+                      text: "12",
                       primaryColor: AppColors.TEXT_INVERT,
                       size: 28,
                     ),
                     Text(
-                      "월",
+                      "금",
                       style: AppTextStyles.REGULAR_12,
                     )
                   ],
@@ -101,42 +131,12 @@ class WeeklyRoutine extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CustomIcon(
-                      text: "07",
+                      text: "13",
                       primaryColor: AppColors.TEXT_INVERT,
                       size: 28,
                     ),
                     Text(
-                      "월",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      text: "07",
-                      primaryColor: AppColors.TEXT_INVERT,
-                      size: 28,
-                    ),
-                    Text(
-                      "월",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      text: "07",
-                      primaryColor: AppColors.TEXT_INVERT,
-                      size: 28,
-                    ),
-                    Text(
-                      "월",
+                      "토",
                       style: AppTextStyles.REGULAR_12,
                     )
                   ],
@@ -404,10 +404,23 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
   }
 }
 
-class DailyRoutineReportContainer extends StatelessWidget {
-  const DailyRoutineReportContainer({
-    super.key,
-  });
+class DailyRoutineReportContainer extends StatefulWidget {
+  const DailyRoutineReportContainer({super.key});
+
+  @override
+  DailyRoutineReportContainerState createState() =>
+      DailyRoutineReportContainerState();
+}
+
+class DailyRoutineReportContainerState
+    extends State<DailyRoutineReportContainer> {
+  bool _isExpanded = false;
+
+  void _toggleExpand() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -415,37 +428,52 @@ class DailyRoutineReportContainer extends StatelessWidget {
       child: GapColumn(
         gap: 24,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RichText(
-                text:
-                    const TextSpan(style: AppTextStyles.REGULAR_16, children: [
-                  TextSpan(
-                    text: "완료1   ",
-                    style: TextStyle(
-                      color: AppColors.TEXT_BRAND,
-                    ),
-                  ),
-                  TextSpan(text: "실패2   "),
-                  TextSpan(
-                    text: "건너뜀1",
-                    style: TextStyle(color: AppColors.TEXT_SUB),
-                  )
-                ]),
-              ),
-              const Icon(size: 30, Icons.keyboard_arrow_up_outlined)
-            ],
+          GestureDetector(
+            onTap: _toggleExpand,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RichText(
+                  text: const TextSpan(
+                      style: AppTextStyles.REGULAR_16,
+                      children: [
+                        TextSpan(
+                          text: "완료1   ",
+                          style: TextStyle(
+                            color: AppColors.TEXT_BRAND,
+                          ),
+                        ),
+                        TextSpan(text: "실패2   "),
+                        TextSpan(
+                          text: "건너뜀1",
+                          style: TextStyle(color: AppColors.TEXT_SUB),
+                        )
+                      ]),
+                ),
+                Icon(
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  size: 30,
+                ),
+              ],
+            ),
           ),
-          const IconListView(
-            text: '아침 조깅하기',
-            icon: Icons.check,
-          ),
-          const IconListView(
-            text: '아침 조깅하기',
-            icon: Icons.close,
-            color: AppColors.BRAND_SUB,
-          ),
+          if (_isExpanded)
+            const GapColumn(
+              gap: 24,
+              children: [
+                IconListView(
+                  text: '아침 조깅하기',
+                  icon: Icons.check,
+                ),
+                IconListView(
+                  text: '아침 조깅하기',
+                  icon: Icons.close,
+                  color: AppColors.BRAND_SUB,
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -497,43 +525,66 @@ class StreakContainer extends StatelessWidget {
   }
 }
 
-class ConductRoutineHistory extends StatelessWidget {
-  const ConductRoutineHistory({
-    super.key,
-  });
+class ConductRoutineHistory extends StatefulWidget {
+  const ConductRoutineHistory({super.key});
+
+  @override
+  ConductRoutineHistoryState createState() => ConductRoutineHistoryState();
+}
+
+class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
+  bool _isExpanded = false;
+
+  void _toggleExpand() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return PaddingContainer(
-        child: GapColumn(
-      gap: 24,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+      child: GapColumn(
+        gap: 24,
+        children: [
+          GestureDetector(
+            onTap: _toggleExpand,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "수행시간: ",
-                  style: AppTextStyles.REGULAR_16,
+                Row(
+                  children: [
+                    const Text(
+                      "수행시간: ",
+                      style: AppTextStyles.REGULAR_16,
+                    ),
+                    Text(
+                      "82분 41초",
+                      style: AppTextStyles.BOLD_16.copyWith(
+                        color: AppColors.TEXT_BRAND,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  "82분 41초",
-                  style: AppTextStyles.BOLD_16.copyWith(
-                    color: AppColors.TEXT_BRAND,
-                  ),
-                ),
+                Icon(_isExpanded
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down),
               ],
             ),
-            const Icon(Icons.keyboard_arrow_down)
-          ],
-        ),
-        const ListItem(id: 0, title: "창문열기"),
-        const ListItem(id: 0, title: "창문열기"),
-        const ListItem(id: 0, title: "창문열기"),
-        const ListItem(id: 0, title: "창문열기"),
-      ],
-    ));
+          ),
+          if (_isExpanded)
+            const GapColumn(
+              gap: 24,
+              children: [
+                ListItem(id: 0, title: "창문열기"),
+                ListItem(id: 0, title: "창문열기"),
+                ListItem(id: 0, title: "창문열기"),
+                ListItem(id: 0, title: "창문열기"),
+              ],
+            ),
+        ],
+      ),
+    );
   }
 }
 
