@@ -24,6 +24,26 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   RepeatCycle? _repeatCycle;
   final List<bool> _weekDays = List.filled(7, false);
   TimeOfDay? _alertTime;
+  List<String> guideQuestions = [
+    '이루고자 하시는 루틴이 무엇인가요?',
+    '몇시에 시작하시나요?',
+    '어느 요일에 반복하시나요?',
+    '시작 전에 알람 드릴까요?'
+  ];
+
+  String getCurrentGuideQuestion() {
+    if (_routineGoal == null) {
+      return guideQuestions[0];
+    } else if (_selectedTime == null) {
+      return guideQuestions[1];
+    } else if (_repeatCycle == null) {
+      return guideQuestions[2];
+    } else if (_alertTime == null) {
+      return guideQuestions[3];
+    } else {
+      return "모든 설정이 완료되었습니다!";
+    }
+  }
 
   void _setRoutineGoal(String value) {
     setState(() {
@@ -188,9 +208,12 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
       ),
       body: Column(
         children: <Widget>[
-          const Text(
-            '어느 요일에 반복하시나요?',
-            style: AppTextStyles.BOLD_20,
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              getCurrentGuideQuestion(),
+              style: AppTextStyles.BOLD_20,
+            ),
           ),
           if (_routineGoal != null && _selectedTime != null && _repeatCycle != null)
             Column(
