@@ -23,6 +23,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   TimeOfDay? _selectedTime;
   RepeatCycle? _repeatCycle;
   final List<bool> _weekDays = List.filled(7, false);
+  TimeOfDay? _alertTime;
 
   void _setRoutineGoal(String value) {
     setState(() {
@@ -75,6 +76,47 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                     }
                   },
                   child: const Text('저장')),
+              const SizedBox(height: 20)
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _setAlertTime(BuildContext context) async {
+    TimeOfDay? tempAlertTime;
+
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: 250,
+          padding: const EdgeInsets.only(top: 15),
+          child: Column(
+            children: [
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.time,
+                  initialDateTime: DateTime.now(),
+                  use24hFormat: true,
+                  minuteInterval: 1,
+                  onDateTimeChanged: (DateTime newTime) {
+                    tempAlertTime = TimeOfDay.fromDateTime(newTime);
+                  },
+                ),
+              ),
+              CupertinoButton(
+                  color: Colors.blue,
+                  onPressed: () {
+                    if (tempAlertTime != null) {
+                      setState(() {
+                        _alertTime = tempAlertTime;
+                      });
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: const Text('알림 시간 저장')),
               const SizedBox(height: 20)
             ],
           ),
@@ -146,9 +188,35 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
       ),
       body: Column(
         children: <Widget>[
+          const Text(
+            '어느 요일에 반복하시나요?',
+            style: AppTextStyles.BOLD_20,
+          ),
+          if (_routineGoal != null && _selectedTime != null && _repeatCycle != null)
+            Column(
+              children: <Widget>[
+                if (_alertTime != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Text('알림 시간: ${_alertTime!.format(context)}',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                TextButton(
+                  onPressed: () => _setAlertTime(context),
+                  child: Text(
+                    _alertTime != null ? '알림 시간 변경' : '알림 시간 설정',
+                    style: const TextStyle(color: Colors.blue),
+                  ),
+                ),
+              ],
+            ),
           if (_routineGoal != null && _selectedTime != null)
             Column(
               children: <Widget>[
+                const Text(
+                  '어느 요일에 반복하시나요?',
+                  style: AppTextStyles.BOLD_20,
+                ),
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -184,6 +252,10 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text(
+                  '몇시에 시작하시나요?',
+                  style: AppTextStyles.BOLD_20,
+                ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text('시작 시간',
