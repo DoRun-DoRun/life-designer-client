@@ -12,7 +12,7 @@ class GapColumn extends StatelessWidget {
     required this.children,
     this.gap = 0,
     this.mainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
     this.mainAxisSize = MainAxisSize.max,
   });
 
