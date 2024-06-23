@@ -72,7 +72,7 @@ class ProgressPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;
 
-      double radius = (size.width / 2) + 6; // 외부 원의 반지름
+      double radius = (size.width / 2); // 외부 원의 반지름
       double angle = 2 * 3.141592653589793 * progress;
 
       Offset center = Offset(size.width / 2, size.height / 2);
