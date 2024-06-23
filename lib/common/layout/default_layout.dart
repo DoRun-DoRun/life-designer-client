@@ -6,7 +6,7 @@ class DefaultLayout extends StatelessWidget {
   final IconButton? leftIcon;
   final IconButton? rightIcon;
   final String? title;
-  final bool showAppBar;
+  final PreferredSizeWidget? customAppBar;
   final Color backgroundColor;
   final Widget? bottomNavigationBar;
   final Widget? floatingActionButton;
@@ -17,7 +17,7 @@ class DefaultLayout extends StatelessWidget {
     this.leftIcon,
     this.rightIcon,
     this.title,
-    this.showAppBar = true,
+    this.customAppBar,
     this.backgroundColor = AppColors.BACKGROUND_SUB,
     this.bottomNavigationBar,
     this.floatingActionButton,
@@ -27,28 +27,22 @@ class DefaultLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: showAppBar
-          ? AppBar(
+      appBar: customAppBar ??
+          AppBar(
               leading: leftIcon,
-              actions: rightIcon != null
-                  ? [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 24.0),
-                        child: rightIcon!,
-                      )
-                    ]
-                  : null,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 24.0),
+                  child: rightIcon,
+                )
+              ],
               elevation: 0,
-              title: title != null
-                  ? Text(
-                      title!,
-                      style: AppTextStyles.MEDIUM_16.copyWith(
-                        color: Colors.black,
-                      ),
-                    )
-                  : null,
-            )
-          : null,
+              title: Text(
+                title ?? '',
+                style: AppTextStyles.MEDIUM_16.copyWith(
+                  color: Colors.black,
+                ),
+              )),
       backgroundColor: backgroundColor,
       bottomNavigationBar: bottomNavigationBar,
       floatingActionButton: floatingActionButton,
