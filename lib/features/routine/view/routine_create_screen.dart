@@ -8,17 +8,21 @@ import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class RoutineCreatorScreen extends StatefulWidget {
-  const RoutineCreatorScreen({super.key});
+enum RepeatCycle { daily, weekdays, weekends, custom }
+
+class RoutineCreateScreen extends StatefulWidget {
+  const RoutineCreateScreen({super.key});
 
   @override
-  State<RoutineCreatorScreen> createState() => _RoutineCreatorScreenState();
+  State<RoutineCreateScreen> createState() => _RoutineCreateScreenState();
 }
 
-class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
+class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   final TextEditingController _textController = TextEditingController();
   String? _routineGoal;
   TimeOfDay? _selectedTime;
+  RepeatCycle? _repeatCycle;
+  final List<bool> _weekDays = List.filled(7, false);
 
   void _setRoutineGoal(String value) {
     setState(() {
@@ -68,13 +72,6 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
                         _selectedTime = tempSelectedTime;
                       });
                       Navigator.of(context).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ConfirmationScreen(
-                                routineGoal: _routineGoal!,
-                                startTime: _selectedTime!)),
-                      );
                     }
                   },
                   child: const Text('저장')),
@@ -83,6 +80,48 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildRepeatOptionButton(String label, RepeatCycle cycle) {
+    bool isSelected = _repeatCycle == cycle;
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          _repeatCycle = cycle;
+        });
+      },
+      style: OutlinedButton.styleFrom(
+        side:
+            BorderSide(width: 2, color: isSelected ? Colors.blue : Colors.grey),
+        backgroundColor: isSelected ? Colors.blue : Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+      ),
+    );
+  }
+
+  Widget _buildDayButton(String dayLabel, int index) {
+    bool isSelected = _weekDays[index];
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          _weekDays[index] = !isSelected;
+        });
+      },
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(width: 2, color: isSelected ? Colors.blue : Colors.grey),
+        backgroundColor: isSelected ? Colors.blue : Colors.transparent,
+        shape: const CircleBorder(),  // 원형 버튼으로 변경
+        fixedSize: const Size(40, 40),  // 버튼의 크기를 지정
+      ),
+      child: Text(
+        dayLabel,
+        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+      ),
     );
   }
 
@@ -107,7 +146,41 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
       ),
       body: Column(
         children: <Widget>[
-          if (_routineGoal != null && _selectedTime == null)
+          if (_routineGoal != null && _selectedTime != null)
+            Column(
+              children: <Widget>[
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  childAspectRatio: 2,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    _buildRepeatOptionButton('매일', RepeatCycle.daily),
+                    _buildRepeatOptionButton('평일', RepeatCycle.weekdays),
+                    _buildRepeatOptionButton('주말', RepeatCycle.weekends),
+                    _buildRepeatOptionButton('직접 선택', RepeatCycle.custom),
+                  ],
+                ),
+                if (_repeatCycle == RepeatCycle.custom)
+                  Container(
+                    height: 50,
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(7, (index) {
+                          return _buildDayButton(['월', '화', '수', '목', '금', '토', '일'][index], index);
+                        }),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          if (_routineGoal != null)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -231,40 +304,6 @@ class _RoutineCreatorScreenState extends State<RoutineCreatorScreen> {
                 ],
               ),
             ),
-          // Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       const Padding(
-          //         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //         child: Text('이루고자 하시는 루틴이 무엇인가요?',
-          //             style:
-          //                 TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          //       ),
-          //       Padding(
-          //         padding:
-          //             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //         child: TextField(
-          //           controller: _textController,
-          //           decoration: InputDecoration(
-          //             filled: true,
-          //             fillColor: Colors.grey[200],
-          //             labelStyle: const TextStyle(color: Colors.black),
-          //             enabledBorder: OutlineInputBorder(
-          //               borderSide: const BorderSide(color: Colors.white),
-          //               borderRadius: BorderRadius.circular(8),
-          //             ),
-          //             focusedBorder: OutlineInputBorder(
-          //               borderSide:
-          //                   const BorderSide(color: Colors.white, width: 2),
-          //               borderRadius: BorderRadius.circular(8),
-          //             ),
-          //           ),
-          //           cursorColor: Colors.blue,
-          //           onSubmitted: _setRoutineGoal,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
           if (_routineGoal != null && _selectedTime != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

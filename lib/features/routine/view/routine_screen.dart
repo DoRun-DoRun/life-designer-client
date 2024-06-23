@@ -3,7 +3,7 @@ import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
-import 'package:dorun_app_flutter/features/routine/view/routine_creator_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -31,7 +31,7 @@ class RoutineScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const RoutineCreatorScreen()),
+                builder: (context) => const RoutineCreateScreen()),
           );
         },
         child: const Icon(Icons.add),
