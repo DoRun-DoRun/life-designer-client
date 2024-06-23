@@ -19,7 +19,7 @@ class SplashScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'asset/img/logo/logo.png',
+              'asset/images/character/bear-example.png',
               width: MediaQuery.of(context).size.width / 2,
             ),
             const SizedBox(height: 16.0),

@@ -8,7 +8,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../common/constant/data.dart';
 import '../../../common/view/root_tab.dart';
+import '../../../common/view/splash_screen.dart';
 import '../model/user_model.dart';
+import '../view/login_screen.dart';
 
 final authProvider = ChangeNotifierProvider<AuthProvider>((ref) {
   return AuthProvider(ref: ref);
@@ -47,8 +49,10 @@ class AuthProvider extends ChangeNotifier {
                 return RoutineCreateProgressScreen(
                   routineGoal: args['routineGoal'] as String? ?? 'Default Goal',
                   startTime: args['startTime'] as TimeOfDay? ?? TimeOfDay.now(),
-                  repeatCycle: args['repeatCycle'] as RepeatCycle? ?? RepeatCycle.daily,
-                  weekDays: args['weekDays'] as List<bool>? ?? List.filled(7, false),
+                  repeatCycle:
+                      args['repeatCycle'] as RepeatCycle? ?? RepeatCycle.daily,
+                  weekDays:
+                      args['weekDays'] as List<bool>? ?? List.filled(7, false),
                   alertTime: args['alertTime'] as String? ?? 'No Alert',
                 );
               },
@@ -63,6 +67,16 @@ class AuthProvider extends ChangeNotifier {
             return RoutineDetailScreen(id: int.parse(id));
           },
         ),
+        GoRoute(
+          path: '/splash',
+          name: SplashScreen.routeName,
+          builder: (_, __) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: LoginScreen.routeName,
+          builder: (_, __) => const LoginScreen(),
+        ),
       ];
 
   void logout() {
@@ -75,17 +89,15 @@ class AuthProvider extends ChangeNotifier {
     final logginIn = state.matchedLocation == '/login';
 
     if (user == null) {
-      print('Step 1');
+      print('User is Null');
       return logginIn ? null : '/login';
     }
 
     if (user is UserModel) {
-      print('Step 2');
       return logginIn || state.matchedLocation == '/splash' ? '/' : null;
     }
 
     if (user is UserModelError) {
-      print('Step 3');
       return !logginIn ? '/login' : null;
     }
 

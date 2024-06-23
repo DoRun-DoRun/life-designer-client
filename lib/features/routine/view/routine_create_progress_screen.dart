@@ -62,7 +62,6 @@ class _RoutineCreateProgressScreenState
     print('Progress complete!');
     if (!mounted) return;
     context.goNamed(RootTab.routeName);
-    print('Go RootTab!');
   }
 
   Future<void> createRoutine() async {

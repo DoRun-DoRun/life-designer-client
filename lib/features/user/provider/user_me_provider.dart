@@ -7,8 +7,9 @@ import '../model/user_model.dart';
 import '../repository/auth_repository.dart';
 import '../repository/user_me_repository.dart';
 
-final userMeProvider = StateNotifierProvider<UserMeStateNotifier, UserModelBase?>(
-      (ref) {
+final userMeProvider =
+    StateNotifierProvider<UserMeStateNotifier, UserModelBase?>(
+  (ref) {
     final authRepository = ref.watch(authRepositoryProvider);
     final userMeRepository = ref.watch(userMeRepositoryProvider);
     final storage = ref.watch(secureStorageProvider);
@@ -38,6 +39,18 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
+    // TODO: Must Remove after Testing
+    if (accessToken == 'dummy_access_token' &&
+        refreshToken == 'dummy_refresh_token') {
+      final dummyUser = UserModel(
+        id: '1',
+        username: 'test',
+        imageUrl: '/asset/images/character/bear-example.png',
+      );
+      state = dummyUser;
+      return;
+    }
+
     if (refreshToken == null || accessToken == null) {
       state = null;
       return;
@@ -54,6 +67,24 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
   }) async {
     try {
       state = UserModelLoading();
+
+      // TODO: Must Remove after Testing
+      if (username == 'test@test.com' && password == 't12345') {
+        const dummyAccessToken = 'dummy_access_token';
+        const dummyRefreshToken = 'dummy_refresh_token';
+
+        await storage.write(key: REFRESH_TOKEN_KEY, value: dummyRefreshToken);
+        await storage.write(key: ACCESS_TOKEN_KEY, value: dummyAccessToken);
+
+        final userResp = UserModel(
+          id: '1',
+          username: 'test',
+          imageUrl: '/asset/images/character/bear-example.png',
+        );
+
+        state = userResp;
+        return userResp;
+      }
 
       final resp = await authRepository.login(
         username: username,
