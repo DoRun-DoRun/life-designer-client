@@ -29,20 +29,22 @@ class DefaultLayout extends StatelessWidget {
     return Scaffold(
       appBar: customAppBar ??
           AppBar(
-              leading: leftIcon,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 24.0),
-                  child: rightIcon,
-                )
-              ],
-              elevation: 0,
-              title: Text(
-                title ?? '',
-                style: AppTextStyles.MEDIUM_16.copyWith(
-                  color: Colors.black,
-                ),
-              )),
+            leading: leftIcon,
+            backgroundColor: Colors.white,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 24.0),
+                child: rightIcon,
+              )
+            ],
+            elevation: 0,
+            title: Text(
+              title ?? '',
+              style: AppTextStyles.MEDIUM_16.copyWith(
+                color: Colors.black,
+              ),
+            ),
+          ),
       backgroundColor: backgroundColor,
       bottomNavigationBar: bottomNavigationBar,
       floatingActionButton: floatingActionButton,

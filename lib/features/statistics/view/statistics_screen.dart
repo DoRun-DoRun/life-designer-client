@@ -132,12 +132,20 @@ class StatisticsPeriodScreen extends StatelessWidget {
               ],
             ),
           ),
-          PaddingContainer(
-            child: Column(
-              children: [
-                const CalendarWidget(),
-                const Divider(),
-                GapColumn(
+          Column(
+            children: [
+              const PaddingContainer(
+                child: GapColumn(
+                  children: [
+                    CalendarWidget(),
+                  ],
+                ),
+              ),
+              const Divider(
+                height: 0,
+              ),
+              PaddingContainer(
+                child: GapColumn(
                   gap: 24,
                   children: [
                     Row(
@@ -180,9 +188,9 @@ class StatisticsPeriodScreen extends StatelessWidget {
                       color: AppColors.BRAND_SUB,
                     ),
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
           PaddingContainer(
             child: GapColumn(
@@ -249,7 +257,13 @@ class StatisticsPeriodScreen extends StatelessWidget {
                   ],
                 ),
                 CustomButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const WeeklyDetail()),
+                    );
+                  },
                   title: '자세히 보기',
                   align: TextAlign.center,
                   backgroundColor: AppColors.BRAND_SUB,
@@ -277,138 +291,149 @@ class StatisticsPeriodScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Container(
-                  decoration: const BoxDecoration(
-                    color: AppColors.BACKGROUND_SUB,
-                    borderRadius: AppRadius.ROUNDED_16,
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: GapColumn(
-                      gap: 16,
-                      children: [
-                        Text(
-                          "아침 조깅하기",
-                          style: AppTextStyles.BOLD_14,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            GapColumn(
-                              gap: 4,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomIcon(
-                                  text: "07",
-                                  primaryColor: AppColors.TEXT_INVERT,
-                                  size: 28,
-                                ),
-                                Text(
-                                  "월",
-                                  style: AppTextStyles.REGULAR_12,
-                                )
-                              ],
-                            ),
-                            GapColumn(
-                              gap: 4,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomIcon(
-                                  text: "07",
-                                  primaryColor: AppColors.TEXT_INVERT,
-                                  size: 28,
-                                ),
-                                Text(
-                                  "월",
-                                  style: AppTextStyles.REGULAR_12,
-                                )
-                              ],
-                            ),
-                            GapColumn(
-                              gap: 4,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomIcon(
-                                  text: "07",
-                                  primaryColor: AppColors.TEXT_INVERT,
-                                  size: 28,
-                                ),
-                                Text(
-                                  "월",
-                                  style: AppTextStyles.REGULAR_12,
-                                )
-                              ],
-                            ),
-                            GapColumn(
-                              gap: 4,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomIcon(
-                                  text: "07",
-                                  primaryColor: AppColors.TEXT_INVERT,
-                                  size: 28,
-                                ),
-                                Text(
-                                  "월",
-                                  style: AppTextStyles.REGULAR_12,
-                                )
-                              ],
-                            ),
-                            GapColumn(
-                              gap: 4,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomIcon(
-                                  text: "07",
-                                  primaryColor: AppColors.TEXT_INVERT,
-                                  size: 28,
-                                ),
-                                Text(
-                                  "월",
-                                  style: AppTextStyles.REGULAR_12,
-                                )
-                              ],
-                            ),
-                            GapColumn(
-                              gap: 4,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomIcon(
-                                  text: "07",
-                                  primaryColor: AppColors.TEXT_INVERT,
-                                  size: 28,
-                                ),
-                                Text(
-                                  "월",
-                                  style: AppTextStyles.REGULAR_12,
-                                )
-                              ],
-                            ),
-                            GapColumn(
-                              gap: 4,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomIcon(
-                                  text: "07",
-                                  primaryColor: AppColors.TEXT_INVERT,
-                                  size: 28,
-                                ),
-                                Text(
-                                  "월",
-                                  style: AppTextStyles.REGULAR_12,
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                )
+                const WeeklyRoutine()
               ],
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class WeeklyRoutine extends StatelessWidget {
+  const WeeklyRoutine({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.BACKGROUND_SUB,
+        borderRadius: AppRadius.ROUNDED_16,
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: GapColumn(
+          gap: 16,
+          children: [
+            Text(
+              "아침 조깅하기",
+              style: AppTextStyles.BOLD_14,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "07",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "월",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "07",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "월",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "07",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "월",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "07",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "월",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "07",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "월",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "07",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "월",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "07",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "월",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -776,6 +801,49 @@ class CalendarWidgetState extends State<CalendarWidget> {
           );
         }
       },
+    );
+  }
+}
+
+class WeeklyDetail extends StatelessWidget {
+  const WeeklyDetail({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultLayout(
+      title: "주간기록",
+      leftIcon: IconButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        icon: const Icon(
+          Icons.chevron_left,
+          size: 30,
+        ),
+      ),
+      child: const PaddingContainer(
+        child: GapColumn(
+          gap: 32,
+          children: [
+            GapColumn(
+              gap: 8,
+              children: [
+                Text(
+                  "홍길동 님의\n일주일 루틴이에요",
+                  style: AppTextStyles.BOLD_20,
+                ),
+                Text(
+                  "04.21 ~ 04.27",
+                  style: AppTextStyles.REGULAR_14,
+                ),
+              ],
+            ),
+            WeeklyRoutine(),
+            WeeklyRoutine(),
+            WeeklyRoutine()
+          ],
+        ),
+      ),
     );
   }
 }
