@@ -5,12 +5,15 @@ import 'package:dorun_app_flutter/common/component/input_box.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-enum RepeatCycle { daily, weekdays, weekends, custom }
+import '../../../common/constant/data.dart';
 
 class RoutineCreateScreen extends StatefulWidget {
+
+  static String get routeName => 'routineCreate';
   const RoutineCreateScreen({super.key});
 
   @override
@@ -23,7 +26,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   TimeOfDay? _selectedTime;
   RepeatCycle? _repeatCycle;
   final List<bool> _weekDays = List.filled(7, false);
-  TimeOfDay? _alertTime;
+  String? _alertTime;
   List<String> guideQuestions = [
     '이루고자 하시는 루틴이 무엇인가요?',
     '몇시에 시작하시나요?',
@@ -41,7 +44,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
     } else if (_alertTime == null) {
       return guideQuestions[3];
     } else {
-      return "모든 설정이 완료되었습니다!";
+      return "시간이 되면 알려드릴까요?";
     }
   }
 
@@ -57,7 +60,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   final List<bool> _buttonStates = [
     false,
     false,
-  ]; // Initialize with desired number of buttons
+  ];
 
   void _handleButtonPress(int index) {
     setState(() {
@@ -105,7 +108,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   }
 
   Future<void> _setAlertTime(BuildContext context) async {
-    TimeOfDay? tempAlertTime;
+    String? formattedTime;
 
     await showModalBottomSheet(
       context: context,
@@ -118,11 +121,20 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
               Expanded(
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.time,
-                  initialDateTime: DateTime.now(),
+                  initialDateTime: DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      0,
+                      1
+                  ),
                   use24hFormat: true,
                   minuteInterval: 1,
                   onDateTimeChanged: (DateTime newTime) {
-                    tempAlertTime = TimeOfDay.fromDateTime(newTime);
+                    TimeOfDay selectedTime = TimeOfDay.fromDateTime(newTime);
+                    int hours = selectedTime.hour;
+                    int minutes = selectedTime.minute;
+                    formattedTime = '${hours}시간 ${minutes}분 전';
                   },
                 ),
               ),
@@ -141,9 +153,9 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                   CupertinoButton(
                       color: Colors.blue,
                       onPressed: () {
-                        if (tempAlertTime != null) {
+                        if (formattedTime != null) {
                           setState(() {
-                            _alertTime = tempAlertTime;
+                            _alertTime = formattedTime;
                           });
                           Navigator.of(context).pop();
                         }
@@ -237,37 +249,39 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
               _selectedTime != null &&
               _repeatCycle != null)
             Column(
-              children: <Widget>[
-                if (_alertTime != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: InkWell(
-                      onTap: () => _setAlertTime(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[200],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              _alertTime != null
-                                  ? '알림 시간: ${_alertTime?.format(context)}'
-                                  : '알람 없음',
-                              style: const TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                            ),
-                            const Icon(Icons.access_time,
-                                size: 16, color: Colors.white),
-                          ],
-                        ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Text('알림 시간',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: InkWell(
+                    onTap: () => _setAlertTime(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[200],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _alertTime != null
+                                ? '알림 시간: ${_alertTime!} 전'
+                                : '알람 없음',
+                            style: const TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          const Icon(Icons.access_time, size: 16, color: Colors.white),
+                        ],
                       ),
                     ),
                   ),
+                ),
               ],
             ),
           if (_routineGoal != null && _selectedTime != null)
@@ -437,9 +451,13 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ConfirmationScreen(
-                            routineGoal: _routineGoal!,
-                            startTime: _selectedTime!)),
+                        builder: (context) => RoutineCreateProgressScreen(
+                              routineGoal: _routineGoal!,
+                              startTime: _selectedTime!,
+                              repeatCycle: _repeatCycle!,
+                              weekDays: _weekDays,
+                              alertTime: _alertTime!,
+                            )),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -457,30 +475,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class ConfirmationScreen extends StatelessWidget {
-  final String routineGoal;
-  final TimeOfDay startTime;
-
-  const ConfirmationScreen(
-      {super.key, required this.routineGoal, required this.startTime});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('루틴 확인')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('루틴 목표: $routineGoal'),
-            Text('시작 시간: ${startTime.format(context)}'),
-          ],
-        ),
       ),
     );
   }
