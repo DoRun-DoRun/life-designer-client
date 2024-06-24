@@ -1,0 +1,15 @@
+{
+    "user": {"id": 0, "userName":"Test"},
+    "longestStreakCount": 10,
+    "totalStreak": 50,
+    "currentStreak": 5,
+    "currentStreakProgress": 0.51423333,
+    "pastWeeklyProgress": 0.7531233333,
+    "currentWeeklyProgress": 0.83433333,
+    "sucessRoutine" : 24,
+    "failedRoutine" : 10,
+    "passedRoutine" : 5,
+    "feedBackRoutineId": "12345",
+    "feedBackRoutineDetail": "단순한 루틴의 달성률이 68% 더 높게 나타나요.\n조금 더 간단하게 해보는 건 어떨까요?",
+    "feedBackRoutineTitle": "최근 어려워한 루틴이에요"
+  }

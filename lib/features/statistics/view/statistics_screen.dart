@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
 import 'package:dorun_app_flutter/features/statistics/view/calendar_widget.dart';
 import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class StatisticsScreen extends StatelessWidget {
@@ -37,13 +41,10 @@ class StatisticsScreen extends StatelessWidget {
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: AppColors.TEXT_BRAND,
                 unselectedLabelColor: AppColors.TEXT_SUB,
+                labelStyle: AppTextStyles.BOLD_14,
                 tabs: [
-                  Tab(
-                    child: Text("기간별", style: AppTextStyles.BOLD_14),
-                  ),
-                  Tab(
-                    child: Text("루틴별", style: AppTextStyles.BOLD_14),
-                  ),
+                  Tab(text: "기간별"),
+                  Tab(text: "루틴별"),
                 ]),
           ),
           child: const TabBarView(
@@ -61,24 +62,47 @@ class StatisticsScreen extends StatelessWidget {
 class StatisticsPeriodScreen extends StatelessWidget {
   const StatisticsPeriodScreen({super.key});
 
+  Future<WeeklyModel> getPeriodStatData() async {
+    final routeFromJsonFile =
+        await rootBundle.loadString('asset/json/weekly_mock.json');
+
+    final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
+    return WeeklyModel.fromJson(jsonData);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: GapColumn(
-        gap: 24,
-        children: [
-          StreakContainer(),
-          Column(
-            children: [
-              CalendarWidget(),
-              Divider(height: 0),
-              DailyRoutineReportContainer(),
-            ],
-          ),
-          WeeklyRoutineReportContainer(),
-          RoutineFeedbackContainer()
-        ],
-      ),
+    return FutureBuilder<WeeklyModel>(
+      future: getPeriodStatData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (snapshot.hasData) {
+          return SingleChildScrollView(
+            child: GapColumn(
+              gap: 24,
+              children: [
+                StreakContainer(periodStatData: snapshot.data!),
+                const Column(
+                  children: [
+                    CalendarWidget(),
+                    Divider(height: 0),
+                    DailyRoutineReportContainer(),
+                  ],
+                ),
+                WeeklyRoutineReportContainer(periodStatData: snapshot.data!),
+                RoutineFeedbackContainer(periodStatData: snapshot.data!)
+              ],
+            ),
+          );
+        } else {
+          return const Center(child: Text('noData'));
+        }
+      },
     );
   }
 }
@@ -115,27 +139,41 @@ class StatisticsRoutineScreen extends StatelessWidget {
 class StatisticsRoutineDetail extends StatelessWidget {
   const StatisticsRoutineDetail({super.key});
 
+  Future<WeeklyModel> getWeeklyData() async {
+    final routeFromJsonFile =
+        await rootBundle.loadString('lib/json/weekly_mock.json');
+
+    final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
+    return WeeklyModel.fromJson(jsonData);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const DefaultLayout(
-        title: '루틴별 통계',
-        child: SingleChildScrollView(
-          child: GapColumn(
-            gap: 24,
-            children: [
-              StreakContainer(),
-              Column(
-                children: [
-                  CalendarWidget(),
-                  Divider(height: 0),
-                  ConductRoutineHistory()
-                  // DailyRoutineReportContainer(),
-                ],
-              ),
-              RoutineReview(),
-            ],
-          ),
-        ));
+    return FutureBuilder<WeeklyModel>(
+        future: getWeeklyData(),
+        builder: (context, snapshot) {
+          return DefaultLayout(
+              title: '루틴별 통계',
+              child: SingleChildScrollView(
+                child: GapColumn(
+                  gap: 24,
+                  children: [
+                    StreakContainer(
+                      periodStatData: snapshot.data!,
+                    ),
+                    const Column(
+                      children: [
+                        CalendarWidget(),
+                        Divider(height: 0),
+                        ConductRoutineHistory()
+                        // DailyRoutineReportContainer(),
+                      ],
+                    ),
+                    const RoutineReview(),
+                  ],
+                ),
+              ));
+        });
   }
 }
 
@@ -166,9 +204,9 @@ class StatisticsWeeklyDetail extends StatelessWidget {
                 Text("04.21 ~ 04.27", style: AppTextStyles.REGULAR_14),
               ],
             ),
-            WeeklyRoutine(),
-            WeeklyRoutine(),
-            WeeklyRoutine()
+            WeeklyRoutine(routineId: "0"),
+            WeeklyRoutine(routineId: "0"),
+            WeeklyRoutine(routineId: "0"),
           ],
         ),
       ),

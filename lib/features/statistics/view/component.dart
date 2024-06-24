@@ -7,12 +7,16 @@ import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
 import 'package:dorun_app_flutter/features/statistics/view/statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 class WeeklyRoutine extends StatelessWidget {
+  final String routineId;
+
   const WeeklyRoutine({
     super.key,
+    required this.routineId,
   });
 
   @override
@@ -297,8 +301,11 @@ class CirclePainter extends CustomPainter {
 }
 
 class RoutineFeedbackContainer extends StatelessWidget {
+  final WeeklyModel periodStatData;
+
   const RoutineFeedbackContainer({
     super.key,
+    required this.periodStatData,
   });
 
   @override
@@ -310,15 +317,18 @@ class RoutineFeedbackContainer extends StatelessWidget {
           GapColumn(
             gap: 8,
             children: [
-              const Text("최근 어려워한 루틴이에요", style: AppTextStyles.BOLD_20),
+              Text(periodStatData.feedBackRoutineTitle,
+                  style: AppTextStyles.BOLD_20),
               Text(
-                "단순한 루틴의 달성률이 68% 더 높게 나타나요.\n조금 더 간단하게 해보는 건 어떨까요?",
+                periodStatData.feedBackRoutineDetail,
                 style: AppTextStyles.REGULAR_14
                     .copyWith(color: AppColors.TEXT_SUB),
               ),
             ],
           ),
-          const WeeklyRoutine()
+          WeeklyRoutine(
+            routineId: periodStatData.feedBackRoutineId,
+          )
         ],
       ),
     );
@@ -326,12 +336,18 @@ class RoutineFeedbackContainer extends StatelessWidget {
 }
 
 class WeeklyRoutineReportContainer extends StatelessWidget {
+  final WeeklyModel periodStatData;
+
   const WeeklyRoutineReportContainer({
     super.key,
+    required this.periodStatData,
   });
 
   @override
   Widget build(BuildContext context) {
+    int difference = (periodStatData.currentWeeklyProgress * 100).toInt() -
+        (periodStatData.pastWeeklyProgress * 100).toInt();
+
     return PaddingContainer(
       child: GapColumn(
         gap: 24,
@@ -343,13 +359,13 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                 gap: 8,
                 children: [
                   RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       text: "지난 주에 비해\n",
                       style: AppTextStyles.BOLD_20,
                       children: <TextSpan>[
                         TextSpan(
-                          text: '12% 더\n달성했네요',
-                          style: TextStyle(color: AppColors.TEXT_BRAND),
+                          text: '$difference% 더 \n달성했어요',
+                          style: const TextStyle(color: AppColors.TEXT_BRAND),
                         )
                       ],
                     ),
@@ -357,32 +373,46 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                   const Text("04.21 ~ 04.27", style: AppTextStyles.REGULAR_14)
                 ],
               ),
-              const CircularProgress(
-                progressNow: 0.6,
-                progressBefore: 0.48,
+              CircularProgress(
+                progressNow: periodStatData.currentWeeklyProgress,
+                progressBefore: periodStatData.pastWeeklyProgress,
               )
             ],
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconListView(
-                text: '아침 조깅하기',
-                icon: Icons.close,
-                color: AppColors.BRAND_SUB,
+              const IconListView(
+                text: '달성 루틴',
+                icon: Icons.check,
+                color: AppColors.BRAND,
               ),
-              Text('24개', style: AppTextStyles.BOLD_16)
+              Text('${periodStatData.sucessRoutine}개',
+                  style: AppTextStyles.BOLD_16)
             ],
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconListView(
-                text: '아침 조깅하기',
+              const IconListView(
+                text: '실패 루틴',
                 icon: Icons.close,
                 color: AppColors.BRAND_SUB,
               ),
-              Text('24개', style: AppTextStyles.BOLD_16)
+              Text('${periodStatData.failedRoutine}개',
+                  style: AppTextStyles.BOLD_16)
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const IconListView(
+                text: '건너뛴 루틴',
+                icon: Icons.keyboard_double_arrow_right,
+                color: AppColors.TEXT_SECONDARY,
+              ),
+              Text('${periodStatData.passedRoutine}개',
+                  style: AppTextStyles.BOLD_16)
             ],
           ),
           CustomButton(
@@ -481,8 +511,11 @@ class DailyRoutineReportContainerState
 }
 
 class StreakContainer extends StatelessWidget {
+  final WeeklyModel periodStatData;
+
   const StreakContainer({
     super.key,
+    required this.periodStatData,
   });
 
   @override
@@ -497,26 +530,30 @@ class StreakContainer extends StatelessWidget {
               style: AppTextStyles.BOLD_20,
               children: <TextSpan>[
                 TextSpan(
-                  text: '연속 15일 ',
+                  text: '연속 ${periodStatData.currentStreak}일 ',
                   style: AppTextStyles.BOLD_20
                       .copyWith(color: AppColors.TEXT_BRAND),
                 ),
-                const TextSpan(text: '동안 \n루틴을 100% 달성했어요'),
+                TextSpan(
+                    text:
+                        '동안 \n루틴을 ${(periodStatData.currentStreakProgress * 100).toInt()}% 달성했어요'),
               ],
             ),
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('최고 연속 달성', style: AppTextStyles.REGULAR_14),
-              Text('24일', style: AppTextStyles.BOLD_16),
+              const Text('최고 연속 달성', style: AppTextStyles.REGULAR_14),
+              Text('${periodStatData.longestStreakCount}일',
+                  style: AppTextStyles.BOLD_16),
             ],
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('누적 연속 달성', style: AppTextStyles.REGULAR_14),
-              Text('24일', style: AppTextStyles.BOLD_16),
+              const Text('누적 달성', style: AppTextStyles.REGULAR_14),
+              Text('${periodStatData.totalStreak}일',
+                  style: AppTextStyles.BOLD_16),
             ],
           ),
         ],

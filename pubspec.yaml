@@ -44,8 +44,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # assets:
-    # - asset/images/
+  assets:
+    - asset/json/
     # - asset/images/background/
     # - asset/images/character/
     # - asset/images/group/

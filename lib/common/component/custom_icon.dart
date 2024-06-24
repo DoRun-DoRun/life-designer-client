@@ -1,4 +1,5 @@
 import 'package:dorun_app_flutter/common/constant/colors.dart';
+import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:flutter/material.dart';
 
 class CustomIcon extends StatelessWidget {
@@ -45,10 +46,8 @@ class CustomIcon extends StatelessWidget {
                 : Center(
                     child: Text(
                       text,
-                      style: TextStyle(
-                        color: secondaryColor,
-                        fontSize: 12,
-                      ),
+                      style: AppTextStyles.REGULAR_12
+                          .copyWith(color: secondaryColor),
                     ),
                   ),
           ),
