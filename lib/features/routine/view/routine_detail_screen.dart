@@ -4,7 +4,7 @@ class RoutineDetailScreen extends StatelessWidget {
   final int id;
   const RoutineDetailScreen({super.key, required this.id});
 
-  static String get routeName => 'routine_detail';
+  static String get routeName => 'routineDetail';
 
   void _showAddRoutineModal(BuildContext context) {
     showModalBottomSheet(

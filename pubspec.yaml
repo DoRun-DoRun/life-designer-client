@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   flutter_localization: ^0.2.0
   intl: ^0.18.1
+  
   cupertino_icons: ^1.0.6
   dio: ^5.4.1
   flutter_secure_storage: ^9.0.0
@@ -26,7 +27,7 @@ dependencies:
   badges: ^3.1.2
   uuid: ^4.3.3
   debounce_throttle: ^2.0.0
-  percent_indicator: ^4.0.1
+  percent_indicator: ^4.2.3
   flutter_localizations:
     sdk: flutter
 
@@ -46,6 +47,7 @@ flutter:
 
   assets:
     - asset/json/
+    - asset/images/character/
     # - asset/images/background/
     # - asset/images/character/
     # - asset/images/group/
