@@ -46,11 +46,10 @@ class InputBoxState extends State<InputBox> {
       gap: AppSpacing.SPACE_8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_isFocused)
-          Text(
-            widget.hintText,
-            style: AppTextStyles.MEDIUM_12,
-          ),
+        Text(
+          _isFocused ? widget.hintText : '',
+          style: AppTextStyles.MEDIUM_12,
+        ),
         TextField(
           controller: widget.controller,
           focusNode: _focusNode,
@@ -71,6 +70,48 @@ class InputBoxState extends State<InputBox> {
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class ReadOnlyBox extends StatelessWidget {
+  final String hintText;
+  final String inputText;
+  final VoidCallback onTap;
+
+  const ReadOnlyBox({
+    super.key,
+    required this.hintText,
+    required this.inputText,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GapColumn(
+      gap: AppSpacing.SPACE_8,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(inputText != '' ? hintText : '', style: AppTextStyles.MEDIUM_12),
+        InkWell(
+          onTap: onTap,
+          child: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: AppColors.BACKGROUND_SUB,
+              borderRadius: AppRadius.ROUNDED_8,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: inputText == ''
+                  ? Text(hintText,
+                      style: AppTextStyles.REGULAR_20
+                          .copyWith(color: AppColors.TEXT_SUB))
+                  : Text(inputText, style: AppTextStyles.REGULAR_20),
+            ),
+          ),
+        )
       ],
     );
   }
