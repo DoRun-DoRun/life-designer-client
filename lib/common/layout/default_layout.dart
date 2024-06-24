@@ -29,6 +29,8 @@ class DefaultLayout extends StatelessWidget {
     return Scaffold(
       appBar: showAppBar
           ? AppBar(
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
               leading: leftIcon,
               actions: rightIcon != null
                   ? [
