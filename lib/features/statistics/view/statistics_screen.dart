@@ -141,7 +141,7 @@ class StatisticsRoutineDetail extends StatelessWidget {
 
   Future<WeeklyModel> getWeeklyData() async {
     final routeFromJsonFile =
-        await rootBundle.loadString('lib/json/weekly_mock.json');
+        await rootBundle.loadString('asset/json/weekly_mock.json');
 
     final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
     return WeeklyModel.fromJson(jsonData);
@@ -152,27 +152,37 @@ class StatisticsRoutineDetail extends StatelessWidget {
     return FutureBuilder<WeeklyModel>(
         future: getWeeklyData(),
         builder: (context, snapshot) {
-          return DefaultLayout(
-              title: '루틴별 통계',
-              child: SingleChildScrollView(
-                child: GapColumn(
-                  gap: 24,
-                  children: [
-                    StreakContainer(
-                      periodStatData: snapshot.data!,
-                    ),
-                    const Column(
-                      children: [
-                        CalendarWidget(),
-                        Divider(height: 0),
-                        ConductRoutineHistory()
-                        // DailyRoutineReportContainer(),
-                      ],
-                    ),
-                    const RoutineReview(),
-                  ],
-                ),
-              ));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (snapshot.hasData) {
+            return DefaultLayout(
+                title: '루틴별 통계',
+                child: SingleChildScrollView(
+                  child: GapColumn(
+                    gap: 24,
+                    children: [
+                      StreakContainer(
+                        periodStatData: snapshot.data!,
+                      ),
+                      const Column(
+                        children: [
+                          CalendarWidget(),
+                          Divider(height: 0),
+                          ConductRoutineHistory()
+                          // DailyRoutineReportContainer(),
+                        ],
+                      ),
+                      const RoutineReview(),
+                    ],
+                  ),
+                ));
+          } else {
+            return const Center(child: Text('nodata'));
+          }
         });
   }
 }
