@@ -1,10 +1,11 @@
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
+import 'package:dorun_app_flutter/common/component/custom_icon.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/gap_row.dart';
 import 'package:dorun_app_flutter/common/component/input_box.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
-import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import '../../../common/constant/data.dart';
 
 class RoutineCreateScreen extends StatefulWidget {
-
   static String get routeName => 'routineCreate';
   const RoutineCreateScreen({super.key});
 
@@ -57,50 +57,54 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
     }
   }
 
-  final List<bool> _buttonStates = [
-    false,
-    false,
-  ];
-
-  void _handleButtonPress(int index) {
-    setState(() {
-      _buttonStates[index] = !_buttonStates[index];
-    });
-  }
-
   Future<void> _setStartTime(BuildContext context) async {
-    TimeOfDay? tempSelectedTime;
+    TimeOfDay tempSelectedTime = TimeOfDay.fromDateTime(DateTime.now());
+    DateTime initialDateTime = DateTime.now();
+
+    if (_selectedTime != null) {
+      initialDateTime = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        _selectedTime!.hour,
+        _selectedTime!.minute,
+      );
+    }
 
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext builder) {
-        return Container(
-          height: 250,
-          padding: const EdgeInsets.only(top: 15),
-          child: Column(
-            children: [
-              Expanded(
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.time,
-                  initialDateTime: DateTime.now(),
-                  onDateTimeChanged: (DateTime newTime) {
-                    tempSelectedTime = TimeOfDay.fromDateTime(newTime);
-                  },
+        return SizedBox(
+          height: 375,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: GapColumn(
+              gap: 24,
+              children: [
+                const Text('몇시에 시작하시나요?', style: AppTextStyles.BOLD_20),
+                Expanded(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.time,
+                    initialDateTime: initialDateTime,
+                    onDateTimeChanged: (DateTime newTime) {
+                      tempSelectedTime = TimeOfDay.fromDateTime(newTime);
+                    },
+                  ),
                 ),
-              ),
-              CupertinoButton(
-                  color: Colors.blue,
+                CustomButton(
                   onPressed: () {
-                    if (tempSelectedTime != null) {
-                      setState(() {
-                        _selectedTime = tempSelectedTime;
-                      });
-                      Navigator.of(context).pop();
-                    }
+                    setState(() {
+                      _selectedTime = tempSelectedTime;
+                    });
+                    Navigator.of(context).pop();
                   },
-                  child: const Text('저장')),
-              const SizedBox(height: 20)
-            ],
+                  title: "저장",
+                  align: TextAlign.center,
+                  backgroundColor: AppColors.BRAND_SUB,
+                  foregroundColor: AppColors.TEXT_BRAND,
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -108,63 +112,71 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   }
 
   Future<void> _setAlertTime(BuildContext context) async {
-    String? formattedTime;
+    String formattedTime = '10분 전';
 
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext builder) {
-        return Container(
-          height: 250,
-          padding: const EdgeInsets.only(top: 15),
-          child: Column(
-            children: [
-              Expanded(
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.time,
-                  initialDateTime: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                      0,
-                      1
+        return SizedBox(
+          height: 375,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+            child: GapColumn(
+              children: [
+                const Text('얼마전에 알람 드릴까요?', style: AppTextStyles.BOLD_20),
+                Expanded(
+                  child: CupertinoTimerPicker(
+                    mode: CupertinoTimerPickerMode.hm,
+                    initialTimerDuration: const Duration(minutes: 10),
+                    minuteInterval: 1,
+                    onTimerDurationChanged: (Duration newDuration) {
+                      int hours = newDuration.inHours;
+                      int minutes = newDuration.inMinutes % 60;
+                      setState(() {
+                        if (hours > 0) {
+                          formattedTime = '$hours시간 $minutes분 전';
+                        } else {
+                          formattedTime = '$minutes분 전';
+                        }
+                      });
+                    },
                   ),
-                  use24hFormat: true,
-                  minuteInterval: 1,
-                  onDateTimeChanged: (DateTime newTime) {
-                    TimeOfDay selectedTime = TimeOfDay.fromDateTime(newTime);
-                    int hours = selectedTime.hour;
-                    int minutes = selectedTime.minute;
-                    formattedTime = '${hours}시간 ${minutes}분 전';
-                  },
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CupertinoButton(
-                      color: Colors.blue,
-                      onPressed: () {
-                        setState(() {
-                          _alertTime = null; // Set to null for no alert
-                        });
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('알람 없이')),
-                  CupertinoButton(
-                      color: Colors.blue,
-                      onPressed: () {
-                        if (formattedTime != null) {
+                GapRow(
+                  gap: 16,
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        onPressed: () {
+                          setState(() {
+                            _alertTime = null;
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        title: '알림 없이',
+                        align: TextAlign.center,
+                        backgroundColor: AppColors.BRAND_SUB,
+                        foregroundColor: AppColors.TEXT_BRAND,
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomButton(
+                        onPressed: () {
                           setState(() {
                             _alertTime = formattedTime;
                           });
                           Navigator.of(context).pop();
-                        }
-                      },
-                      child: const Text('저장')),
-                ],
-              ),
-              const SizedBox(height: 20)
-            ],
+                        },
+                        title: '저장',
+                        align: TextAlign.center,
+                        backgroundColor: AppColors.BRAND_SUB,
+                        foregroundColor: AppColors.TEXT_BRAND,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -173,308 +185,152 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
 
   Widget _buildRepeatOptionButton(String label, RepeatCycle cycle) {
     bool isSelected = _repeatCycle == cycle;
-    return OutlinedButton(
+    return CustomButton(
       onPressed: () {
         setState(() {
           _repeatCycle = cycle;
         });
       },
-      style: OutlinedButton.styleFrom(
-        side:
-            BorderSide(width: 2, color: isSelected ? Colors.blue : Colors.grey),
-        backgroundColor: isSelected ? Colors.blue : Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
-      ),
+      title: label,
+      foregroundColor: isSelected ? AppColors.BRAND : AppColors.TEXT_SECONDARY,
+      backgroundColor:
+          isSelected ? AppColors.BRAND_SUB : AppColors.BACKGROUND_SUB,
+      align: TextAlign.center,
     );
   }
 
   Widget _buildDayButton(String dayLabel, int index) {
     bool isSelected = _weekDays[index];
-    return OutlinedButton(
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         setState(() {
           _weekDays[index] = !isSelected;
         });
       },
-      style: OutlinedButton.styleFrom(
-        side:
-            BorderSide(width: 2, color: isSelected ? Colors.blue : Colors.grey),
-        backgroundColor: isSelected ? Colors.blue : Colors.transparent,
-        shape: const CircleBorder(), // 원형 버튼으로 변경
-        fixedSize: const Size(40, 40), // 버튼의 크기를 지정
-      ),
-      child: Text(
-        dayLabel,
-        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+      child: CustomIcon(
+        size: 36,
+        text: dayLabel,
+        primaryColor:
+            isSelected ? AppColors.BRAND_SUB : AppColors.BACKGROUND_SUB,
+        secondaryColor: isSelected ? AppColors.BRAND : AppColors.TEXT_SECONDARY,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '생성하기',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.chevron_left),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                getCurrentGuideQuestion(),
-                style: AppTextStyles.BOLD_20,
-              ),
-            ),
-          ),
-          if (_routineGoal != null &&
-              _selectedTime != null &&
-              _repeatCycle != null)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Text('알림 시간',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: InkWell(
-                    onTap: () => _setAlertTime(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _alertTime != null
-                                ? '알림 시간: ${_alertTime!} 전'
-                                : '알람 없음',
-                            style: const TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          const Icon(Icons.access_time, size: 16, color: Colors.white),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          if (_routineGoal != null && _selectedTime != null)
-            Column(
+    return DefaultLayout(
+      title: "생성하기",
+      backgroundColor: Colors.white,
+      child: Container(
+        height: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GapColumn(
+              gap: 16,
               children: <Widget>[
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  childAspectRatio: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  padding: const EdgeInsets.all(20),
-                  children: [
-                    _buildRepeatOptionButton('매일', RepeatCycle.daily),
-                    _buildRepeatOptionButton('평일', RepeatCycle.weekdays),
-                    _buildRepeatOptionButton('주말', RepeatCycle.weekends),
-                    _buildRepeatOptionButton('직접 선택', RepeatCycle.custom),
-                  ],
-                ),
-                if (_repeatCycle == RepeatCycle.custom)
-                  Container(
-                    height: 50,
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: List.generate(7, (index) {
-                          return _buildDayButton(
-                              ['월', '화', '수', '목', '금', '토', '일'][index],
-                              index);
-                        }),
-                      ),
-                    ),
+                Text(getCurrentGuideQuestion(), style: AppTextStyles.BOLD_20),
+                if (_routineGoal != null &&
+                    _selectedTime != null &&
+                    _repeatCycle != null)
+                  ReadOnlyBox(
+                    hintText: '알림 시간',
+                    inputText: _alertTime != null ? _alertTime! : '',
+                    onTap: () {
+                      _setAlertTime(context);
+                    },
                   ),
-              ],
-            ),
-          if (_routineGoal != null)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Text('시작 시간',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: InkWell(
-                    onTap: () => _setStartTime(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[200],
-                        borderRadius: BorderRadius.circular(8),
+                if (_routineGoal != null && _selectedTime != null)
+                  GapColumn(
+                    gap: 16,
+                    children: [
+                      const Text(
+                        "반복 요일",
+                        style: AppTextStyles.MEDIUM_12,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      GapRow(
+                        gap: 16,
                         children: [
-                          Text(
-                            _selectedTime != null
-                                ? '시간: ${_selectedTime!.format(context)}'
-                                : '시작 시간 설정',
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.white),
+                          Expanded(
+                            child: _buildRepeatOptionButton(
+                                '매일', RepeatCycle.daily),
                           ),
-                          const Icon(Icons.access_time,
-                              size: 16, color: Colors.white),
+                          Expanded(
+                            child: _buildRepeatOptionButton(
+                                '평일', RepeatCycle.weekdays),
+                          ),
                         ],
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          if (_routineGoal != null)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Text('루틴 목표',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: TextField(
-                    controller: TextEditingController(text: _routineGoal),
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(8),
+                      GapRow(
+                        gap: 16,
+                        children: [
+                          Expanded(
+                            child: _buildRepeatOptionButton(
+                                '주말', RepeatCycle.weekends),
+                          ),
+                          Expanded(
+                            child: _buildRepeatOptionButton(
+                                '직접 선택', RepeatCycle.custom),
+                          ),
+                        ],
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 10),
-                    ),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ],
-            ),
-          if (_routineGoal == null)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.SPACE_24,
-                vertical: AppSpacing.SPACE_32,
-              ),
-              child: GapColumn(
-                gap: AppSpacing.SPACE_16,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InputBox(
-                    controller: _textController,
-                    hintText: '루틴 목표',
-                    onSubmitted: _setRoutineGoal,
-                  ),
-                  const Text(
-                    '버튼 테스트 입니다',
-                    style: AppTextStyles.BOLD_20,
-                  ),
-                  GapRow(
-                    gap: AppSpacing.SPACE_8,
-                    children: List.generate(
-                      _buttonStates.length,
-                      (i) => Expanded(
-                        child: CustomButton(
-                          onPressed: () => _handleButtonPress(i),
-                          title: 'Button $i',
-                          backgroundColor: _buttonStates[i]
-                              ? AppColors.BRAND_SUB
-                              : AppColors.BACKGROUND_SUB,
-                          foregroundColor: _buttonStates[i]
-                              ? AppColors.TEXT_BRAND
-                              : AppColors.TEXT_PRIMARY,
+                      if (_repeatCycle == RepeatCycle.custom)
+                        GapRow(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: List.generate(7, (index) {
+                            return _buildDayButton(
+                              ['월', '화', '수', '목', '금', '토', '일'][index],
+                              index,
+                            );
+                          }),
                         ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                    ],
+                  ),
+                if (_routineGoal != null)
+                  ReadOnlyBox(
+                    hintText: '시작 시간',
+                    inputText: _selectedTime != null
+                        ? _selectedTime!.format(context)
+                        : '',
+                    onTap: () {
+                      _setStartTime(context);
+                    },
+                  ),
+                InputBox(
+                  controller: _textController,
+                  hintText: '루틴 목표',
+                  onSubmitted: _setRoutineGoal,
+                ),
+              ],
             ),
-          if (_routineGoal != null &&
-              _selectedTime != null &&
-              _repeatCycle != null &&
-              _alertTime != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: ElevatedButton(
+            if (_routineGoal != null &&
+                _selectedTime != null &&
+                _repeatCycle != null &&
+                _alertTime != null)
+              CustomButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => RoutineCreateProgressScreen(
-                              routineGoal: _routineGoal!,
-                              startTime: _selectedTime!,
-                              repeatCycle: _repeatCycle!,
-                              weekDays: _weekDays,
-                              alertTime: _alertTime!,
-                            )),
+                      builder: (context) => RoutineCreateProgressScreen(
+                        routineGoal: _routineGoal!,
+                        startTime: _selectedTime!,
+                        repeatCycle: _repeatCycle!,
+                        weekDays: _weekDays,
+                        alertTime: _alertTime!,
+                      ),
+                    ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.blue[700],
-                  textStyle: const TextStyle(fontSize: 16),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text('완료하기'),
+                title: "완료하기",
+                align: TextAlign.center,
+                backgroundColor: AppColors.BRAND_SUB,
+                foregroundColor: AppColors.TEXT_BRAND,
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
