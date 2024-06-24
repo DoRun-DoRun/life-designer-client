@@ -57,6 +57,13 @@ class AppTextStyles {
     color: AppColors.TEXT_PRIMARY,
   );
 
+  static const TextStyle MEDIUM_20 = TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: FontWeight.w500,
+    fontSize: 20,
+    color: AppColors.TEXT_PRIMARY,
+  );
+
   // Bold
   static const TextStyle BOLD_14 = TextStyle(
     fontFamily: fontFamily,
