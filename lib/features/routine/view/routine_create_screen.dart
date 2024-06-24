@@ -99,7 +99,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                     Navigator.of(context).pop();
                   },
                   title: "저장",
-                  align: TextAlign.center,
                   backgroundColor: AppColors.BRAND_SUB,
                   foregroundColor: AppColors.TEXT_BRAND,
                 ),
@@ -154,7 +153,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                           Navigator.of(context).pop();
                         },
                         title: '알림 없이',
-                        align: TextAlign.center,
                         backgroundColor: AppColors.BRAND_SUB,
                         foregroundColor: AppColors.TEXT_BRAND,
                       ),
@@ -168,7 +166,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                           Navigator.of(context).pop();
                         },
                         title: '저장',
-                        align: TextAlign.center,
                         backgroundColor: AppColors.BRAND_SUB,
                         foregroundColor: AppColors.TEXT_BRAND,
                       ),
@@ -195,7 +192,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
       foregroundColor: isSelected ? AppColors.BRAND : AppColors.TEXT_SECONDARY,
       backgroundColor:
           isSelected ? AppColors.BRAND_SUB : AppColors.BACKGROUND_SUB,
-      align: TextAlign.center,
     );
   }
 
@@ -325,7 +321,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                   );
                 },
                 title: "완료하기",
-                align: TextAlign.center,
                 backgroundColor: AppColors.BRAND_SUB,
                 foregroundColor: AppColors.TEXT_BRAND,
               ),

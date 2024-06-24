@@ -11,7 +11,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor = AppColors.BACKGROUND_SUB,
     this.foregroundColor = AppColors.TEXT_SECONDARY,
     this.padding = const EdgeInsets.all(16.0),
-    this.align = TextAlign.start,
+    this.align = TextAlign.center,
   });
 
   final VoidCallback onPressed;

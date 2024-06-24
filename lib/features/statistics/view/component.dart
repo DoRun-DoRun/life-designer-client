@@ -424,7 +424,6 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
               );
             },
             title: '자세히 보기',
-            align: TextAlign.center,
             backgroundColor: AppColors.BRAND_SUB,
             foregroundColor: AppColors.TEXT_BRAND,
           )

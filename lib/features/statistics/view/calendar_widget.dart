@@ -91,7 +91,6 @@ class CalendarWidgetState extends State<CalendarWidget> {
                     title: "선택",
                     backgroundColor: AppColors.BRAND_SUB,
                     foregroundColor: AppColors.TEXT_BRAND,
-                    align: TextAlign.center,
                     onPressed: () {
                       setState(() {
                         _selectedDate = _tempSelectedDate;
