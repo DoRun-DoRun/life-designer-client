@@ -374,6 +374,7 @@ packages:
     source: hosted
     version: "4.0.2"
   intl:
+    dependency: "direct main"
     dependency: transitive
     description:
       name: intl

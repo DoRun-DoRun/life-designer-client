@@ -21,6 +21,13 @@ class AppTextStyles {
     color: AppColors.TEXT_PRIMARY,
   );
 
+  static const TextStyle REGULAR_16 = TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: AppColors.TEXT_PRIMARY,
+  );
+
   static const TextStyle REGULAR_20 = TextStyle(
     fontFamily: fontFamily,
     fontWeight: FontWeight.w400,
@@ -51,6 +58,12 @@ class AppTextStyles {
   );
 
   // Bold
+  static const TextStyle BOLD_14 = TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+  );
+
   static const TextStyle BOLD_16 = TextStyle(
     fontFamily: fontFamily,
     fontWeight: FontWeight.w700,

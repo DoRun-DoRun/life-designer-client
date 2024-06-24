@@ -1,276 +1,225 @@
+import 'dart:convert';
+
+import 'package:dorun_app_flutter/common/component/gap_column.dart';
+import 'package:dorun_app_flutter/common/component/list_item.dart';
+import 'package:dorun_app_flutter/common/component/padding_container.dart';
+import 'package:dorun_app_flutter/common/constant/colors.dart';
+import 'package:dorun_app_flutter/common/constant/fonts.dart';
+import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
+import 'package:dorun_app_flutter/features/statistics/view/calendar_widget.dart';
+import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('통계'),
-      ),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            StatisticsSummary(),
-            SizedBox(height: 16),
-            Calendar(),
-            SizedBox(height: 16),
-            FilterButtons(),
-            SizedBox(height: 16),
-            WeeklyReport(),
-            SizedBox(height: 16),
-            RecentRoutine(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class StatisticsSummary extends StatelessWidget {
-  const StatisticsSummary({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SummaryCard(
-          title: '현재 연속 달성',
-          value: '15일',
-          icon: Icons.calendar_today,
-        ),
-        SummaryCard(
-          title: '최고 달성',
-          value: '15일',
-          icon: Icons.star,
-        ),
-        SummaryCard(
-          title: '누적 달성',
-          value: '123일',
-          icon: Icons.check_circle,
-        ),
+    return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
-    );
-  }
-}
-
-class SummaryCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-
-  const SummaryCard({
-    super.key,
-    required this.title,
-    required this.value,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Icon(icon, size: 36),
-            const SizedBox(height: 8),
-            Text(title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text(value, style: const TextStyle(fontSize: 20)),
-          ],
+      supportedLocales: const [
+        Locale('ko', ''),
+        Locale('en', ''),
+      ],
+      debugShowCheckedModeBanner: false,
+      home: DefaultTabController(
+        length: 2,
+        child: DefaultLayout(
+          customAppBar: AppBar(
+            title: const Text('통계', style: AppTextStyles.MEDIUM_16),
+            bottom: const TabBar(
+                indicator: UnderlineTabIndicator(
+                  borderSide: BorderSide(width: 4, color: AppColors.BRAND),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: AppColors.TEXT_BRAND,
+                unselectedLabelColor: AppColors.TEXT_SUB,
+                labelStyle: AppTextStyles.BOLD_14,
+                tabs: [
+                  Tab(text: "기간별"),
+                  Tab(text: "루틴별"),
+                ]),
+          ),
+          child: const TabBarView(
+            children: [
+              StatisticsPeriodScreen(),
+              StatisticsRoutineScreen(),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class Calendar extends StatelessWidget {
-  const Calendar({super.key});
+class StatisticsPeriodScreen extends StatelessWidget {
+  const StatisticsPeriodScreen({super.key});
+
+  Future<WeeklyModel> getPeriodStatData() async {
+    final routeFromJsonFile =
+        await rootBundle.loadString('asset/json/weekly_mock.json');
+
+    final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
+    return WeeklyModel.fromJson(jsonData);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {},
-            ),
-            const Text('2024.04',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            IconButton(
-              icon: const Icon(Icons.arrow_forward),
-              onPressed: () {},
-            ),
-          ],
-        ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7,
-            childAspectRatio: 1,
-          ),
-          itemCount: 30,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                backgroundColor:
-                    index % 2 == 0 ? Colors.blue : Colors.grey[300],
-                child: Text(
-                  '${index + 1}',
-                  style: TextStyle(
-                      color: index % 2 == 0 ? Colors.white : Colors.black),
+    return FutureBuilder<WeeklyModel>(
+      future: getPeriodStatData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (snapshot.hasData) {
+          return SingleChildScrollView(
+            child: GapColumn(
+              gap: 24,
+              children: [
+                StreakContainer(periodStatData: snapshot.data!),
+                const Column(
+                  children: [
+                    CalendarWidget(),
+                    Divider(height: 0),
+                    DailyRoutineReportContainer(),
+                  ],
                 ),
-              ),
+                WeeklyRoutineReportContainer(periodStatData: snapshot.data!),
+                RoutineFeedbackContainer(periodStatData: snapshot.data!)
+              ],
+            ),
+          );
+        } else {
+          return const Center(child: Text('noData'));
+        }
+      },
+    );
+  }
+}
+
+class StatisticsRoutineScreen extends StatelessWidget {
+  const StatisticsRoutineScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PaddingContainer(
+        child: GapColumn(
+      gap: 24,
+      children: [
+        ListItem(
+          id: 0,
+          title: "아침 조깅하기",
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const StatisticsRoutineDetail()),
             );
           },
         ),
+        const ListItem(id: 0, title: "아침 조깅하기"),
+        const ListItem(id: 0, title: "아침 조깅하기"),
+        const ListItem(id: 0, title: "아침 조깅하기"),
+        const ListItem(id: 0, title: "아침 조깅하기"),
       ],
-    );
+    ));
   }
 }
 
-class FilterButtons extends StatelessWidget {
-  const FilterButtons({super.key});
+class StatisticsRoutineDetail extends StatelessWidget {
+  const StatisticsRoutineDetail({super.key});
+
+  Future<WeeklyModel> getWeeklyData() async {
+    final routeFromJsonFile =
+        await rootBundle.loadString('asset/json/weekly_mock.json');
+
+    final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
+    return WeeklyModel.fromJson(jsonData);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        FilterButton(text: '완료', isSelected: true),
-        FilterButton(text: '실패', isSelected: false),
-        FilterButton(text: '건너뜀', isSelected: false),
-      ],
-    );
+    return FutureBuilder<WeeklyModel>(
+        future: getWeeklyData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (snapshot.hasData) {
+            return DefaultLayout(
+                title: '루틴별 통계',
+                child: SingleChildScrollView(
+                  child: GapColumn(
+                    gap: 24,
+                    children: [
+                      StreakContainer(
+                        periodStatData: snapshot.data!,
+                      ),
+                      const Column(
+                        children: [
+                          CalendarWidget(),
+                          Divider(height: 0),
+                          ConductRoutineHistory()
+                          // DailyRoutineReportContainer(),
+                        ],
+                      ),
+                      const RoutineReview(),
+                    ],
+                  ),
+                ));
+          } else {
+            return const Center(child: Text('nodata'));
+          }
+        });
   }
 }
 
-class FilterButton extends StatelessWidget {
-  final String text;
-  final bool isSelected;
-
-  const FilterButton({super.key, required this.text, required this.isSelected});
+class StatisticsWeeklyDetail extends StatelessWidget {
+  const StatisticsWeeklyDetail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.blue : Colors.grey[300],
+    return DefaultLayout(
+      title: "주간기록",
+      leftIcon: IconButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        icon: const Icon(
+          Icons.chevron_left,
+          size: 30,
+        ),
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: isSelected ? Colors.white : Colors.black),
-      ),
-    );
-  }
-}
-
-class WeeklyReport extends StatelessWidget {
-  const WeeklyReport({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: const PaddingContainer(
+        child: GapColumn(
+          gap: 32,
           children: [
-            const Text('주간 리포트 (04.21 - 04.27)',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            const Text('지난 주에 비해 12% 더 달성했네요!'),
-            const SizedBox(height: 16),
-            Row(
+            GapColumn(
+              gap: 8,
               children: [
-                const Expanded(
-                  child: Column(
-                    children: [
-                      Text('달성 루틴',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('24개'),
-                    ],
-                  ),
-                ),
-                const Expanded(
-                  child: Column(
-                    children: [
-                      Text('실패 루틴',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('10개'),
-                    ],
-                  ),
-                ),
-                const Expanded(
-                  child: Column(
-                    children: [
-                      Text('건너뛴 루틴',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('7개'),
-                    ],
-                  ),
-                ),
-                CircularPercentIndicator(
-                  radius: 60.0,
-                  lineWidth: 5.0,
-                  percent: 0.6,
-                  center: const Text("60%"),
-                  progressColor: Colors.blue,
-                ),
+                Text("홍길동 님의\n일주일 루틴이에요", style: AppTextStyles.BOLD_20),
+                Text("04.21 ~ 04.27", style: AppTextStyles.REGULAR_14),
               ],
             ),
+            WeeklyRoutine(routineId: "0"),
+            WeeklyRoutine(routineId: "0"),
+            WeeklyRoutine(routineId: "0"),
           ],
         ),
       ),
-    );
-  }
-}
-
-class RecentRoutine extends StatelessWidget {
-  const RecentRoutine({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('최근 어려웠던 루틴이에요',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const Text('달성률이 낮은 루틴을 모아서 볼 수 있어요.'),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(5, (index) {
-            return const RoutineAdjustmentButton(day: '일');
-          }),
-        ),
-      ],
-    );
-  }
-}
-
-class RoutineAdjustmentButton extends StatelessWidget {
-  final String day;
-
-  const RoutineAdjustmentButton({super.key, required this.day});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      child: Text(day),
     );
   }
 }

@@ -1,0 +1,72 @@
+[
+    {
+      "date": "2024-06-01T00:00:00.000Z",
+      "dailyProgress": 0.85,
+      "sucessRoutine": 5,
+      "failedRoutine": 1,
+      "passedRoutine": 2
+    },
+    {
+      "date": "2024-06-03T00:00:00.000Z",
+      "dailyProgress": 1,
+      "sucessRoutine": 4,
+      "failedRoutine": 2,
+      "passedRoutine": 1
+    },
+    {
+      "date": "2024-06-04T00:00:00.000Z",
+      "dailyProgress": 0.90,
+      "sucessRoutine": 6,
+      "failedRoutine": 1,
+      "passedRoutine": 0
+    },
+    {
+      "date": "2024-06-05T00:00:00.000Z",
+      "dailyProgress": 1,
+      "sucessRoutine": 3,
+      "failedRoutine": 3,
+      "passedRoutine": 1
+    },
+    {
+      "date": "2024-06-09T00:00:00.000Z",
+      "dailyProgress": 0.50,
+      "sucessRoutine": 2,
+      "failedRoutine": 4,
+      "passedRoutine": 1
+    },
+    {
+      "date": "2024-06-11T00:00:00.000Z",
+      "dailyProgress": 0.80,
+      "sucessRoutine": 5,
+      "failedRoutine": 1,
+      "passedRoutine": 1
+    },
+    {
+      "date": "2024-06-13T00:00:00.000Z",
+      "dailyProgress": 0.70,
+      "sucessRoutine": 4,
+      "failedRoutine": 2,
+      "passedRoutine": 1
+    },
+    {
+      "date": "2024-06-15T00:00:00.000Z",
+      "dailyProgress": 0.65,
+      "sucessRoutine": 3,
+      "failedRoutine": 3,
+      "passedRoutine": 1
+    },
+    {
+      "date": "2024-06-17T00:00:00.000Z",
+      "dailyProgress": 0.95,
+      "sucessRoutine": 6,
+      "failedRoutine": 0,
+      "passedRoutine": 1
+    },
+    {
+      "date": "2024-06-19T00:00:00.000Z",
+      "dailyProgress": 0.55,
+      "sucessRoutine": 3,
+      "failedRoutine": 3,
+      "passedRoutine": 0
+    }
+  ]
