@@ -11,48 +11,35 @@ import 'package:dorun_app_flutter/features/statistics/view/calendar_widget.dart'
 import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('ko', ''),
-        Locale('en', ''),
-      ],
-      debugShowCheckedModeBanner: false,
-      home: DefaultTabController(
-        length: 2,
-        child: DefaultLayout(
-          customAppBar: AppBar(
-            title: const Text('통계', style: AppTextStyles.MEDIUM_16),
-            bottom: const TabBar(
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(width: 4, color: AppColors.BRAND),
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: AppColors.TEXT_BRAND,
-                unselectedLabelColor: AppColors.TEXT_SUB,
-                labelStyle: AppTextStyles.BOLD_14,
-                tabs: [
-                  Tab(text: "기간별"),
-                  Tab(text: "루틴별"),
-                ]),
-          ),
-          child: const TabBarView(
-            children: [
-              StatisticsPeriodScreen(),
-              StatisticsRoutineScreen(),
-            ],
-          ),
+    return DefaultTabController(
+      length: 2,
+      child: DefaultLayout(
+        customAppBar: AppBar(
+          title: const Text('통계', style: AppTextStyles.MEDIUM_16),
+          bottom: const TabBar(
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(width: 4, color: AppColors.BRAND),
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: AppColors.TEXT_BRAND,
+              unselectedLabelColor: AppColors.TEXT_SUB,
+              labelStyle: AppTextStyles.BOLD_14,
+              tabs: [
+                Tab(text: "기간별"),
+                Tab(text: "루틴별"),
+              ]),
+        ),
+        child: const TabBarView(
+          children: [
+            StatisticsPeriodScreen(),
+            StatisticsRoutineScreen(),
+          ],
         ),
       ),
     );
