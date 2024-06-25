@@ -8,7 +8,6 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -108,53 +107,57 @@ class TemplateDetailScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GapColumn(
-            gap: 16,
-            children: [
-              PaddingContainer(
-                width: double.infinity,
-                child: GapColumn(
-                  children: [
-                    const Text("아침 조깅하기", style: AppTextStyles.BOLD_20),
-                    const SizedBox(height: 24),
-                    Text("총 소요시간",
-                        style: AppTextStyles.MEDIUM_14.copyWith(
-                          color: AppColors.TEXT_SUB,
-                        )),
-                    const SizedBox(height: 8),
-                    const Text("111분", style: AppTextStyles.BOLD_20),
-                  ],
-                ),
-              ),
-              PaddingContainer(
-                child: GapColumn(
-                  gap: 16,
-                  children: [
-                    const Text("세부 루틴", style: AppTextStyles.BOLD_20),
-                    ListItem(
-                      id: 0,
-                      routinEmoji: '🪟',
-                      title: "창문열기",
-                      subTitle: "1분",
-                      actionIcon: Icons.add,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const TemplateDetailAddScreen(),
-                          ),
-                        );
-                      },
+          Expanded(
+            child: SingleChildScrollView(
+              child: GapColumn(
+                gap: 16,
+                children: [
+                  PaddingContainer(
+                    width: double.infinity,
+                    child: GapColumn(
+                      children: [
+                        const Text("아침 조깅하기", style: AppTextStyles.BOLD_20),
+                        const SizedBox(height: 24),
+                        Text("총 소요시간",
+                            style: AppTextStyles.MEDIUM_14.copyWith(
+                              color: AppColors.TEXT_SUB,
+                            )),
+                        const SizedBox(height: 8),
+                        const Text("111분", style: AppTextStyles.BOLD_20),
+                      ],
                     ),
-                    const ListItem(id: 0, title: "창문열기"),
-                    const ListItem(id: 0, title: "창문열기"),
-                    const ListItem(id: 0, title: "창문열기"),
-                    const ListItem(id: 0, title: "창문열기"),
-                  ],
-                ),
-              )
-            ],
+                  ),
+                  PaddingContainer(
+                    child: GapColumn(
+                      gap: 16,
+                      children: [
+                        const Text("세부 루틴", style: AppTextStyles.BOLD_20),
+                        ListItem(
+                          id: 0,
+                          routinEmoji: '🪟',
+                          title: "창문열기",
+                          subTitle: "1분",
+                          actionIcon: Icons.add,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const TemplateDetailAddScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        const ListItem(id: 0, title: "창문열기"),
+                        const ListItem(id: 0, title: "창문열기"),
+                        const ListItem(id: 0, title: "창문열기"),
+                        const ListItem(id: 0, title: "창문열기"),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
           PaddingContainer(
               child: CustomButton(

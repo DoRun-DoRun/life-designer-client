@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../common/constant/colors.dart';
 import '../../../common/constant/data.dart';
-import '../../../common/constant/fonts.dart';
 import '../../../common/view/root_tab.dart';
 
 class RoutineCreateProgressScreen extends StatefulWidget {
@@ -46,13 +45,13 @@ class _RoutineCreateProgressScreenState
 
   void startProgress() {
     timer = Timer.periodic(const Duration(milliseconds: 20), (timer) {
-      double stepIncrement = 1.0 / 100;  // 총 100번의 업데이트로 1.0에 도달
+      double stepIncrement = 1.0 / 100; // 총 100번의 업데이트로 1.0에 도달
       setState(() {
         progress += stepIncrement;
         if (progress >= 1) {
-          progress = 1.0;  // 오버플로 방지
+          progress = 1.0; // 오버플로 방지
           timer.cancel();
-          onProgressComplete();  // 프로그레스 완료 시 처리
+          onProgressComplete(); // 프로그레스 완료 시 처리
         }
       });
     });
@@ -93,7 +92,7 @@ class _RoutineCreateProgressScreenState
             ),
             const SizedBox(height: 20),
             LinearProgressIndicator(
-              value: progress,  // 직접적으로 progress 값을 사용
+              value: progress, // 직접적으로 progress 값을 사용
               backgroundColor: AppColors.BACKGROUND_SUB,
               valueColor: const AlwaysStoppedAnimation<Color?>(AppColors.BRAND),
               minHeight: 5,

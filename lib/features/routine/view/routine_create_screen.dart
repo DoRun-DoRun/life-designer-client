@@ -9,6 +9,7 @@ import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../../common/constant/data.dart';
 
@@ -148,7 +149,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       child: CustomButton(
                         onPressed: () {
                           setState(() {
-                            _alertTime = null;
+                            _alertTime = '알람 X';
                           });
                           Navigator.of(context).pop();
                         },
@@ -224,82 +225,87 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GapColumn(
-              gap: 16,
-              children: <Widget>[
-                Text(getCurrentGuideQuestion(), style: AppTextStyles.BOLD_20),
-                if (_routineGoal != null &&
-                    _selectedTime != null &&
-                    _repeatCycle != null)
-                  ReadOnlyBox(
-                    hintText: '알림 시간',
-                    inputText: _alertTime != null ? _alertTime! : '',
-                    onTap: () {
-                      _setAlertTime(context);
-                    },
-                  ),
-                if (_routineGoal != null && _selectedTime != null)
-                  GapColumn(
-                    gap: 16,
-                    children: [
-                      const Text(
-                        "반복 요일",
-                        style: AppTextStyles.MEDIUM_12,
+            Expanded(
+              child: SingleChildScrollView(
+                child: GapColumn(
+                  gap: 16,
+                  children: <Widget>[
+                    Text(getCurrentGuideQuestion(),
+                        style: AppTextStyles.BOLD_20),
+                    if (_routineGoal != null &&
+                        _selectedTime != null &&
+                        _repeatCycle != null)
+                      ReadOnlyBox(
+                        hintText: '알림 시간',
+                        inputText: _alertTime != null ? _alertTime! : '',
+                        onTap: () {
+                          _setAlertTime(context);
+                        },
                       ),
-                      GapRow(
+                    if (_routineGoal != null && _selectedTime != null)
+                      GapColumn(
                         gap: 16,
                         children: [
-                          Expanded(
-                            child: _buildRepeatOptionButton(
-                                '매일', RepeatCycle.daily),
+                          const Text(
+                            "반복 요일",
+                            style: AppTextStyles.MEDIUM_12,
                           ),
-                          Expanded(
-                            child: _buildRepeatOptionButton(
-                                '평일', RepeatCycle.weekdays),
+                          GapRow(
+                            gap: 16,
+                            children: [
+                              Expanded(
+                                child: _buildRepeatOptionButton(
+                                    '매일', RepeatCycle.daily),
+                              ),
+                              Expanded(
+                                child: _buildRepeatOptionButton(
+                                    '평일', RepeatCycle.weekdays),
+                              ),
+                            ],
                           ),
+                          GapRow(
+                            gap: 16,
+                            children: [
+                              Expanded(
+                                child: _buildRepeatOptionButton(
+                                    '주말', RepeatCycle.weekends),
+                              ),
+                              Expanded(
+                                child: _buildRepeatOptionButton(
+                                    '직접 선택', RepeatCycle.custom),
+                              ),
+                            ],
+                          ),
+                          if (_repeatCycle == RepeatCycle.custom)
+                            GapRow(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: List.generate(7, (index) {
+                                return _buildDayButton(
+                                  ['월', '화', '수', '목', '금', '토', '일'][index],
+                                  index,
+                                );
+                              }),
+                            ),
                         ],
                       ),
-                      GapRow(
-                        gap: 16,
-                        children: [
-                          Expanded(
-                            child: _buildRepeatOptionButton(
-                                '주말', RepeatCycle.weekends),
-                          ),
-                          Expanded(
-                            child: _buildRepeatOptionButton(
-                                '직접 선택', RepeatCycle.custom),
-                          ),
-                        ],
+                    if (_routineGoal != null)
+                      ReadOnlyBox(
+                        hintText: '시작 시간',
+                        inputText: _selectedTime != null
+                            ? _selectedTime!.format(context)
+                            : '',
+                        onTap: () {
+                          _setStartTime(context);
+                        },
                       ),
-                      if (_repeatCycle == RepeatCycle.custom)
-                        GapRow(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: List.generate(7, (index) {
-                            return _buildDayButton(
-                              ['월', '화', '수', '목', '금', '토', '일'][index],
-                              index,
-                            );
-                          }),
-                        ),
-                    ],
-                  ),
-                if (_routineGoal != null)
-                  ReadOnlyBox(
-                    hintText: '시작 시간',
-                    inputText: _selectedTime != null
-                        ? _selectedTime!.format(context)
-                        : '',
-                    onTap: () {
-                      _setStartTime(context);
-                    },
-                  ),
-                InputBox(
-                  controller: _textController,
-                  hintText: '루틴 목표',
-                  onSubmitted: _setRoutineGoal,
+                    InputBox(
+                      controller: _textController,
+                      hintText: '루틴 목표',
+                      onSubmitted: _setRoutineGoal,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
             if (_routineGoal != null &&
                 _selectedTime != null &&
