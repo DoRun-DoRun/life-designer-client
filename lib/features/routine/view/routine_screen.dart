@@ -1,16 +1,31 @@
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
+import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
-import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
+import 'package:dorun_app_flutter/features/routine/routine_create/view/routine_create_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class RoutineScreen extends StatelessWidget {
   static String get routeName => 'routine';
 
   const RoutineScreen({super.key});
+
+  Routine? getRoutineById(int id) {
+    try {
+      return routineMockData.firstWhere((routine) => routine.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  String formatDateTime(DateTime dateTime) {
+    final DateFormat formatter = DateFormat('HH:mm 시작');
+    return formatter.format(dateTime);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +41,9 @@ class RoutineScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        foregroundColor: Colors.white,
+        backgroundColor: AppColors.BRAND,
+        shape: const CircleBorder(),
         onPressed: () {
           Navigator.push(
             context,
@@ -75,21 +93,20 @@ class RoutineScreen extends StatelessWidget {
                 gap: AppSpacing.SPACE_16,
                 children: [
                   ListItem(
-                    id: 0,
-                    title: "운동하기",
-                    subTitle: '09:00',
-                    routinEmoji: '😛',
+                    id: routineMockData[0].id,
+                    title: routineMockData[0].name,
+                    subTitle: formatDateTime(routineMockData[0].startTime),
                     isButton: true,
                     onTap: () {
-                      context.push('/routine_edit/0');
+                      context.push('/routine_detail/${routineMockData[0].id}');
                     },
                   ),
                   ListItem(
-                    id: 1,
-                    title: "운동하기",
-                    subTitle: '09:00',
+                    id: routineMockData[1].id,
+                    title: routineMockData[1].name,
+                    subTitle: formatDateTime(routineMockData[1].startTime),
                     onTap: () {
-                      context.push('/routine_edit/1');
+                      context.push('/routine_detail/${routineMockData[1].id}');
                     },
                   ),
                 ],

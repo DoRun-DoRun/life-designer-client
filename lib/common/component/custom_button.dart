@@ -8,6 +8,7 @@ class CustomButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.title,
+    this.icon,
     this.backgroundColor = AppColors.BACKGROUND_SUB,
     this.foregroundColor = AppColors.TEXT_SECONDARY,
     this.padding = const EdgeInsets.all(16.0),
@@ -20,6 +21,7 @@ class CustomButton extends StatelessWidget {
   final Color foregroundColor;
   final EdgeInsets padding;
   final TextAlign align;
+  final Icon? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +37,12 @@ class CustomButton extends StatelessWidget {
         ),
         child: Padding(
           padding: padding,
-          child: Text(
-            title,
-            style: AppTextStyles.MEDIUM_16.copyWith(color: foregroundColor),
-            textAlign: align,
-          ),
+          child: icon ??
+              Text(
+                title,
+                style: AppTextStyles.MEDIUM_16.copyWith(color: foregroundColor),
+                textAlign: align,
+              ),
         ),
       ),
     );
