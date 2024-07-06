@@ -71,7 +71,7 @@ class ListItem extends StatelessWidget {
               ),
               if (isButton)
                 ElevatedButton(
-                  onPressed: () => {context.push('/routine_detail/$id')},
+                  onPressed: () => {context.push('/routine_proceed/$id')},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.BRAND_SUB,
                     shape: const RoundedRectangleBorder(

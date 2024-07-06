@@ -61,9 +61,12 @@ class AuthProvider extends ChangeNotifier {
           ],
         ),
         GoRoute(
-          path: '/routine_proceed',
+          path: '/routine_proceed/:id',
           name: RoutineProceedScreen.routeName,
-          builder: (_, state) => const RoutineProceedScreen(),
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return RoutineProceedScreen(id: int.parse(id));
+          },
         ),
         GoRoute(
           path: '/routine_detail/:id',

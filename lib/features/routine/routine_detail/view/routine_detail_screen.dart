@@ -7,7 +7,7 @@ import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 
 class RoutineDetailScreen extends StatelessWidget {
   final int id;
@@ -136,7 +136,6 @@ class RoutineDetailScreen extends StatelessWidget {
                         ),
                         CustomButton(
                           onPressed: () => {},
-                          title: '',
                           icon: const Icon(
                             Icons.add_circle,
                             size: 25,
@@ -155,7 +154,9 @@ class RoutineDetailScreen extends StatelessWidget {
               title: '수행하기',
               backgroundColor: AppColors.BRAND,
               foregroundColor: AppColors.BRAND_SUB,
-              onPressed: () {},
+              onPressed: () {
+                context.go('/routine_proceed/${getRoutineById(id)!.id}');
+              },
             ),
           ),
         ],
