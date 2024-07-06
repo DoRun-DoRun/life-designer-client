@@ -4,7 +4,7 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:flutter/material.dart';
 
 class AppTextStyles {
-  static const String fontFamily = 'NotoSansKR';
+  static const String fontFamily = 'NotoSans';
 
   // Regular
   static const TextStyle REGULAR_12 = TextStyle(
