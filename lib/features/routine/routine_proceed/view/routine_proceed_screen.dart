@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/gap_row.dart';
@@ -8,15 +10,28 @@ import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-class RoutineProceedScreen extends StatelessWidget {
+class RoutineProceedScreen extends StatefulWidget {
   static String get routeName => 'routineProceed';
   final int id;
   const RoutineProceedScreen({super.key, required this.id});
+
+  @override
+  State<RoutineProceedScreen> createState() => _RoutineProceedScreenState();
+}
+
+class _RoutineProceedScreenState extends State<RoutineProceedScreen> {
+  Routine? routine;
+  int currentSubRoutineIndex = 0;
+  Timer? timer;
+  int remainingTime = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Routine? getRoutineById(int id) {
     try {
@@ -24,6 +39,34 @@ class RoutineProceedScreen extends StatelessWidget {
     } catch (e) {
       return routineMockData[0];
     }
+  }
+
+  void startSubRoutine(SubRoutine subRoutine) {
+    setState(() {
+      remainingTime = subRoutine.duration;
+    });
+
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (remainingTime > 0) {
+          remainingTime--;
+        } else {
+          timer.cancel();
+          if (currentSubRoutineIndex < routine!.subRoutines.length - 1) {
+            setState(() {
+              currentSubRoutineIndex++;
+            });
+            startSubRoutine(routine!.subRoutines[currentSubRoutineIndex]);
+          }
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -54,13 +97,15 @@ class RoutineProceedScreen extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: Text(getRoutineById(id)!.name,
+                        child: Text(
+                            getRoutineById(widget.id)!
+                                .subRoutines[currentSubRoutineIndex]
+                                .name,
                             style: AppTextStyles.BOLD_16),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 32.0),
-                        child: Text(
-                            getRoutineById(id)!.totalDuration.toString(),
+                        child: Text(remainingTime.toString(),
                             style:
                                 AppTextStyles.BOLD_16.copyWith(fontSize: 50)),
                       )
@@ -81,7 +126,10 @@ class RoutineProceedScreen extends StatelessWidget {
                       )),
                       Expanded(
                           child: CustomButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          startSubRoutine(getRoutineById(widget.id)!
+                              .subRoutines[currentSubRoutineIndex]);
+                        },
                         title: '수행하기',
                         backgroundColor: AppColors.BRAND,
                         foregroundColor: Colors.white,
@@ -95,7 +143,7 @@ class RoutineProceedScreen extends StatelessWidget {
           PaddingContainer(
             child: GapColumn(
               gap: 16,
-              children: getRoutineById(id)!.subRoutines.map((data) {
+              children: getRoutineById(widget.id)!.subRoutines.map((data) {
                 return ListItem(
                   id: data.id,
                   title: data.name,
