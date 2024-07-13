@@ -4,7 +4,8 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
-import 'package:dorun_app_flutter/features/routine/routine_create/view/routine_create_screen.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -91,25 +92,17 @@ class RoutineScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24.0),
               child: GapColumn(
                 gap: AppSpacing.SPACE_16,
-                children: [
-                  ListItem(
-                    id: routineMockData[0].id,
-                    title: routineMockData[0].name,
-                    subTitle: formatDateTime(routineMockData[0].startTime),
-                    isButton: true,
-                    onTap: () {
-                      context.push('/routine_detail/${routineMockData[0].id}');
-                    },
-                  ),
-                  ListItem(
-                    id: routineMockData[1].id,
-                    title: routineMockData[1].name,
-                    subTitle: formatDateTime(routineMockData[1].startTime),
-                    onTap: () {
-                      context.push('/routine_detail/${routineMockData[1].id}');
-                    },
-                  ),
-                ],
+                children: routineMockData.map((routine) {
+                  return ListItem(
+                      id: routine.id,
+                      title: routine.name,
+                      subTitle: formatDateTime(routine.startTime),
+                      isButton: !routine.isFinished,
+                      isDone: routine.isFinished,
+                      onTap: () {
+                        context.push('/routine_detail/${routine.id}');
+                      });
+                }).toList(),
               ),
             ),
           ),

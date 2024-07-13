@@ -1,7 +1,8 @@
-import 'package:dorun_app_flutter/features/routine/routine_create/view/routine_create_progress_screen.dart';
-import 'package:dorun_app_flutter/features/routine/routine_create/view/routine_create_screen.dart';
-import 'package:dorun_app_flutter/features/routine/routine_detail/view/routine_detail_screen.dart';
-import 'package:dorun_app_flutter/features/routine/routine_proceed/view/routine_proceed_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_detail_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_proceed_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_review_screen.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -66,6 +67,14 @@ class AuthProvider extends ChangeNotifier {
           builder: (context, state) {
             final id = state.pathParameters['id']!;
             return RoutineProceedScreen(id: int.parse(id));
+          },
+        ),
+        GoRoute(
+          path: '/routine_review/:id',
+          name: RoutineReviewScreen.routeName,
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return RoutineReviewScreen(id: int.parse(id));
           },
         ),
         GoRoute(

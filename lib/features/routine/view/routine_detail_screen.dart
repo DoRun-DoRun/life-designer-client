@@ -6,6 +6,7 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -119,7 +120,7 @@ class RoutineDetailScreen extends StatelessWidget {
                         id: data.id,
                         title: data.name,
                         routinEmoji: data.emoji,
-                        subTitle: '${data.duration.toString()}분',
+                        subTitle: '${(data.durationSecond / 60).toString()}분',
                       );
                     }).toList(),
                   ),

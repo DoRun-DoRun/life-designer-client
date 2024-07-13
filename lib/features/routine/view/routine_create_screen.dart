@@ -6,11 +6,11 @@ import 'package:dorun_app_flutter/common/component/input_box.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
-import 'package:dorun_app_flutter/features/routine/routine_create/view/routine_create_progress_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../common/constant/data.dart';
+import '../../../common/constant/data.dart';
 
 class RoutineCreateScreen extends StatefulWidget {
   static String get routeName => 'routineCreate';

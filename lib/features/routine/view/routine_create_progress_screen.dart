@@ -4,9 +4,9 @@ import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../common/constant/colors.dart';
-import '../../../../common/constant/data.dart';
-import '../../../../common/view/root_tab.dart';
+import '../../../common/constant/colors.dart';
+import '../../../common/constant/data.dart';
+import '../../../common/view/root_tab.dart';
 
 class RoutineCreateProgressScreen extends StatefulWidget {
   static String get routeName => 'routineCreateProgress';

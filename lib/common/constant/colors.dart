@@ -26,4 +26,6 @@ class AppColors {
   static const Color BRAND_SUB = Color(0xFFDFEAFF);
   static const Color BRAND = Color(0xFF1777E9);
   static const Color BACKGROUND_SUB = Color(0xFFF4F4F4);
+
+  static const Color Red = Color(0xFFC52727);
 }
