@@ -48,6 +48,7 @@ flutter:
   assets:
     - asset/json/
     - asset/images/character/
+    - asset/images/
     # - asset/images/background/
     # - asset/images/character/
     # - asset/images/group/

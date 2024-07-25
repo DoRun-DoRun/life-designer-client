@@ -92,25 +92,26 @@ class _RoutineProceedScreenState extends State<RoutineProceedScreen> {
       routineHistory!.histories[currentSubRoutineIndex]
           .setDurtaionTime(remainingTime);
 
-      if (routineHistory!.histories.length > currentSubRoutineIndex) {
+      if (routineHistory!.histories.length > currentSubRoutineIndex + 1) {
         remainingTime = routineHistory!
             .histories[currentSubRoutineIndex + 1].durationSecond;
         currentSubRoutineIndex++;
         startTimer();
       } else {
-        context.go('/routine_review/${widget.id}');
+        context.go('/routine_review_edit/${widget.id}');
       }
     });
   }
 
   void passedTimer() {
     setState(() {
-      if (routineHistory!.histories.length > currentSubRoutineIndex) {
+      if (routineHistory!.histories.length > currentSubRoutineIndex + 1) {
         remainingTime = routineHistory!
             .histories[currentSubRoutineIndex + 1].durationSecond;
         currentSubRoutineIndex++;
         startTimer();
-        context.go('/routine_review/${widget.id}');
+      } else {
+        context.go('/routine_review_edit/${widget.id}');
       }
     });
   }
@@ -131,7 +132,7 @@ class _RoutineProceedScreenState extends State<RoutineProceedScreen> {
         break;
       case TimerHandleState.rest:
         //쉬어가기
-        context.go('/routine_review/${widget.id}');
+        context.go('/routine_review_edit/${widget.id}');
         break;
       case TimerHandleState.start:
         //다시시작
@@ -277,12 +278,19 @@ class _RoutineProceedScreenState extends State<RoutineProceedScreen> {
           PaddingContainer(
             child: GapColumn(
               gap: 16,
-              children: getRoutineById(widget.id)!.subRoutines.map((data) {
+              children: getRoutineById(widget.id)!
+                  .subRoutines
+                  .asMap()
+                  .entries
+                  .map((entry) {
+                int index = entry.key;
+                SubRoutine data = entry.value;
                 return ListItem(
                   id: data.id,
                   title: data.name,
                   routinEmoji: data.emoji,
-                  subTitle: '${(data.durationSecond / 60).toString()}분',
+                  subTitle: '${(data.durationSecond ~/ 60).toString()}분',
+                  isDone: index < currentSubRoutineIndex,
                 );
               }).toList(),
             ),

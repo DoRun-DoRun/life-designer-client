@@ -2,6 +2,7 @@ import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_
 import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_detail_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_proceed_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_review_edit_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_review_screen.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +68,14 @@ class AuthProvider extends ChangeNotifier {
           builder: (context, state) {
             final id = state.pathParameters['id']!;
             return RoutineProceedScreen(id: int.parse(id));
+          },
+        ),
+        GoRoute(
+          path: '/routine_review_edit/:id',
+          name: RoutineReviewEditScreen.routeName,
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return RoutineReviewEditScreen(id: int.parse(id));
           },
         ),
         GoRoute(
