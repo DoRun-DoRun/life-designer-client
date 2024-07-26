@@ -41,12 +41,12 @@ class CustomIcon extends StatelessWidget {
                 ? Icon(
                     icon,
                     color: secondaryColor,
-                    size: 16,
+                    size: 20,
                   )
                 : Center(
                     child: Text(
                       text,
-                      style: AppTextStyles.REGULAR_12
+                      style: AppTextStyles.REGULAR_14
                           .copyWith(color: secondaryColor),
                     ),
                   ),

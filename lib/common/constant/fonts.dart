@@ -65,6 +65,12 @@ class AppTextStyles {
   );
 
   // Bold
+  static const TextStyle BOLD_12 = TextStyle(
+    fontFamily: fontFamily,
+    fontWeight: FontWeight.w700,
+    fontSize: 12,
+  );
+
   static const TextStyle BOLD_14 = TextStyle(
     fontFamily: fontFamily,
     fontWeight: FontWeight.w700,

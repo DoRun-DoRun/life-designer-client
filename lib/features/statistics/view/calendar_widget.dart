@@ -182,20 +182,20 @@ class CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
-  Widget _buildDaysOfWeek() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(7, (index) {
-          return Text(
-            DateFormat.E().format(DateTime(2022, 1, index + 3)),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          );
-        }),
-      ),
-    );
-  }
+  // Widget _buildDaysOfWeek() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       children: List.generate(7, (index) {
+  //         return Text(
+  //           DateFormat.E().format(DateTime(2022, 1, index + 3)),
+  //           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //         );
+  //       }),
+  //     ),
+  //   );
+  // }
 
   Widget _buildCalendar(List<CalendarModel>? calendarData) {
     final firstDayOfMonth = DateTime(_focusedDate.year, _focusedDate.month, 1);
@@ -232,13 +232,13 @@ class CalendarWidgetState extends State<CalendarWidget> {
               ? CustomIcon(
                   size: 32,
                   text: day.toString(),
-                  primaryColor: AppColors.TEXT_INVERT,
-                  secondaryColor: Colors.white,
+                  primaryColor: Colors.transparent,
+                  secondaryColor: Colors.black,
                 )
               : CustomIcon(
                   size: 32,
                   text: day.toString(),
-                  primaryColor: AppColors.TEXT_INVERT,
+                  primaryColor: Colors.transparent,
                   secondaryColor: AppColors.TEXT_SUB,
                 );
         }
@@ -248,7 +248,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
               item.date.year == date.year &&
               item.date.month == date.month &&
               item.date.day == date.day,
-          orElse: () => CalendarModel(date, 0.0, 0, 0, 0),
+          orElse: () => CalendarModel(date, 0.0, 0, 0),
         );
 
         final isComplete = calendarModel.dailyProgress == 1;
@@ -264,7 +264,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
               DateTime(
                 DateTime.now().year,
                 DateTime.now().month,
-                DateTime.now().day,
+                DateTime.now().day - 1,
               ),
             ))
                 ? CustomIcon(
@@ -276,19 +276,19 @@ class CalendarWidgetState extends State<CalendarWidget> {
                 : calendarModel.dailyProgress > 0
                     ? CustomIcon(
                         size: 32,
-                        // text: isComplete ? '' : day.toString(),
                         progress: isComplete ? 0 : calendarModel.dailyProgress,
                         primaryColor:
                             isComplete ? AppColors.BRAND : Colors.transparent,
                         secondaryColor:
-                            isComplete ? Colors.white : AppColors.TEXT_PRIMARY,
+                            isComplete ? Colors.white : AppColors.BRAND,
                         icon: Icons.check,
                       )
-                    : const CustomIcon(
+                    : CustomIcon(
                         size: 32,
-                        icon: Icons.close,
-                        primaryColor: AppColors.BRAND_SUB,
-                        secondaryColor: Colors.white,
+                        text: day.toString(),
+                        primaryColor: Colors.transparent,
+                        secondaryColor:
+                            isComplete ? Colors.black : AppColors.TEXT_SUB,
                       ),
           ),
         );
