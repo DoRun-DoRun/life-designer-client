@@ -37,7 +37,7 @@ class ListItem extends StatelessWidget {
         height: 62,
         decoration: const BoxDecoration(
           color: AppColors.BACKGROUND_SUB,
-          borderRadius: AppRadius.ROUNDED_8,
+          borderRadius: AppRadius.ROUNDED_16,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.SPACE_16),

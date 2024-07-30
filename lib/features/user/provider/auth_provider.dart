@@ -41,12 +41,12 @@ class AuthProvider extends ChangeNotifier {
         GoRoute(
           path: '/routine_create',
           name: RoutineCreateScreen.routeName,
-          builder: (_, state) => const RoutineCreateScreen(),
+          builder: (context, state) => const RoutineCreateScreen(),
           routes: [
             GoRoute(
               path: 'routine_create_progress',
               name: RoutineCreateProgressScreen.routeName,
-              builder: (_, state) {
+              builder: (context, state) {
                 // state.extra에 대한 null 체크와 기본값 처리
                 final args = state.extra as Map<String, dynamic>? ?? {};
                 return RoutineCreateProgressScreen(

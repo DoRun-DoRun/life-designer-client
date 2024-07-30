@@ -45,6 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
               labelColor: AppColors.TEXT_BRAND,
               unselectedLabelColor: AppColors.TEXT_SUB,
               labelStyle: AppTextStyles.BOLD_14,
+              unselectedLabelStyle: AppTextStyles.REGULAR_14,
               tabs: [
                 Tab(text: "주제별 템플릿"),
                 Tab(text: "커뮤니티"),
@@ -319,13 +320,14 @@ class TemplateTabMenu extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           borderRadius: AppRadius.ROUNDED_36,
-          color: isSelected ? AppColors.BRAND : AppColors.BRAND_SUB,
+          color: isSelected ? AppColors.BRAND_SUB : AppColors.BACKGROUND_SUB,
         ),
         child: Text(
           text,
-          style: AppTextStyles.BOLD_14.copyWith(
-            color: isSelected ? Colors.white : AppColors.BRAND,
-          ),
+          style: isSelected
+              ? AppTextStyles.BOLD_14.copyWith(color: AppColors.BRAND)
+              : AppTextStyles.REGULAR_14
+                  .copyWith(color: AppColors.TEXT_SECONDARY),
         ),
       ),
     );

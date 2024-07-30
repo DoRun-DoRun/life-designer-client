@@ -96,3 +96,5 @@ lib/generated_plugin_registrant.dart
 
 # g.dart
 lib/**/*.g.dart
+
+**/macos

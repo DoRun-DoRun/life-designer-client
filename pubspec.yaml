@@ -30,6 +30,7 @@ dependencies:
   percent_indicator: ^4.2.3
   flutter_localizations:
     sdk: flutter
+  emoji_selector: ^0.0.6
 
 dev_dependencies:
   flutter_test:
@@ -47,7 +48,6 @@ flutter:
 
   assets:
     - asset/json/
-    - asset/images/character/
     - asset/images/
     # - asset/images/background/
     # - asset/images/character/
