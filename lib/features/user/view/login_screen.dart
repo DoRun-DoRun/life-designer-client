@@ -4,6 +4,7 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
 import '../../../common/layout/default_layout.dart';
@@ -24,6 +25,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     // final state = ref.watch(userMeProvider);
+    const List<String> scopes = <String>[
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ];
+
+    GoogleSignIn googleSignIn = GoogleSignIn(
+      // Optional clientId
+      // clientId: 'your-client_id.apps.googleusercontent.com',
+      scopes: scopes,
+    );
+
+    Future<void> handleSignIn() async {
+      try {
+        await googleSignIn.signIn();
+        print(googleSignIn.currentUser);
+      } catch (error) {
+        print(error);
+      }
+    }
 
     return DefaultLayout(
       child: Column(
@@ -95,7 +115,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       }
                     },
                     child: const LoginButton(socialType: SocialType.kakao)),
-                const LoginButton(socialType: SocialType.google),
+                GestureDetector(
+                    onTap: handleSignIn,
+                    child: const LoginButton(socialType: SocialType.google)),
                 const LoginButton(socialType: SocialType.apple),
               ],
             ),

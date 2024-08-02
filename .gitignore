@@ -59,6 +59,7 @@ lib/generated_plugin_registrant.dart
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/app/src/main/AndroidManifest.xml
+**/android
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -87,6 +88,7 @@ lib/generated_plugin_registrant.dart
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Runner/GoogleService-Info.plist
 **/ios/Runner/Info.plist
 
 # Exceptions to above rules.
