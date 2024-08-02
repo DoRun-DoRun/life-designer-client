@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localization: ^0.2.0
-  intl: ^0.18.1
+  intl: ^0.19.0
   
   cupertino_icons: ^1.0.6
   dio: ^5.4.1
@@ -31,6 +31,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   emoji_selector: ^0.0.6
+  freezed: ^2.5.2
+  kakao_flutter_sdk_user: ^1.9.5 # 카카오 로그인 API 패키지
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +52,7 @@ flutter:
   assets:
     - asset/json/
     - asset/images/
+    - .env
     # - asset/images/background/
     # - asset/images/character/
     # - asset/images/group/

@@ -14,7 +14,6 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 });
 
 class AuthRepository {
-  // http://$ip/auth
   final String baseUrl;
   final Dio dio;
 
@@ -43,7 +42,7 @@ class AuthRepository {
     );
   }
 
-  Future<TokenResponse> token()async{
+  Future<TokenResponse> token() async {
     final resp = await dio.post(
       '$baseUrl/token',
       options: Options(

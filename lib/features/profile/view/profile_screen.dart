@@ -6,9 +6,7 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -332,7 +330,7 @@ class SystemSettingListItemState extends State<SystemSettingListItem> {
               activeTrackColor: AppColors.BRAND,
               inactiveTrackColor: AppColors.TEXT_INVERT,
               inactiveThumbColor: Colors.white,
-              trackOutlineWidth: MaterialStateProperty.all(0),
+              trackOutlineWidth: WidgetStateProperty.all(0),
               value: _isSwitched,
               onChanged: (bool value) {
                 setState(() {

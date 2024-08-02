@@ -45,7 +45,6 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       final dummyUser = UserModel(
         id: '1',
         username: 'test',
-        imageUrl: '/asset/images/character/bear-example.png',
       );
       state = dummyUser;
       return;
@@ -79,7 +78,6 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
         final userResp = UserModel(
           id: '1',
           username: 'test',
-          imageUrl: '/asset/images/character/bear-example.png',
         );
 
         state = userResp;

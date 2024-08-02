@@ -58,6 +58,7 @@ lib/generated_plugin_registrant.dart
 **/android/key.properties
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
+**/android/app/src/main/AndroidManifest.xml
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -86,6 +87,7 @@ lib/generated_plugin_registrant.dart
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Runner/Info.plist
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
@@ -98,3 +100,5 @@ lib/generated_plugin_registrant.dart
 lib/**/*.g.dart
 
 **/macos
+
+.env
