@@ -37,6 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
       child: DefaultLayout(
         customAppBar: AppBar(
           title: const Text('둘러보기', style: AppTextStyles.MEDIUM_16),
+          backgroundColor: Colors.white,
           bottom: const TabBar(
               indicator: UnderlineTabIndicator(
                 borderSide: BorderSide(width: 4, color: AppColors.BRAND),

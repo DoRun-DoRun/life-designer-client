@@ -22,6 +22,7 @@ class StatisticsScreen extends StatelessWidget {
       child: DefaultLayout(
         customAppBar: AppBar(
           title: const Text('통계', style: AppTextStyles.MEDIUM_16),
+          backgroundColor: Colors.white,
           bottom: const TabBar(
               indicator: UnderlineTabIndicator(
                 borderSide: BorderSide(width: 4, color: AppColors.BRAND),
