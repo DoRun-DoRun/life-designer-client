@@ -1,11 +1,15 @@
+import 'dart:io' show Platform;
+
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../common/layout/default_layout.dart';
 
@@ -118,7 +122,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 GestureDetector(
                     onTap: handleSignIn,
                     child: const LoginButton(socialType: SocialType.google)),
-                const LoginButton(socialType: SocialType.apple),
+                Platform.isIOS
+                    ? GestureDetector(
+                        onTap: () {
+                          SignInWithApple.getAppleIDCredential(scopes: [
+                            // 사용할 사용자 정보 범위
+                          ]).then((AuthorizationCredentialAppleID user) {
+                            // 로그인 후 로직
+                          }).onError((error, stackTrace) {
+                            if (error is PlatformException) return;
+                            print(error);
+                          });
+                        },
+                        child: const LoginButton(socialType: SocialType.apple))
+                    : Container(),
               ],
             ),
           ),
