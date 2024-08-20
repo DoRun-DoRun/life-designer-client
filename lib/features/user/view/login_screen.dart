@@ -4,9 +4,11 @@ import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/features/user/repository/login_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -26,6 +28,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String username = '';
   String password = '';
 
+  void login(email, authProvider) async {
+    try {
+      await loginUser(email, authProvider);
+      context.push('/');
+      // print('Access Token: ${tokens['accessToken']}');
+      // print('Refresh Token: ${tokens['refreshToken']}');
+    } catch (error) {
+      print('Login failed: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // final state = ref.watch(userMeProvider);
@@ -43,7 +56,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     Future<void> handleSignIn() async {
       try {
         await googleSignIn.signIn();
-        print(googleSignIn.currentUser);
+        login(googleSignIn.currentUser?.email, "Google");
+        // print(googleSignIn.currentUser);
       } catch (error) {
         print(error);
       }
@@ -102,17 +116,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onTap: () async {
                       if (await isKakaoTalkInstalled()) {
                         try {
-                          OAuthToken token =
-                              await UserApi.instance.loginWithKakaoTalk();
-                          print('카카오톡으로 로그인 성공 ${token.accessToken}');
+                          await UserApi.instance.loginWithKakaoTalk();
+                          User user = await UserApi.instance.me();
+                          login(user.kakaoAccount?.email, "Kakao");
+
+                          // print('카카오톡으로 로그인 성공 $user');
                         } catch (error) {
                           print('카카오톡으로 로그인 실패 $error');
                         }
                       } else {
                         try {
-                          OAuthToken token =
-                              await UserApi.instance.loginWithKakaoAccount();
-                          print('카카오계정으로 로그인 성공 ${token.accessToken}');
+                          await UserApi.instance.loginWithKakaoAccount();
+                          User user = await UserApi.instance.me();
+
+                          // print('카카오계정으로 로그인 성공 $user');
+                          login(user.kakaoAccount?.email, "Kakao");
                         } catch (error) {
                           print('카카오계정으로 로그인 실패 $error');
                         }
@@ -128,6 +146,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           SignInWithApple.getAppleIDCredential(scopes: [
                             // 사용할 사용자 정보 범위
                           ]).then((AuthorizationCredentialAppleID user) {
+                            if (user.email != null) {
+                              loginUser(user.email!, "Apple");
+                            }
                             // 로그인 후 로직
                           }).onError((error, stackTrace) {
                             if (error is PlatformException) return;
