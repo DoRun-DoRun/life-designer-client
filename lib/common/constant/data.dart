@@ -1,11 +1,9 @@
-// ignore_for_file: constant_identifier_names
-
 import 'dart:io';
 
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 
-const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
-const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
+// const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
+// const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
 
 // localhost
 const emulatorIp = '10.0.2.2:3000';

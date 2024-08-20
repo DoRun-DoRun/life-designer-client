@@ -8,8 +8,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     routes: provider.routes,
-    initialLocation: '/login',
+    initialLocation: '/',
     refreshListenable: provider,
-    // redirect: provider.redirectLogic,
+    redirect: provider.redirectLogic,
   );
 });

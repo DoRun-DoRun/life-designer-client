@@ -6,13 +6,15 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/user/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return DefaultLayout(
       title: 'MY',
       child: SingleChildScrollView(
@@ -92,12 +94,15 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const Column(
+            Column(
               children: [
-                ProfileListItem(text: "로그인", color: AppColors.TEXT_BRAND),
+                const ProfileListItem(text: "로그인", color: AppColors.TEXT_BRAND),
                 ProfileListItem(
+                  onTap: () async {
+                    ref.read(authProvider.notifier).logout();
+                  },
                   text: "회원탈퇴",
-                  color: Color(0xFFFF0000),
+                  color: const Color(0xFFFF0000),
                 ),
               ],
             )

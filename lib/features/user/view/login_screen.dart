@@ -4,11 +4,12 @@ import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
-import 'package:dorun_app_flutter/features/user/repository/login_repository.dart';
+import 'package:dorun_app_flutter/common/secure_storage/secure_storage.dart';
+import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
+import 'package:dorun_app_flutter/features/user/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -28,20 +29,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String username = '';
   String password = '';
 
-  void login(email, authProvider) async {
-    try {
-      await loginUser(email, authProvider);
-      context.push('/');
-      // print('Access Token: ${tokens['accessToken']}');
-      // print('Refresh Token: ${tokens['refreshToken']}');
-    } catch (error) {
-      print('Login failed: $error');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // final state = ref.watch(userMeProvider);
+    final userRepository = ref.watch(userRepositoryProvider);
+
+    void login(email, authProvider) async {
+      try {
+        final tokens = await userRepository.login(
+          email: email,
+          authProvider: authProvider,
+        );
+        await saveTokens(tokens.accessToken, tokens.refreshToken);
+        ref.read(userMeProvider.notifier).getMe();
+      } catch (error) {
+        print('Login failed: $error');
+      }
+    }
+
     const List<String> scopes = <String>[
       'email',
       'https://www.googleapis.com/auth/contacts.readonly',
@@ -57,7 +61,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       try {
         await googleSignIn.signIn();
         login(googleSignIn.currentUser?.email, "Google");
-        // print(googleSignIn.currentUser);
       } catch (error) {
         print(error);
       }
@@ -147,7 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             // 사용할 사용자 정보 범위
                           ]).then((AuthorizationCredentialAppleID user) {
                             if (user.email != null) {
-                              loginUser(user.email!, "Apple");
+                              login(user.email, "Apple");
                             }
                             // 로그인 후 로직
                           }).onError((error, stackTrace) {
