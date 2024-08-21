@@ -30,4 +30,14 @@ abstract class UserRepository {
   @GET('/')
   @Headers({'accessToken': 'true'})
   Future<UserModel> getMe();
+
+  @PUT('/')
+  @Headers({'accessToken': 'true'})
+  Future<UserModel> updateUser({
+    @Field('name') String? name,
+    @Field('age') String? age,
+    @Field('job') String? job,
+    @Field('challenges') String? challenges,
+    @Field('gender') String? gender,
+  });
 }

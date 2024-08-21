@@ -21,7 +21,7 @@ class UserModel extends UserModelBase {
   final String authProvider;
   final String memberStatus;
   final String? name;
-  final int? age;
+  final String? age;
   final String? job;
   final String? challenges;
   final String? gender;

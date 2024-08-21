@@ -54,6 +54,7 @@ class InputBoxState extends State<InputBox> {
           ),
         ),
         TextField(
+          style: AppTextStyles.REGULAR_20,
           controller: widget.controller,
           focusNode: _focusNode,
           onSubmitted: widget.onSubmitted,

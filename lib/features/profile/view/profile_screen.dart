@@ -10,13 +10,11 @@ import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/features/user/model/user_model.dart';
 import 'package:dorun_app_flutter/features/user/provider/auth_provider.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
+import 'package:dorun_app_flutter/features/user/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// TODO
-// 나이, 직업, 어려운일 선택하게 만들기
-// UserEdit - 서버 API만들기
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -199,7 +197,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final user = ref.read(userMeProvider) as UserModel;
 
     nameController.text = user.name ?? '';
-    selectedAge = (user.age ?? '').toString();
+    selectedAge = user.age ?? '';
     selectedGender = user.gender ?? '';
     selectedJob = user.job ?? '';
     selectedDifficulties = (user.challenges ?? '')
@@ -212,6 +210,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.read(userMeProvider) as UserModel;
+    final userRepository = ref.watch(userRepositoryProvider);
 
     void showYearPicker(
       BuildContext context,
@@ -502,7 +501,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       ),
                       ReadOnlyBox(
                           hintText: "나이",
-                          inputText: "$selectedAge살",
+                          inputText: selectedAge != '' ? '$selectedAge살' : '',
                           onTap: () {
                             showYearPicker(context, (value) {
                               setState(() {
@@ -556,7 +555,17 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     ],
                   ),
                   CustomButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      userRepository.updateUser(
+                        name: nameController.text,
+                        age: selectedAge,
+                        job: selectedJob,
+                        gender: selectedGender,
+                        // challenges: selectedDifficulties.toString(),
+                      );
+                      ref.invalidate(userMeProvider);
+                      context.pop();
+                    },
                     title: "수정하기",
                     backgroundColor: AppColors.BRAND,
                     foregroundColor: Colors.white,
