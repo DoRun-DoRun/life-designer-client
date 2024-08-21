@@ -54,10 +54,14 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     print(
         'Tokens found: refreshToken = $refreshToken, accessToken = $accessToken');
 
-    final resp = await repository.getMe();
-
-    print('User data fetched successfully: $resp');
-    state = resp;
+    try {
+      final resp = await repository.getMe();
+      print('User data fetched successfully: $resp');
+      state = resp;
+    } catch (error) {
+      print('Error fetching user data: $error');
+      state = null;
+    }
   }
 
   Future<void> logout() async {
