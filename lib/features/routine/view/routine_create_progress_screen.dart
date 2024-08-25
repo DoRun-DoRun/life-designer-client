@@ -2,37 +2,37 @@ import 'dart:async';
 
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
+import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
+import 'package:dorun_app_flutter/features/routine/repository/routine_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../common/constant/colors.dart';
-import '../../../common/constant/data.dart';
 
-class RoutineCreateProgressScreen extends StatefulWidget {
+class RoutineCreateProgressScreen extends ConsumerStatefulWidget {
   static String get routeName => 'routineCreateProgress';
 
   final String routineGoal;
-  final TimeOfDay startTime;
-  final RepeatCycle repeatCycle;
+  final DateTime startTime;
   final List<bool> weekDays;
-  final String alertTime;
+  final DateTime? alertTime;
 
   const RoutineCreateProgressScreen({
     super.key,
     required this.routineGoal,
     required this.startTime,
-    required this.repeatCycle,
     required this.weekDays,
     required this.alertTime,
   });
 
   @override
-  State<RoutineCreateProgressScreen> createState() =>
+  ConsumerState<RoutineCreateProgressScreen> createState() =>
       _RoutineCreateProgressScreenState();
 }
 
 class _RoutineCreateProgressScreenState
-    extends State<RoutineCreateProgressScreen> {
+    extends ConsumerState<RoutineCreateProgressScreen> {
   double progress = 0.0;
   Timer? timer;
 
@@ -51,20 +51,45 @@ class _RoutineCreateProgressScreenState
         if (progress >= 1) {
           progress = 1.0; // 오버플로 방지
           timer.cancel();
-          onProgressComplete(context); // 프로그레스 완료 시 처리
         }
       });
     });
   }
 
-  void onProgressComplete(BuildContext context) {
-    // print('Progress complete!');
-    if (!mounted) return;
-    context.pushReplacement('/');
+  String convertTimeOfDayToString(TimeOfDay timeOfDay) {
+    final formattedTime =
+        "${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}";
+    return formattedTime;
+  }
+
+  String convertRepeatDaysToString(List<bool> repeatDays) {
+    List<int> days = [];
+    for (int i = 0; i < repeatDays.length; i++) {
+      if (repeatDays[i]) {
+        days.add(i + 1); // 1부터 시작하는 요일 인덱스
+      }
+    }
+    return days.join(','); // "1,4,7"과 같은 형식
   }
 
   Future<void> createRoutine() async {
-    await Future.delayed(const Duration(seconds: 2));
+    final routineRepository = ref.read(routineRepositoryProvider);
+
+    try {
+      final newRoutine = await routineRepository.createRoutine(
+        goal: widget.routineGoal,
+        startTime: widget.startTime.toString(),
+        repeatDays: convertRepeatDaysToString(widget.weekDays),
+        notificationTime: widget.alertTime.toString(),
+      );
+      ref.invalidate(routineListProvider);
+
+      context.pushReplacement('/');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to create routine: $e')),
+      );
+    }
   }
 
   @override

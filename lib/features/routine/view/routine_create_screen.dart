@@ -9,8 +9,21 @@ import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../common/constant/data.dart';
+
+String _formattedTime(DateTime? time) {
+  String formattedTime = '알림 없음';
+  if (time == null) return formattedTime;
+
+  if (time.hour > 0) {
+    formattedTime = '${time.hour}시간 ${time.minute}분 전';
+  } else {
+    formattedTime = '${time.minute}분 전';
+  }
+  return formattedTime;
+}
 
 class RoutineCreateScreen extends StatefulWidget {
   static String get routeName => 'routineCreate';
@@ -23,10 +36,10 @@ class RoutineCreateScreen extends StatefulWidget {
 class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   final TextEditingController _textController = TextEditingController();
   String? _routineGoal;
-  TimeOfDay? _selectedTime;
+  DateTime? _selectedTime;
   RepeatCycle? _repeatCycle;
   final List<bool> _weekDays = List.filled(7, false);
-  String? _alertTime;
+  DateTime? _alertTime;
   List<String> guideQuestions = [
     '이루고자 하시는 루틴이 무엇인가요?',
     '몇시에 시작하시나요?',
@@ -58,7 +71,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   }
 
   Future<void> _setStartTime(BuildContext context) async {
-    TimeOfDay tempSelectedTime = TimeOfDay.fromDateTime(DateTime.now());
+    DateTime tempSelectedTime = DateTime.now();
     DateTime initialDateTime = DateTime.now();
 
     if (_selectedTime != null) {
@@ -87,7 +100,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                     mode: CupertinoDatePickerMode.time,
                     initialDateTime: initialDateTime,
                     onDateTimeChanged: (DateTime newTime) {
-                      tempSelectedTime = TimeOfDay.fromDateTime(newTime);
+                      tempSelectedTime = newTime;
                     },
                   ),
                 ),
@@ -111,8 +124,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   }
 
   Future<void> _setAlertTime(BuildContext context) async {
-    String formattedTime = '10분 전';
-
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext builder) {
@@ -132,11 +143,9 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       int hours = newDuration.inHours;
                       int minutes = newDuration.inMinutes % 60;
                       setState(() {
-                        if (hours > 0) {
-                          formattedTime = '$hours시간 $minutes분 전';
-                        } else {
-                          formattedTime = '$minutes분 전';
-                        }
+                        final now = DateTime.now();
+                        _alertTime = DateTime(
+                            now.year, now.month, now.day, hours, minutes);
                       });
                     },
                   ),
@@ -148,7 +157,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       child: CustomButton(
                         onPressed: () {
                           setState(() {
-                            _alertTime = '알람 X';
+                            _alertTime = null;
                           });
                           Navigator.of(context).pop();
                         },
@@ -161,8 +170,11 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       child: CustomButton(
                         onPressed: () {
                           setState(() {
-                            _alertTime = formattedTime;
+                            final now = DateTime.now();
+                            _alertTime ??=
+                                DateTime(now.year, now.month, now.day, 0, 10);
                           });
+
                           Navigator.of(context).pop();
                         },
                         title: '저장',
@@ -236,7 +248,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                         _repeatCycle != null)
                       ReadOnlyBox(
                         hintText: '알림 시간',
-                        inputText: _alertTime != null ? _alertTime! : '',
+                        inputText: _formattedTime(_alertTime),
                         onTap: () {
                           _setAlertTime(context);
                         },
@@ -291,7 +303,8 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       ReadOnlyBox(
                         hintText: '시작 시간',
                         inputText: _selectedTime != null
-                            ? _selectedTime!.format(context)
+                            ? DateFormat('a hh:mm', 'ko_KR')
+                                .format(_selectedTime!)
                             : '',
                         onTap: () {
                           _setStartTime(context);
@@ -318,8 +331,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       builder: (context) => RoutineCreateProgressScreen(
                         routineGoal: _routineGoal!,
                         startTime: _selectedTime!,
-                        repeatCycle: _repeatCycle!,
-                        weekDays: _weekDays,
+                        weekDays: createRepeatDays(_repeatCycle!, _weekDays),
                         alertTime: _alertTime!,
                       ),
                     ),
@@ -333,5 +345,20 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
         ),
       ),
     );
+  }
+}
+
+List<bool> createRepeatDays(RepeatCycle repeatCycle, List<bool> weekDays) {
+  switch (repeatCycle) {
+    case RepeatCycle.daily:
+      return List<bool>.filled(7, true);
+    case RepeatCycle.weekdays:
+      return [true, true, true, true, true, false, false];
+    case RepeatCycle.weekends:
+      return [false, false, false, false, false, true, true];
+    case RepeatCycle.custom:
+      return weekDays;
+    default:
+      return List<bool>.filled(7, false);
   }
 }
