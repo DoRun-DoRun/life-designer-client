@@ -46,10 +46,8 @@ class UserModel extends UserModelBase {
     this.lastLoginAt,
   });
 
-  // JSON 데이터를 UserModel 인스턴스로 변환
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
-  // UserModel 인스턴스를 JSON 데이터로 변환
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }

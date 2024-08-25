@@ -1,33 +1,63 @@
-class Routine {
+import 'package:json_annotation/json_annotation.dart';
+
+part 'routine_model.g.dart';
+
+@JsonSerializable()
+class RoutineModel {
   final int id;
-  final int totalDuration;
   final DateTime startTime;
   final bool isFinished;
   final String name;
-  final List<SubRoutine> subRoutines;
 
-  Routine({
+  RoutineModel({
     required this.id,
-    required this.totalDuration,
     required this.startTime,
     required this.isFinished,
     required this.name,
-    required this.subRoutines,
   });
+  factory RoutineModel.fromJson(Map<String, dynamic> json) =>
+      _$RoutineModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RoutineModelToJson(this);
 }
 
-class SubRoutine {
+@JsonSerializable()
+class DetailRoutineModel {
+  final int id;
+  final String name;
+  final int totalDuration;
+  final List<SubRoutineModel> subRoutines;
+
+  DetailRoutineModel({
+    required this.totalDuration,
+    required this.name,
+    required this.subRoutines,
+    required this.id,
+  });
+  factory DetailRoutineModel.fromJson(Map<String, dynamic> json) =>
+      _$DetailRoutineModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DetailRoutineModelToJson(this);
+}
+
+@JsonSerializable()
+class SubRoutineModel {
   final int id;
   final String name;
   final String emoji;
   final int durationSecond;
 
-  SubRoutine({
+  SubRoutineModel({
     required this.id,
     required this.name,
     required this.emoji,
     required this.durationSecond,
   });
+
+  factory SubRoutineModel.fromJson(Map<String, dynamic> json) =>
+      _$SubRoutineModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubRoutineModelToJson(this);
 }
 
 class RoutineHistory {
