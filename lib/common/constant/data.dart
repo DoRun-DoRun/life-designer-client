@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
-
 // const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
 // const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
 
@@ -41,29 +39,32 @@ enum RepeatCycle { daily, weekdays, weekends, custom }
 //   }
 // ];
 
-final List<Routine> routineMockData = [
-  Routine(
-    id: 1,
-    totalDuration: 60,
-    startTime: DateTime.now().subtract(const Duration(hours: 1)),
-    name: "Morning Routine",
-    isFinished: false,
-    subRoutines: [
-      SubRoutine(
-          id: 0, name: "Stretching", durationSecond: 600, emoji: "🤸‍♂️"),
-      SubRoutine(id: 1, name: "Jogging", durationSecond: 660, emoji: "🏃‍♂️"),
-      SubRoutine(id: 2, name: "Swimming", durationSecond: 720, emoji: "🏊‍♂️"),
-    ],
-  ),
-  Routine(
-    id: 2,
-    totalDuration: 45,
-    startTime: DateTime.now().subtract(const Duration(hours: 2)),
-    name: "Evening Routine",
-    isFinished: true,
-    subRoutines: [
-      SubRoutine(id: 0, name: "Yoga", durationSecond: 20, emoji: "🧘‍♂️"),
-      SubRoutine(id: 1, name: "Cycling", durationSecond: 25, emoji: "🚴‍♂️"),
-    ],
-  ),
-];
+// final List<RoutineModel> routineMockData = [
+//   RoutineModel(
+//     id: 1,
+//     totalDuration: 60,
+//     startTime: DateTime.now().subtract(const Duration(hours: 1)),
+//     name: "Morning Routine",
+//     isFinished: false,
+//     subRoutines: [
+//       SubRoutineModel(
+//           id: 0, name: "Stretching", durationSecond: 600, emoji: "🤸‍♂️"),
+//       SubRoutineModel(
+//           id: 1, name: "Jogging", durationSecond: 660, emoji: "🏃‍♂️"),
+//       SubRoutineModel(
+//           id: 2, name: "Swimming", durationSecond: 720, emoji: "🏊‍♂️"),
+//     ],
+//   ),
+//   RoutineModel(
+//     id: 2,
+//     totalDuration: 45,
+//     startTime: DateTime.now().subtract(const Duration(hours: 2)),
+//     name: "Evening Routine",
+//     isFinished: true,
+//     subRoutines: [
+//       SubRoutineModel(id: 0, name: "Yoga", durationSecond: 20, emoji: "🧘‍♂️"),
+//       SubRoutineModel(
+//           id: 1, name: "Cycling", durationSecond: 25, emoji: "🚴‍♂️"),
+//     ],
+//   ),
+// ];
