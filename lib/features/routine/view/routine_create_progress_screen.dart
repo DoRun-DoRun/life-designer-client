@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/routine/repository/routine_repository.dart';
+import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +19,7 @@ class RoutineCreateProgressScreen extends ConsumerStatefulWidget {
   final Duration startTime;
   final List<bool> weekDays;
   final Duration? alertTime;
+  final List<SubRoutineTemplate>? subRoutines;
 
   const RoutineCreateProgressScreen({
     super.key,
@@ -24,6 +27,7 @@ class RoutineCreateProgressScreen extends ConsumerStatefulWidget {
     required this.startTime,
     required this.weekDays,
     required this.alertTime,
+    this.subRoutines,
   });
 
   @override
@@ -40,17 +44,19 @@ class _RoutineCreateProgressScreenState
   void initState() {
     super.initState();
     createRoutine();
-    startProgress(context);
+    startProgress();
   }
 
-  void startProgress(BuildContext context) {
+  void startProgress() {
     timer = Timer.periodic(const Duration(milliseconds: 20), (timer) {
-      double stepIncrement = 1.0 / 100; // 총 100번의 업데이트로 1.0에 도달
+      double stepIncrement = 1.0 / 100;
       setState(() {
         progress += stepIncrement;
         if (progress >= 1) {
-          progress = 1.0; // 오버플로 방지
+          progress = 1.0;
           timer.cancel();
+
+          context.pushReplacement('/');
         }
       });
     });
@@ -66,10 +72,10 @@ class _RoutineCreateProgressScreenState
     List<int> days = [];
     for (int i = 0; i < repeatDays.length; i++) {
       if (repeatDays[i]) {
-        days.add(i + 1); // 1부터 시작하는 요일 인덱스
+        days.add(i + 1);
       }
     }
-    return days.join(','); // "1,4,7"과 같은 형식
+    return days.join(',');
   }
 
   Future<void> createRoutine() async {
@@ -77,18 +83,24 @@ class _RoutineCreateProgressScreenState
 
     try {
       await routineRepository.createRoutine(
-        goal: widget.routineGoal,
-        startTime: widget.startTime.inSeconds,
-        repeatDays: convertRepeatDaysToString(widget.weekDays),
-        notificationTime: widget.alertTime?.inSeconds,
+        CreateRoutineModel(
+          goal: widget.routineGoal,
+          startTime: widget.startTime.inSeconds,
+          repeatDays: convertRepeatDaysToString(widget.weekDays),
+          notificationTime: widget.alertTime?.inSeconds,
+          subRoutines: widget.subRoutines,
+        ),
       );
-      ref.invalidate(routineListProvider);
 
-      context.pushReplacement('/');
+      if (!mounted) return;
+
+      ref.invalidate(routineListProvider);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create routine: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create routine: $e')),
+        );
+      }
     }
   }
 
@@ -101,7 +113,7 @@ class _RoutineCreateProgressScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
         child: Column(

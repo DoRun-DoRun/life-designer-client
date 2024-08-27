@@ -1,6 +1,29 @@
+import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'routine_model.g.dart';
+
+@JsonSerializable()
+class CreateRoutineModel {
+  final String goal;
+  final int startTime;
+  final String repeatDays;
+  final int? notificationTime;
+  final List<SubRoutineTemplate>? subRoutines;
+
+  CreateRoutineModel({
+    required this.goal,
+    required this.startTime,
+    required this.repeatDays,
+    this.notificationTime,
+    required this.subRoutines,
+  });
+
+  factory CreateRoutineModel.fromJson(Map<String, dynamic> json) =>
+      _$CreateRoutineModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CreateRoutineModelToJson(this);
+}
 
 @JsonSerializable()
 class RoutineModel {

@@ -9,6 +9,7 @@ import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
+import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +18,9 @@ import '../../../common/constant/data.dart';
 
 class RoutineCreateScreen extends StatefulWidget {
   static String get routeName => 'routineCreate';
-  const RoutineCreateScreen({super.key});
+  final RoutineTemplate? routineTemplate;
+
+  const RoutineCreateScreen({super.key, this.routineTemplate});
 
   @override
   State<RoutineCreateScreen> createState() => _RoutineCreateScreenState();
@@ -36,6 +39,16 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
     '어느 요일에 반복하시나요?',
     '시작 전에 알람 드릴까요?'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.routineTemplate != null) {
+      _routineGoal = widget.routineTemplate!.goal;
+      _textController.text = _routineGoal!;
+    }
+  }
 
   String getCurrentGuideQuestion() {
     if (_routineGoal == null) {
@@ -259,6 +272,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                         startTime: _selectedTime!,
                         weekDays: createRepeatDays(_repeatCycle!, _weekDays),
                         alertTime: _alertTime,
+                        subRoutines: widget.routineTemplate?.subRoutines,
                       ),
                     ),
                   );

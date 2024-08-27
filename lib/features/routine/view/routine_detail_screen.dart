@@ -1,40 +1,34 @@
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
-import 'package:dorun_app_flutter/common/component/gap_row.dart';
 import 'package:dorun_app_flutter/common/component/input_box.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
-import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
-import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
+import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
+import 'package:dorun_app_flutter/features/routine/repository/routine_repository.dart';
+import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
 import 'package:emoji_selector/emoji_selector.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class RoutineDetailScreen extends StatefulWidget {
+class RoutineDetailScreen extends ConsumerStatefulWidget {
   static String get routeName => 'routineDetail';
   final int id;
   const RoutineDetailScreen({super.key, required this.id});
 
   @override
-  State<RoutineDetailScreen> createState() => _RoutineDetailScreenState();
+  ConsumerState<RoutineDetailScreen> createState() =>
+      _RoutineDetailScreenState();
 }
 
-class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
-  String _alertTime = '';
+class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
+  Duration? _durationTime;
   String _emoji = '✅';
-
-  Routine? getRoutineById(int id) {
-    try {
-      return routineMockData.firstWhere((routine) => routine.id == id);
-    } catch (e) {
-      return routineMockData[0];
-    }
-  }
 
   void _showAddRoutineModal(BuildContext context) {
     final TextEditingController titleController = TextEditingController();
@@ -89,16 +83,39 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                     InputBox(controller: titleController, hintText: '세부 루틴'),
                     ReadOnlyBox(
                       hintText: '수행 시간',
-                      inputText: _alertTime,
-                      onTap: () {
-                        _setAlertTime(bc, setState);
+                      inputText: formattedProcessTime(_durationTime),
+                      onTap: () async {
+                        _durationTime = await setProcessTime(
+                          context: context,
+                          initialTime: _durationTime,
+                        );
+                        setState(() {});
                       },
                     ),
                     const SizedBox(height: 16),
                     CustomButton(
-                      onPressed: () {
-                        _alertTime = '';
-                        Navigator.of(bc).pop();
+                      onPressed: () async {
+                        final routineRepository =
+                            ref.read(routineRepositoryProvider);
+
+                        if (_durationTime == null ||
+                            titleController.text.trim() == '') {
+                          return;
+                        }
+                        try {
+                          await routineRepository.createSubRoutine(
+                            id: widget.id,
+                            goal: titleController.text.trim(),
+                            emoji: _emoji,
+                            duration: _durationTime!.inSeconds,
+                          );
+                          ref.invalidate(routineDetailProvider);
+
+                          _durationTime = null;
+                          bc.pop();
+                        } catch (e) {
+                          print('Failed to create routine: $e');
+                        }
                       },
                       title: '추가하기',
                       backgroundColor: AppColors.BRAND_SUB,
@@ -110,76 +127,6 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
             );
           });
         });
-  }
-
-  void _setAlertTime(BuildContext context, StateSetter setState) {
-    String formattedTime = '10분';
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext builder) {
-        return SizedBox(
-          height: 375,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-            child: GapColumn(
-              children: [
-                const Text('소요시간을 알려주세요', style: AppTextStyles.BOLD_20),
-                Expanded(
-                  child: CupertinoTimerPicker(
-                    mode: CupertinoTimerPickerMode.hm,
-                    initialTimerDuration: const Duration(minutes: 10),
-                    minuteInterval: 1,
-                    onTimerDurationChanged: (Duration newDuration) {
-                      int hours = newDuration.inHours;
-                      int minutes = newDuration.inMinutes % 60;
-                      setState(() {
-                        if (hours > 0) {
-                          formattedTime = '$hours시간 $minutes분';
-                        } else {
-                          formattedTime = '$minutes분';
-                        }
-                      });
-                    },
-                  ),
-                ),
-                GapRow(
-                  gap: 16,
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        onPressed: () {
-                          setState(() {
-                            _alertTime = '알람 X';
-                          });
-                          Navigator.of(builder).pop();
-                        },
-                        title: '알림 없이',
-                        backgroundColor: AppColors.BRAND_SUB,
-                        foregroundColor: AppColors.TEXT_BRAND,
-                      ),
-                    ),
-                    Expanded(
-                      child: CustomButton(
-                        onPressed: () {
-                          setState(() {
-                            _alertTime = formattedTime;
-                          });
-                          Navigator.of(builder).pop();
-                        },
-                        title: '저장',
-                        backgroundColor: AppColors.BRAND_SUB,
-                        foregroundColor: AppColors.TEXT_BRAND,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void setEmoji(BuildContext context, StateSetter setState) {
@@ -209,91 +156,107 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: GapColumn(
-                gap: 16,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PaddingContainer(
-                    width: double.infinity,
-                    child: GapColumn(
-                      gap: 24,
-                      children: [
-                        Text(getRoutineById(widget.id)!.name,
-                            style: AppTextStyles.BOLD_20),
-                        GapColumn(
-                          gap: 8,
+    final routineDetailAsyncValue = ref.watch(routineDetailProvider(widget.id));
+    return routineDetailAsyncValue.when(
+      data: (routine) {
+        final totalDurtation = Duration(seconds: routine.totalDuration);
+
+        return DefaultLayout(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: GapColumn(
+                    gap: 16,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PaddingContainer(
+                        width: double.infinity,
+                        child: GapColumn(
+                          gap: 24,
                           children: [
-                            Text(
-                              "총 소요시간",
-                              style: AppTextStyles.MEDIUM_14
-                                  .copyWith(color: AppColors.TEXT_SUB),
+                            Text(routine.name, style: AppTextStyles.BOLD_20),
+                            GapColumn(
+                              gap: 8,
+                              children: [
+                                Text(
+                                  "총 소요시간",
+                                  style: AppTextStyles.MEDIUM_14.copyWith(
+                                    color: AppColors.TEXT_SUB,
+                                  ),
+                                ),
+                                Text(
+                                  "${totalDurtation.inMinutes} 분",
+                                  style: AppTextStyles.MEDIUM_20,
+                                ),
+                              ],
                             ),
-                            Text(
-                                "${getRoutineById(widget.id)!.totalDuration.toString()} 분",
-                                style: AppTextStyles.MEDIUM_20),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  PaddingContainer(
-                    child: GapColumn(
-                      gap: 16,
-                      children:
-                          getRoutineById(widget.id)!.subRoutines.map((data) {
-                        return ListItem(
-                          id: data.id,
-                          title: data.name,
-                          routinEmoji: data.emoji,
-                          subTitle:
-                              '${(data.durationSecond ~/ 60).toString()}분',
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  PaddingContainer(
-                      child: Column(
-                    children: [
-                      GapColumn(
-                        gap: 16,
-                        children: [
-                          const Text(
-                            "루틴을 수행하고 있는지 작성해주세요",
-                            style: AppTextStyles.MEDIUM_16,
+                      ),
+                      if (routine.subRoutines.isNotEmpty)
+                        PaddingContainer(
+                          child: GapColumn(
+                            gap: 16,
+                            children: routine.subRoutines.map((data) {
+                              return ListItem(
+                                id: data.id,
+                                title: data.goal,
+                                routinEmoji: data.emoji,
+                                subTitle: '${data.duration ~/ 60}분',
+                              );
+                            }).toList(),
                           ),
-                          CustomButton(
-                            onPressed: () => {_showAddRoutineModal(context)},
-                            icon: const Icon(
-                              Icons.add_circle,
-                              size: 25,
-                              color: AppColors.TEXT_BRAND,
+                        ),
+                      PaddingContainer(
+                        child: GapColumn(
+                          gap: 16,
+                          children: [
+                            const Text(
+                              "루틴을 수행하고 있는지 작성해주세요",
+                              style: AppTextStyles.MEDIUM_16,
                             ),
-                          )
-                        ],
+                            CustomButton(
+                              onPressed: () => _showAddRoutineModal(context),
+                              icon: const Icon(
+                                Icons.add_circle,
+                                size: 25,
+                                color: AppColors.TEXT_BRAND,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
-                  ))
-                ],
+                  ),
+                ),
               ),
-            ),
+              PaddingContainer(
+                child: CustomButton(
+                  title: routine.subRoutines.isNotEmpty
+                      ? '수행하기'
+                      : '세부 루틴을 추가해주세요.',
+                  backgroundColor: routine.subRoutines.isNotEmpty
+                      ? AppColors.BRAND
+                      : AppColors.BACKGROUND_SUB,
+                  foregroundColor: routine.subRoutines.isNotEmpty
+                      ? AppColors.BRAND_SUB
+                      : AppColors.TEXT_SUB,
+                  onPressed: () {
+                    if (routine.subRoutines.isNotEmpty) {
+                      context.go('/routine_proceed/${widget.id}');
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
-          PaddingContainer(
-            child: CustomButton(
-              title: '수행하기',
-              backgroundColor: AppColors.BRAND,
-              foregroundColor: AppColors.BRAND_SUB,
-              onPressed: () {
-                context.go('/routine_proceed/${getRoutineById(widget.id)!.id}');
-              },
-            ),
-          ),
-        ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
+        child: Text('Failed to load routine details $error'),
       ),
     );
   }

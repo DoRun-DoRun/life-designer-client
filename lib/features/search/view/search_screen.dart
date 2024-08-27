@@ -7,8 +7,10 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
 import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -84,14 +86,15 @@ class _SearchScreenState extends State<SearchScreen> {
                             .map(
                               (routine) => ListItem(
                                 id: -1,
-                                title: routine.name,
+                                title: routine.goal,
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           TemplateDetailScreen(
-                                              routine: routine),
+                                        routine: routine,
+                                      ),
                                     ),
                                   );
                                 },
@@ -118,19 +121,19 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-class TemplateDetailScreen extends StatelessWidget {
+class TemplateDetailScreen extends ConsumerWidget {
   final RoutineTemplate routine;
 
   const TemplateDetailScreen({super.key, required this.routine});
 
   String getTotalDuration() {
     int totlaDuration = routine.subRoutines
-        .fold(0, (sum, subRoutine) => sum + subRoutine.durationSecond);
+        .fold(0, (sum, subRoutine) => sum + subRoutine.duration);
     return '${(totlaDuration ~/ 60).toString()}분';
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return DefaultLayout(
       title: '템플릿 상세',
       child: Column(
@@ -145,7 +148,7 @@ class TemplateDetailScreen extends StatelessWidget {
                     width: double.infinity,
                     child: GapColumn(
                       children: [
-                        Text(routine.name, style: AppTextStyles.BOLD_20),
+                        Text(routine.goal, style: AppTextStyles.BOLD_20),
                         const SizedBox(height: 24),
                         Text("총 소요시간",
                             style: AppTextStyles.MEDIUM_14.copyWith(
@@ -164,9 +167,9 @@ class TemplateDetailScreen extends StatelessWidget {
                         ...routine.subRoutines.map(
                           (subRoutine) => ListItem(
                             id: 0,
-                            title: subRoutine.name,
+                            title: subRoutine.goal,
                             subTitle:
-                                '${(subRoutine.durationSecond ~/ 60).toString()}분',
+                                '${(subRoutine.duration ~/ 60).toString()}분',
                             routinEmoji: subRoutine.emoji,
                             actionIcon: Icons.add,
                             onTap: () {
@@ -191,7 +194,15 @@ class TemplateDetailScreen extends StatelessWidget {
           ),
           PaddingContainer(
               child: CustomButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      RoutineCreateScreen(routineTemplate: routine),
+                ),
+              );
+            },
             title: "한번에 루틴 추가히기",
             backgroundColor: AppColors.BRAND,
             foregroundColor: Colors.white,
@@ -268,9 +279,8 @@ class _TemplateDetailAddScreenState extends State<TemplateDetailAddScreen> {
                     ...widget.routine.subRoutines.map(
                       (subRoutine) => ListItem(
                         id: 0,
-                        title: subRoutine.name,
-                        subTitle:
-                            '${(subRoutine.durationSecond ~/ 60).toString()}분',
+                        title: subRoutine.goal,
+                        subTitle: '${(subRoutine.duration ~/ 60).toString()}분',
                         routinEmoji: subRoutine.emoji,
                         actionIcon: Icons.check,
                         actionIconColor:

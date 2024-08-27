@@ -41,7 +41,8 @@ class RoutineScreen extends ConsumerWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const RoutineCreateScreen()),
+              builder: (context) => const RoutineCreateScreen(),
+            ),
           );
         },
         child: const Icon(Icons.add),
@@ -72,42 +73,55 @@ class RoutineScreen extends ConsumerWidget {
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: routineListAsyncValue.when(
-                  data: (routines) {
-                    if (routines.isEmpty) {
-                      return const SizedBox(
-                        width: double.infinity,
-                        child: Center(
-                          child: Text("루틴을 생성해주세요",
-                              style: AppTextStyles.MEDIUM_14),
-                        ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: routineListAsyncValue.when(
+                    data: (routines) {
+                      if (routines.isEmpty) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RoutineCreateScreen(),
+                              ),
+                            );
+                          },
+                          child: const SizedBox(
+                            width: double.infinity,
+                            child: Center(
+                              child: Text("루틴을 생성해주세요",
+                                  style: AppTextStyles.MEDIUM_14),
+                            ),
+                          ),
+                        );
+                      }
+                      return GapColumn(
+                        gap: AppSpacing.SPACE_16,
+                        children: routines.map((routine) {
+                          return ListItem(
+                              id: routine.id,
+                              title: routine.name,
+                              subTitle: formatDateTime(
+                                  Duration(seconds: routine.startTime)),
+                              isButton: !routine.isFinished,
+                              isDone: routine.isFinished,
+                              onTap: () {
+                                context.push('/routine_detail/${routine.id}');
+                              });
+                        }).toList(),
                       );
-                    }
-                    return GapColumn(
-                      gap: AppSpacing.SPACE_16,
-                      children: routines.map((routine) {
-                        return ListItem(
-                            id: routine.id,
-                            title: routine.name,
-                            subTitle: formatDateTime(
-                                Duration(seconds: routine.startTime)),
-                            isButton: !routine.isFinished,
-                            isDone: routine.isFinished,
-                            onTap: () {
-                              context.push('/routine_detail/${routine.id}');
-                            });
-                      }).toList(),
-                    );
-                  },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) =>
-                      const Center(child: Text('Failed to load routines')),
+                    },
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (error, stack) =>
+                        const Center(child: Text('Failed to load routines')),
+                  ),
                 ),
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:dorun_app_flutter/features/routine/view/routine_detail_screen.da
 import 'package:dorun_app_flutter/features/routine/view/routine_proceed_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_review_edit_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_review_screen.dart';
+import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +48,6 @@ class AuthProvider extends ChangeNotifier {
               path: 'routine_create_progress',
               name: RoutineCreateProgressScreen.routeName,
               builder: (context, state) {
-                // state.extra에 대한 null 체크와 기본값 처리
                 final args = state.extra as Map<String, dynamic>? ?? {};
                 return RoutineCreateProgressScreen(
                   routineGoal: args['routineGoal'] as String? ?? 'Default Goal',
@@ -55,6 +55,7 @@ class AuthProvider extends ChangeNotifier {
                   weekDays:
                       args['weekDays'] as List<bool>? ?? List.filled(7, false),
                   alertTime: args['alertTime'] as Duration?,
+                  subRoutines: args['subRoutines'] as List<SubRoutineTemplate>?,
                 );
               },
             ),
