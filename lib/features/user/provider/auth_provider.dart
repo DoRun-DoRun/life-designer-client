@@ -51,10 +51,10 @@ class AuthProvider extends ChangeNotifier {
                 final args = state.extra as Map<String, dynamic>? ?? {};
                 return RoutineCreateProgressScreen(
                   routineGoal: args['routineGoal'] as String? ?? 'Default Goal',
-                  startTime: args['startTime'] as DateTime,
+                  startTime: args['startTime'] as Duration,
                   weekDays:
                       args['weekDays'] as List<bool>? ?? List.filled(7, false),
-                  alertTime: args['alertTime'] as DateTime?,
+                  alertTime: args['alertTime'] as Duration?,
                 );
               },
             ),

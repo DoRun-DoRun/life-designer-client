@@ -14,9 +14,9 @@ class RoutineCreateProgressScreen extends ConsumerStatefulWidget {
   static String get routeName => 'routineCreateProgress';
 
   final String routineGoal;
-  final DateTime startTime;
+  final Duration startTime;
   final List<bool> weekDays;
-  final DateTime? alertTime;
+  final Duration? alertTime;
 
   const RoutineCreateProgressScreen({
     super.key,
@@ -78,9 +78,9 @@ class _RoutineCreateProgressScreenState
     try {
       await routineRepository.createRoutine(
         goal: widget.routineGoal,
-        startTime: widget.startTime.toString(),
+        startTime: widget.startTime.inSeconds,
         repeatDays: convertRepeatDaysToString(widget.weekDays),
-        notificationTime: widget.alertTime.toString(),
+        notificationTime: widget.alertTime?.inSeconds,
       );
       ref.invalidate(routineListProvider);
 

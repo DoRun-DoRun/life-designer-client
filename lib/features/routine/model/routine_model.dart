@@ -5,7 +5,7 @@ part 'routine_model.g.dart';
 @JsonSerializable()
 class RoutineModel {
   final int id;
-  final DateTime startTime;
+  final int startTime;
   final bool isFinished;
   final String name;
 

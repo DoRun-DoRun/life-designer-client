@@ -26,10 +26,10 @@ class RoutineCreateScreen extends StatefulWidget {
 class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   final TextEditingController _textController = TextEditingController();
   String? _routineGoal;
-  DateTime? _selectedTime;
+  Duration? _selectedTime;
   RepeatCycle? _repeatCycle;
   final List<bool> _weekDays = List.filled(7, false);
-  DateTime? _alertTime;
+  Duration? _alertTime;
   List<String> guideQuestions = [
     '이루고자 하시는 루틴이 무엇인가요?',
     '몇시에 시작하시나요?',
@@ -69,8 +69,8 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
         DateTime.now().year,
         DateTime.now().month,
         DateTime.now().day,
-        _selectedTime!.hour,
-        _selectedTime!.minute,
+        _selectedTime!.inHours,
+        _selectedTime!.inMinutes,
       );
     }
 
@@ -97,7 +97,9 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                 CustomButton(
                   onPressed: () {
                     setState(() {
-                      _selectedTime = tempSelectedTime;
+                      _selectedTime = Duration(
+                          hours: tempSelectedTime.hour,
+                          minutes: tempSelectedTime.minute);
                     });
                     Navigator.of(context).pop();
                   },
@@ -229,7 +231,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                         hintText: '시작 시간',
                         inputText: _selectedTime != null
                             ? DateFormat('a hh:mm', 'ko_KR')
-                                .format(_selectedTime!)
+                                .format(durationToDateTime(_selectedTime!))
                             : '',
                         onTap: () {
                           _setStartTime(context);
@@ -256,7 +258,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                         routineGoal: _routineGoal!,
                         startTime: _selectedTime!,
                         weekDays: createRepeatDays(_repeatCycle!, _weekDays),
-                        alertTime: _alertTime!,
+                        alertTime: _alertTime,
                       ),
                     ),
                   );

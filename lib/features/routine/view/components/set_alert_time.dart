@@ -4,11 +4,11 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Future<DateTime?> setAlertTime({
+Future<Duration?> setAlertTime({
   required BuildContext context,
-  DateTime? initialTime,
+  Duration? initialTime,
 }) async {
-  DateTime? selectedTime = initialTime;
+  Duration? selectedTime = initialTime;
 
   await showModalBottomSheet(
     context: context,
@@ -25,15 +25,15 @@ Future<DateTime?> setAlertTime({
                   mode: CupertinoTimerPickerMode.hm,
                   initialTimerDuration: initialTime != null
                       ? Duration(
-                          hours: initialTime.hour, minutes: initialTime.minute)
+                          hours: initialTime.inHours,
+                          minutes: initialTime.inMinutes)
                       : const Duration(minutes: 10),
                   minuteInterval: 1,
                   onTimerDurationChanged: (Duration newDuration) {
                     int hours = newDuration.inHours;
                     int minutes = newDuration.inMinutes % 60;
-                    final now = DateTime.now();
-                    selectedTime =
-                        DateTime(now.year, now.month, now.day, hours, minutes);
+
+                    selectedTime = Duration(hours: hours, minutes: minutes);
                   },
                 ),
               ),
@@ -54,11 +54,7 @@ Future<DateTime?> setAlertTime({
                   Expanded(
                     child: CustomButton(
                       onPressed: () {
-                        if (selectedTime == null) {
-                          final now = DateTime.now();
-                          selectedTime =
-                              DateTime(now.year, now.month, now.day, 0, 10);
-                        }
+                        selectedTime ??= const Duration(minutes: 10);
                         Navigator.of(context).pop();
                       },
                       title: '저장',
@@ -78,11 +74,11 @@ Future<DateTime?> setAlertTime({
   return selectedTime;
 }
 
-Future<DateTime?> setProcessTime({
+Future<Duration?> setProcessTime({
   required BuildContext context,
-  DateTime? initialTime,
+  Duration? initialTime,
 }) async {
-  DateTime? selectedTime = initialTime;
+  Duration? selectedTime = initialTime;
 
   await showModalBottomSheet(
     context: context,
@@ -100,15 +96,15 @@ Future<DateTime?> setProcessTime({
                   mode: CupertinoTimerPickerMode.hm,
                   initialTimerDuration: initialTime != null
                       ? Duration(
-                          hours: initialTime.hour, minutes: initialTime.minute)
+                          hours: initialTime.inHours,
+                          minutes: initialTime.inMinutes)
                       : const Duration(minutes: 10),
                   minuteInterval: 1,
                   onTimerDurationChanged: (Duration newDuration) {
                     int hours = newDuration.inHours;
                     int minutes = newDuration.inMinutes % 60;
-                    final now = DateTime.now();
-                    selectedTime =
-                        DateTime(now.year, now.month, now.day, hours, minutes);
+
+                    selectedTime = Duration(hours: hours, minutes: minutes);
                   },
                 ),
               ),
@@ -129,11 +125,7 @@ Future<DateTime?> setProcessTime({
                   Expanded(
                     child: CustomButton(
                       onPressed: () {
-                        if (selectedTime == null) {
-                          final now = DateTime.now();
-                          selectedTime =
-                              DateTime(now.year, now.month, now.day, 0, 10);
-                        }
+                        selectedTime ??= const Duration(minutes: 10);
                         Navigator.of(context).pop();
                       },
                       title: '저장',

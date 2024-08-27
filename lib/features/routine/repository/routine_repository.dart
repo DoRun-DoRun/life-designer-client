@@ -24,9 +24,9 @@ abstract class RoutineRepository {
   @Headers({'accessToken': 'true'})
   Future<RoutineModel> createRoutine({
     @Field('goal') required String goal,
-    @Field('startTime') required String startTime,
+    @Field('startTime') required int startTime,
     @Field('repeatDays') required String repeatDays,
-    @Field('notificationTime') String? notificationTime,
+    @Field('notificationTime') int? notificationTime,
   });
 
   @GET('/')
@@ -43,7 +43,7 @@ abstract class RoutineRepository {
     @Field('id') required int id,
     @Field('goal') required String goal,
     @Field('emoji') required String emoji,
-    @Field('duration') required String duration,
+    @Field('duration') required int duration,
   });
 
   @POST("/routine/review")

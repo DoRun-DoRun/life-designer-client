@@ -5,6 +5,7 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +17,6 @@ class RoutineScreen extends ConsumerWidget {
   static String get routeName => 'routine';
 
   const RoutineScreen({super.key});
-
-  String _formatDateTime(DateTime dateTime) {
-    final DateFormat formatter = DateFormat('HH:mm 시작');
-    return formatter.format(dateTime);
-  }
 
   @override
   Widget build(BuildContext context, ref) {
@@ -84,7 +80,13 @@ class RoutineScreen extends ConsumerWidget {
                 child: routineListAsyncValue.when(
                   data: (routines) {
                     if (routines.isEmpty) {
-                      return const Text("루틴을 생성해주세요");
+                      return const SizedBox(
+                        width: double.infinity,
+                        child: Center(
+                          child: Text("루틴을 생성해주세요",
+                              style: AppTextStyles.MEDIUM_14),
+                        ),
+                      );
                     }
                     return GapColumn(
                       gap: AppSpacing.SPACE_16,
@@ -92,7 +94,8 @@ class RoutineScreen extends ConsumerWidget {
                         return ListItem(
                             id: routine.id,
                             title: routine.name,
-                            subTitle: _formatDateTime(routine.startTime),
+                            subTitle: formatDateTime(
+                                Duration(seconds: routine.startTime)),
                             isButton: !routine.isFinished,
                             isDone: routine.isFinished,
                             onTap: () {
