@@ -33,7 +33,16 @@ abstract class RoutineRepository {
   @Headers({'accessToken': 'true'})
   Future<List<RoutineModel>> getRoutines();
 
-  @GET('/{id}')
+  @GET('/detail/{id}')
   @Headers({'accessToken': 'true'})
   Future<DetailRoutineModel> getRoutineDetail(@Path('id') int id);
+
+  @POST("/sub_routine")
+  @Headers({'accessToken': 'true'})
+  Future createSubRoutine({
+    @Field('id') required int id,
+    @Field('goal') required String goal,
+    @Field('emoji') required String emoji,
+    @Field('duration') required String duration,
+  });
 }
