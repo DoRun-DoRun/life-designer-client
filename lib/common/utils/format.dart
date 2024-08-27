@@ -64,3 +64,20 @@ String formatDateTime(Duration duration) {
   final DateFormat formatter = DateFormat('HH:mm 시작');
   return formatter.format(dateTime);
 }
+
+String formatTime(int seconds) {
+  bool isNegative = seconds < 0;
+  Duration duration = Duration(seconds: seconds.abs());
+
+  String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+  int hours = duration.inHours;
+  String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+  String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+
+  String formattedTime = hours > 0
+      ? "${twoDigits(hours)}:$twoDigitMinutes:$twoDigitSeconds"
+      : "$twoDigitMinutes:$twoDigitSeconds";
+
+  return isNegative ? "-$formattedTime" : formattedTime;
+}

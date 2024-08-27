@@ -9,6 +9,7 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:flutter/material.dart';
@@ -40,18 +41,23 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
-        final routineData = ref.read(routineDetailProvider(widget.id)).value;
-        if (routineData != null) {
-          setState(
-            () {
+        ref.read(routineDetailProvider(widget.id).future).then((routineData) {
+          if (routineData.subRoutines.isEmpty) {
+            context.pushReplacement('/routine_detail/${routineData.id}');
+          } else {
+            setState(() {
               routine = routineData;
               remainingTime = routine!.subRoutines[currentIndex].duration;
               updateRoutineHistory();
-            },
-          );
-        }
+            });
+          }
+        }).catchError((error) {
+          // 오류 처리
+          print("오류 발생: $error");
+        });
       },
     );
   }
@@ -141,23 +147,6 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
     }
   }
 
-  String formatTime(int seconds) {
-    bool isNegative = seconds < 0;
-    Duration duration = Duration(seconds: seconds.abs());
-
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-
-    int hours = duration.inHours;
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-
-    String formattedTime = hours > 0
-        ? "${twoDigits(hours)}:$twoDigitMinutes:$twoDigitSeconds"
-        : "$twoDigitMinutes:$twoDigitSeconds";
-
-    return isNegative ? "-$formattedTime" : formattedTime;
-  }
-
   @override
   void dispose() {
     timer?.cancel();
@@ -166,152 +155,144 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final routineAsyncValue = ref.watch(routineDetailProvider(widget.id));
+    if (routine == null) {
+      return const DefaultLayout(child: CircularProgressIndicator());
+    }
 
-    return routineAsyncValue.when(
-      data: (routine) {
-        return DefaultLayout(
-          rightIcon: IconButton(
-            icon: const Icon(Icons.close, size: 30),
-            onPressed: () {
-              context.go('/');
-            },
-          ),
-          child: GapColumn(
-            gap: 16,
-            children: [
-              PaddingContainer(
-                width: double.infinity,
-                child: GapColumn(
-                  gap: 24,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: const BoxDecoration(
-                        color: AppColors.BACKGROUND_SUB,
-                        borderRadius: AppRadius.ROUNDED_16,
+    return DefaultLayout(
+      rightIcon: IconButton(
+        icon: const Icon(Icons.close, size: 30),
+        onPressed: () {
+          context.go('/');
+        },
+      ),
+      child: GapColumn(
+        gap: 16,
+        children: [
+          PaddingContainer(
+            width: double.infinity,
+            child: GapColumn(
+              gap: 24,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: const BoxDecoration(
+                    color: AppColors.BACKGROUND_SUB,
+                    borderRadius: AppRadius.ROUNDED_16,
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Text(
+                          routine!.subRoutines[currentIndex].goal,
+                          style: AppTextStyles.BOLD_16,
+                        ),
                       ),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            child: Text(
-                              routine.subRoutines[currentIndex].goal,
-                              style: AppTextStyles.BOLD_16,
-                            ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32.0),
+                        child: Text(
+                          formatTime(remainingTime),
+                          style: AppTextStyles.BOLD_16.copyWith(
+                            fontSize: 50,
+                            color: remainingTime > 0
+                                ? Colors.black
+                                : AppColors.Red,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 32.0),
-                            child: Text(
-                              formatTime(remainingTime),
-                              style: AppTextStyles.BOLD_16.copyWith(
-                                fontSize: 50,
-                                color: remainingTime > 0
-                                    ? Colors.black
-                                    : AppColors.Red,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24.0),
-                      child: GapColumn(
-                        gap: 24,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: GapColumn(
+                    gap: 24,
+                    children: [
+                      GapRow(
+                        gap: 10,
                         children: [
-                          GapRow(
-                            gap: 10,
-                            children: [
-                              Expanded(
-                                child: CustomButton(
-                                  onPressed: () {
-                                    handleTimerState(
-                                      timerState == TimerState.stop
-                                          ? TimerHandleState.rest
-                                          : timerState == TimerState.start
-                                              ? TimerHandleState.pause
-                                              : TimerHandleState.start,
-                                    );
-                                  },
-                                  title: timerState == TimerState.stop
-                                      ? '쉬어가기'
-                                      : timerState == TimerState.start
-                                          ? '일시정지'
-                                          : '다시시작',
-                                  backgroundColor: AppColors.BRAND_SUB,
-                                  foregroundColor: AppColors.TEXT_BRAND,
-                                ),
-                              ),
-                              if (timerState != TimerState.pause)
-                                Expanded(
-                                  child: CustomButton(
-                                    onPressed: () {
-                                      handleTimerState(
-                                        timerState == TimerState.stop
-                                            ? TimerHandleState.start
-                                            : TimerHandleState.passed,
-                                      );
-                                    },
-                                    title: timerState == TimerState.stop
-                                        ? '수행하기'
-                                        : '건너뛰기',
-                                    backgroundColor:
-                                        timerState == TimerState.stop
-                                            ? AppColors.BRAND
-                                            : AppColors.BRAND_SUB,
-                                    foregroundColor:
-                                        timerState == TimerState.stop
-                                            ? Colors.white
-                                            : AppColors.TEXT_BRAND,
-                                  ),
-                                )
-                            ],
-                          ),
-                          if (timerState == TimerState.start)
-                            CustomButton(
+                          Expanded(
+                            child: CustomButton(
                               onPressed: () {
-                                handleTimerState(TimerHandleState.complete);
+                                handleTimerState(
+                                  timerState == TimerState.stop
+                                      ? TimerHandleState.rest
+                                      : timerState == TimerState.start
+                                          ? TimerHandleState.pause
+                                          : TimerHandleState.start,
+                                );
                               },
-                              title: '완료하기',
-                              backgroundColor: AppColors.BRAND,
-                              foregroundColor: Colors.white,
+                              title: timerState == TimerState.stop
+                                  ? '쉬어가기'
+                                  : timerState == TimerState.start
+                                      ? '일시정지'
+                                      : '다시시작',
+                              backgroundColor: AppColors.BRAND_SUB,
+                              foregroundColor: AppColors.TEXT_BRAND,
+                            ),
+                          ),
+                          if (timerState != TimerState.pause)
+                            Expanded(
+                              child: CustomButton(
+                                onPressed: () {
+                                  handleTimerState(
+                                    timerState == TimerState.stop
+                                        ? TimerHandleState.start
+                                        : TimerHandleState.passed,
+                                  );
+                                },
+                                title: timerState == TimerState.stop
+                                    ? '수행하기'
+                                    : '건너뛰기',
+                                backgroundColor: timerState == TimerState.stop
+                                    ? AppColors.BRAND
+                                    : AppColors.BRAND_SUB,
+                                foregroundColor: timerState == TimerState.stop
+                                    ? Colors.white
+                                    : AppColors.TEXT_BRAND,
+                              ),
                             )
                         ],
                       ),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: PaddingContainer(
-                  child: SingleChildScrollView(
-                    child: GapColumn(
-                      gap: 16,
-                      children:
-                          routine.subRoutines.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        SubRoutineModel data = entry.value;
-                        return ListItem(
-                          id: data.id,
-                          title: data.goal,
-                          routinEmoji: data.emoji,
-                          subTitle: '${data.duration ~/ 60}분',
-                          isDone: index < currentIndex,
-                        );
-                      }).toList(),
-                    ),
+                      if (timerState == TimerState.start)
+                        CustomButton(
+                          onPressed: () {
+                            handleTimerState(TimerHandleState.complete);
+                          },
+                          title: '완료하기',
+                          backgroundColor: AppColors.BRAND,
+                          foregroundColor: Colors.white,
+                        )
+                    ],
                   ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: PaddingContainer(
+              child: SingleChildScrollView(
+                child: GapColumn(
+                  gap: 16,
+                  children: routine!.subRoutines.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    SubRoutineModel data = entry.value;
+                    return ListItem(
+                      id: data.id,
+                      title: data.goal,
+                      routinEmoji: data.emoji,
+                      subTitle: '${data.duration ~/ 60}분',
+                      isDone: index < currentIndex,
+                    );
+                  }).toList(),
                 ),
               ),
-            ],
+            ),
           ),
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) =>
-          const Center(child: Text('Failed to load routine details')),
+        ],
+      ),
     );
   }
 }
