@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../common/constant/data.dart';
 import '../../../common/view/root_tab.dart';
 import '../../../common/view/splash_screen.dart';
 import '../model/user_model.dart';
@@ -51,12 +50,10 @@ class AuthProvider extends ChangeNotifier {
                 final args = state.extra as Map<String, dynamic>? ?? {};
                 return RoutineCreateProgressScreen(
                   routineGoal: args['routineGoal'] as String? ?? 'Default Goal',
-                  startTime: args['startTime'] as TimeOfDay? ?? TimeOfDay.now(),
-                  repeatCycle:
-                      args['repeatCycle'] as RepeatCycle? ?? RepeatCycle.daily,
+                  startTime: args['startTime'] as DateTime,
                   weekDays:
                       args['weekDays'] as List<bool>? ?? List.filled(7, false),
-                  alertTime: args['alertTime'] as String? ?? 'No Alert',
+                  alertTime: args['alertTime'] as DateTime?,
                 );
               },
             ),

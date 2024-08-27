@@ -43,15 +43,15 @@ class DetailRoutineModel {
 @JsonSerializable()
 class SubRoutineModel {
   final int id;
-  final String name;
+  final String goal;
   final String emoji;
-  final int durationSecond;
+  final int duration;
 
   SubRoutineModel({
     required this.id,
-    required this.name,
+    required this.goal,
     required this.emoji,
-    required this.durationSecond,
+    required this.duration,
   });
 
   factory SubRoutineModel.fromJson(Map<String, dynamic> json) =>

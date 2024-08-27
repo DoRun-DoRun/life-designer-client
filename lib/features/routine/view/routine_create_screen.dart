@@ -6,24 +6,14 @@ import 'package:dorun_app_flutter/common/component/input_box.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/constant/data.dart';
-
-String _formattedTime(DateTime? time) {
-  String formattedTime = '알림 없음';
-  if (time == null) return formattedTime;
-
-  if (time.hour > 0) {
-    formattedTime = '${time.hour}시간 ${time.minute}분 전';
-  } else {
-    formattedTime = '${time.minute}분 전';
-  }
-  return formattedTime;
-}
 
 class RoutineCreateScreen extends StatefulWidget {
   static String get routeName => 'routineCreate';
@@ -123,75 +113,6 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
     );
   }
 
-  Future<void> _setAlertTime(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      builder: (BuildContext builder) {
-        return SizedBox(
-          height: 375,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-            child: GapColumn(
-              children: [
-                const Text('얼마전에 알람 드릴까요?', style: AppTextStyles.BOLD_20),
-                Expanded(
-                  child: CupertinoTimerPicker(
-                    mode: CupertinoTimerPickerMode.hm,
-                    initialTimerDuration: const Duration(minutes: 10),
-                    minuteInterval: 1,
-                    onTimerDurationChanged: (Duration newDuration) {
-                      int hours = newDuration.inHours;
-                      int minutes = newDuration.inMinutes % 60;
-                      setState(() {
-                        final now = DateTime.now();
-                        _alertTime = DateTime(
-                            now.year, now.month, now.day, hours, minutes);
-                      });
-                    },
-                  ),
-                ),
-                GapRow(
-                  gap: 16,
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        onPressed: () {
-                          setState(() {
-                            _alertTime = null;
-                          });
-                          Navigator.of(context).pop();
-                        },
-                        title: '알림 없이',
-                        backgroundColor: AppColors.BRAND_SUB,
-                        foregroundColor: AppColors.TEXT_BRAND,
-                      ),
-                    ),
-                    Expanded(
-                      child: CustomButton(
-                        onPressed: () {
-                          setState(() {
-                            final now = DateTime.now();
-                            _alertTime ??=
-                                DateTime(now.year, now.month, now.day, 0, 10);
-                          });
-
-                          Navigator.of(context).pop();
-                        },
-                        title: '저장',
-                        backgroundColor: AppColors.BRAND_SUB,
-                        foregroundColor: AppColors.TEXT_BRAND,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildRepeatOptionButton(String label, RepeatCycle cycle) {
     bool isSelected = _repeatCycle == cycle;
     return CustomButton(
@@ -248,9 +169,13 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                         _repeatCycle != null)
                       ReadOnlyBox(
                         hintText: '알림 시간',
-                        inputText: _formattedTime(_alertTime),
-                        onTap: () {
-                          _setAlertTime(context);
+                        inputText: formattedAlertTime(_alertTime),
+                        onTap: () async {
+                          _alertTime = await setAlertTime(
+                            context: context,
+                            initialTime: _alertTime,
+                          );
+                          setState(() {});
                         },
                       ),
                     if (_routineGoal != null && _selectedTime != null)
@@ -321,8 +246,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
             ),
             if (_routineGoal != null &&
                 _selectedTime != null &&
-                _repeatCycle != null &&
-                _alertTime != null)
+                _repeatCycle != null)
               CustomButton(
                 onPressed: () {
                   Navigator.push(

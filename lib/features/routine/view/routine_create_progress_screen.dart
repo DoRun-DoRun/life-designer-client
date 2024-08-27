@@ -76,7 +76,7 @@ class _RoutineCreateProgressScreenState
     final routineRepository = ref.read(routineRepositoryProvider);
 
     try {
-      final newRoutine = await routineRepository.createRoutine(
+      await routineRepository.createRoutine(
         goal: widget.routineGoal,
         startTime: widget.startTime.toString(),
         repeatDays: convertRepeatDaysToString(widget.weekDays),
