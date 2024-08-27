@@ -45,4 +45,8 @@ abstract class RoutineRepository {
     @Field('emoji') required String emoji,
     @Field('duration') required String duration,
   });
+
+  @POST("/routine/review")
+  @Headers({'accessToken': 'true'})
+  Future<void> createRoutineReview(@Body() RoutineReviewModel routineReview);
 }

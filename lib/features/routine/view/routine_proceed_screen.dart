@@ -32,7 +32,7 @@ class RoutineProceedScreen extends ConsumerStatefulWidget {
 class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
   DetailRoutineModel? routine;
   RoutineHistory? routineHistory;
-  int currentSubRoutineIndex = 0;
+  int currentIndex = 0;
   Timer? timer;
   int remainingTime = 0;
   TimerState timerState = TimerState.stop;
@@ -47,8 +47,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
           setState(
             () {
               routine = routineData;
-              remainingTime =
-                  routine!.subRoutines[currentSubRoutineIndex].duration;
+              remainingTime = routine!.subRoutines[currentIndex].duration;
               updateRoutineHistory();
             },
           );
@@ -60,11 +59,11 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
   void updateRoutineHistory() {
     setState(() {
       routineHistory = RoutineHistory(
-        id: widget.id,
+        routineId: widget.id,
         histories: routine!.subRoutines.map((data) {
           return SubRoutineHistory(
-            id: data.id,
-            durationSecond: data.duration,
+            subRoutine: data,
+            duration: data.duration,
             state: RoutineHistoyState.passed,
           );
         }).toList(),
@@ -93,29 +92,31 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
 
   void completeTimer() {
     setState(() {
-      routineHistory!.histories[currentSubRoutineIndex]
-          .setDurtaionTime(remainingTime);
+      final int originTime = routine!.subRoutines[currentIndex].duration;
 
-      if (routineHistory!.histories.length > currentSubRoutineIndex + 1) {
-        remainingTime = routineHistory!
-            .histories[currentSubRoutineIndex + 1].durationSecond;
-        currentSubRoutineIndex++;
+      routineHistory!.setDurtaionTime(originTime - remainingTime, currentIndex);
+      routineHistory!
+          .setRoutineState(RoutineHistoyState.complete, currentIndex);
+
+      if (routineHistory!.histories.length > currentIndex + 1) {
+        remainingTime = routineHistory!.histories[currentIndex + 1].duration;
+        currentIndex++;
         startTimer();
       } else {
-        context.go('/routine_review_edit/${widget.id}');
+        context.go('/routine_review_edit/${widget.id}', extra: routineHistory);
       }
     });
   }
 
   void passedTimer() {
+    routineHistory!.setDurtaionTime(0, currentIndex);
     setState(() {
-      if (routineHistory!.histories.length > currentSubRoutineIndex + 1) {
-        remainingTime = routineHistory!
-            .histories[currentSubRoutineIndex + 1].durationSecond;
-        currentSubRoutineIndex++;
+      if (routineHistory!.histories.length > currentIndex + 1) {
+        remainingTime = routineHistory!.histories[currentIndex + 1].duration;
+        currentIndex++;
         startTimer();
       } else {
-        context.go('/routine_review_edit/${widget.id}');
+        context.go('/routine_review_edit/${widget.id}', extra: routineHistory);
       }
     });
   }
@@ -132,7 +133,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
         pauseTimer();
         break;
       case TimerHandleState.rest:
-        context.go('/routine_review_edit/${widget.id}');
+        context.go('/routine_review_edit/${widget.id}', extra: routineHistory);
         break;
       case TimerHandleState.start:
         startTimer();
@@ -196,7 +197,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             child: Text(
-                              routine.subRoutines[currentSubRoutineIndex].goal,
+                              routine.subRoutines[currentIndex].goal,
                               style: AppTextStyles.BOLD_16,
                             ),
                           ),
@@ -297,7 +298,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
                           title: data.goal,
                           routinEmoji: data.emoji,
                           subTitle: '${data.duration ~/ 60}분',
-                          isDone: index < currentSubRoutineIndex,
+                          isDone: index < currentIndex,
                         );
                       }).toList(),
                     ),

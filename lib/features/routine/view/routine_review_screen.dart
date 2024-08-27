@@ -6,19 +6,26 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
+import 'package:dorun_app_flutter/features/routine/repository/routine_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class RoutineReviewScreen extends StatefulWidget {
+class RoutineReviewScreen extends ConsumerStatefulWidget {
   static String get routeName => 'routinReviewScreen';
   final int id;
-  const RoutineReviewScreen({super.key, required this.id});
+  final RoutineHistory routineHistory;
+  const RoutineReviewScreen(
+      {super.key, required this.id, required this.routineHistory});
 
   @override
-  State<RoutineReviewScreen> createState() => _RoutineReviewScreenState();
+  ConsumerState<RoutineReviewScreen> createState() =>
+      _RoutineReviewScreenState();
 }
 
-class _RoutineReviewScreenState extends State<RoutineReviewScreen> {
+class _RoutineReviewScreenState extends ConsumerState<RoutineReviewScreen> {
   String selectedText = '';
 
   void handleEmojiToggle(String text) {
@@ -116,8 +123,25 @@ class _RoutineReviewScreenState extends State<RoutineReviewScreen> {
               builder: (context, value, child) {
                 return PaddingContainer(
                   child: CustomButton(
-                    onPressed: () {
-                      context.go('/');
+                    onPressed: () async {
+                      final routineRepository =
+                          ref.read(routineRepositoryProvider);
+                      try {
+                        await routineRepository.createRoutineReview(
+                          RoutineReviewModel(
+                            routineId: widget.id,
+                            overallRating: mapTextToOverallRating(selectedText),
+                            comments: textController.text,
+                            subRoutineReviews: convertToSubRoutineReviews(
+                              widget.routineHistory,
+                            ),
+                          ),
+                        );
+
+                        context.go('/');
+                      } catch (e) {
+                        print('Failed to create routine: $e');
+                      }
                     },
                     title: value.text.isEmpty ? '건너뛰기' : '확인',
                     backgroundColor: value.text.isEmpty

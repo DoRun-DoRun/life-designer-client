@@ -60,34 +60,72 @@ class SubRoutineModel {
   Map<String, dynamic> toJson() => _$SubRoutineModelToJson(this);
 }
 
+enum RoutineHistoyState { passed, complete }
+
 class RoutineHistory {
-  final int id;
+  final int routineId;
   final List<SubRoutineHistory> histories;
 
   RoutineHistory({
-    required this.id,
     required this.histories,
+    required this.routineId,
   });
+
+  void setDurtaionTime(int duration, int index) {
+    histories[index].duration = duration;
+  }
+
+  void setRoutineState(RoutineHistoyState state, int index) {
+    histories[index].state = state;
+  }
 }
 
-enum RoutineHistoyState { passed, complete }
-
 class SubRoutineHistory {
-  final int id;
-  int durationSecond;
+  SubRoutineModel subRoutine;
+  int duration;
   RoutineHistoyState state;
 
   SubRoutineHistory({
-    required this.id,
-    required this.durationSecond,
+    required this.subRoutine,
+    required this.duration,
     required this.state,
   });
+}
 
-  void setDurtaionTime(int durationSecond) {
-    this.durationSecond = durationSecond;
-  }
+@JsonSerializable()
+class RoutineReviewModel {
+  final int routineId;
+  final String overallRating;
+  final String? comments;
+  final List<SubRoutineReviewModel> subRoutineReviews;
 
-  void setRoutineState(RoutineHistoyState state) {
-    this.state = state;
-  }
+  RoutineReviewModel({
+    required this.routineId,
+    required this.overallRating,
+    this.comments,
+    required this.subRoutineReviews,
+  });
+
+  factory RoutineReviewModel.fromJson(Map<String, dynamic> json) =>
+      _$RoutineReviewModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RoutineReviewModelToJson(this);
+}
+
+@JsonSerializable()
+class SubRoutineReviewModel {
+  final int subRoutineId;
+  final int timeSpent;
+  final bool isSkipped;
+
+  SubRoutineReviewModel({
+    required this.subRoutineId,
+    required this.timeSpent,
+    required this.isSkipped,
+  });
+
+  factory SubRoutineReviewModel.fromJson(Map<String, dynamic> json) =>
+      _$SubRoutineReviewModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubRoutineReviewModelToJson(this);
 }
