@@ -75,8 +75,23 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     );
   }
 
-  // Future<void> login(tokens) async {
-  //   await saveTokens(tokens.accessToken, tokens.refreshToken);
-  //   state = null;
-  // }
+  Future<void> signOut() async {
+    try {
+      await repository.deleteUser();
+
+      state = null;
+      // TODO
+      // 기타 캐시 invalidate 처리하기
+
+      await Future.wait(
+        [
+          storage.delete(key: REFRESH_TOKEN_KEY),
+          storage.delete(key: ACCESS_TOKEN_KEY),
+        ],
+      );
+    } catch (error) {
+      print('Error fetching user data: $error');
+      state = null;
+    }
+  }
 }

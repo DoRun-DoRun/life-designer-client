@@ -111,7 +111,7 @@ class ProfileScreen extends ConsumerWidget {
                   color: AppColors.TEXT_SUB,
                 ),
                 ProfileListItem(
-                  onTap: () => {ref.read(authProvider.notifier).logout()},
+                  onTap: () => {ref.read(authProvider.notifier).signOut()},
                   text: "회원탈퇴",
                   color: const Color(0xFFFF0000),
                 ),

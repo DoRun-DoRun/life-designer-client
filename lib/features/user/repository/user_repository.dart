@@ -33,11 +33,15 @@ abstract class UserRepository {
 
   @PUT('/')
   @Headers({'accessToken': 'true'})
-  Future<UserModel> updateUser({
+  Future<void> updateUser({
     @Field('name') String? name,
     @Field('age') String? age,
     @Field('job') String? job,
     @Field('challenges') List<String>? challenges,
     @Field('gender') String? gender,
   });
+
+  @PUT('/withdraw')
+  @Headers({'accessToken': 'true'})
+  Future<void> deleteUser();
 }

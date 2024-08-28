@@ -115,6 +115,10 @@ class AuthProvider extends ChangeNotifier {
     ref.read(userMeProvider.notifier).logout();
   }
 
+  void signOut() {
+    ref.read(userMeProvider.notifier).signOut();
+  }
+
   String? redirectLogic(BuildContext context, GoRouterState state) {
     final UserModelBase? user = ref.read(userMeProvider);
 
