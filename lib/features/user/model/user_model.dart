@@ -23,7 +23,7 @@ class UserModel extends UserModelBase {
   final String? name;
   final String? age;
   final String? job;
-  final String? challenges;
+  final List<String>? challenges;
   final String? gender;
   final DateTime createdAt;
   final DateTime updatedAt;

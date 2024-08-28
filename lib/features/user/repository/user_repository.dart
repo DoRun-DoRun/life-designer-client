@@ -37,7 +37,7 @@ abstract class UserRepository {
     @Field('name') String? name,
     @Field('age') String? age,
     @Field('job') String? job,
-    @Field('challenges') String? challenges,
+    @Field('challenges') List<String>? challenges,
     @Field('gender') String? gender,
   });
 }

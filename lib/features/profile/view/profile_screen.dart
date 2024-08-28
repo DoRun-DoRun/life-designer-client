@@ -195,13 +195,12 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void initState() {
     super.initState();
     final user = ref.read(userMeProvider) as UserModel;
-
+    print(user.challenges);
     nameController.text = user.name ?? '';
     selectedAge = user.age ?? '';
     selectedGender = user.gender ?? '';
     selectedJob = user.job ?? '';
-    selectedDifficulties = (user.challenges ?? '')
-        .split(',')
+    selectedDifficulties = (user.challenges ?? [])
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .toList();
@@ -218,7 +217,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       int startYear = 1900,
     }) {
       final currentYear = DateTime.now().year;
-      int selectedYear = currentYear;
+      int selectedYear = currentYear - 20;
 
       showModalBottomSheet(
         context: context,
@@ -561,7 +560,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         age: selectedAge,
                         job: selectedJob,
                         gender: selectedGender,
-                        // challenges: selectedDifficulties.toString(),
+                        challenges: selectedDifficulties,
                       );
                       ref.invalidate(userMeProvider);
                       context.pop();
