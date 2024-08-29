@@ -105,7 +105,7 @@ class StatisticsRoutineScreen extends StatelessWidget {
       gap: 24,
       children: [
         ListItem(
-          id: 0,
+          routineId: 0,
           title: "아침 조깅하기",
           onTap: () {
             Navigator.push(
@@ -115,10 +115,10 @@ class StatisticsRoutineScreen extends StatelessWidget {
             );
           },
         ),
-        const ListItem(id: 0, title: "아침 조깅하기"),
-        const ListItem(id: 0, title: "아침 조깅하기"),
-        const ListItem(id: 0, title: "아침 조깅하기"),
-        const ListItem(id: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
       ],
     ));
   }

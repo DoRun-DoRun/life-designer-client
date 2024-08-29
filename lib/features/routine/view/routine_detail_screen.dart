@@ -28,11 +28,14 @@ class RoutineDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
-  Duration? _durationTime;
   String _emoji = '✅';
 
-  void _showAddRoutineModal(BuildContext context) {
-    final TextEditingController titleController = TextEditingController();
+  void _showAddRoutineModal(BuildContext context, SubRoutineModel? subRoutine) {
+    Duration? durationTime =
+        subRoutine != null ? Duration(seconds: subRoutine.duration) : null;
+
+    final TextEditingController titleController =
+        TextEditingController(text: subRoutine?.goal);
 
     showModalBottomSheet(
         context: context,
@@ -40,7 +43,7 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
         builder: (BuildContext bc) {
           return StatefulBuilder(builder: (context, setState) {
             return Padding(
-              padding: MediaQuery.of(context).viewInsets, // 키보드 높이에 따라 패딩 조정
+              padding: MediaQuery.of(context).viewInsets,
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: const BoxDecoration(
@@ -84,11 +87,11 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                     InputBox(controller: titleController, hintText: '세부 루틴'),
                     ReadOnlyBox(
                       hintText: '수행 시간',
-                      inputText: formattedProcessTime(_durationTime),
+                      inputText: formattedProcessTime(durationTime),
                       onTap: () async {
-                        _durationTime = await setProcessTime(
+                        durationTime = await setProcessTime(
                           context: context,
-                          initialTime: _durationTime,
+                          initialTime: durationTime,
                         );
                         setState(() {});
                       },
@@ -99,28 +102,39 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                         final routineRepository =
                             ref.read(routineRepositoryProvider);
 
-                        if (_durationTime == null ||
+                        if (durationTime == null ||
                             titleController.text.trim() == '') {
                           return;
                         }
                         try {
-                          await routineRepository.createSubRoutines([
-                            SubRoutineModel(
-                              id: widget.id,
-                              goal: titleController.text.trim(),
-                              emoji: _emoji,
-                              duration: _durationTime!.inSeconds,
-                            )
-                          ]);
+                          subRoutine != null
+                              ? await routineRepository.editSubRoutine(
+                                  SubRoutineModel(
+                                    id: subRoutine.id,
+                                    routineId: widget.id,
+                                    goal: titleController.text.trim(),
+                                    emoji: _emoji,
+                                    duration: durationTime!.inSeconds,
+                                  ),
+                                )
+                              : await routineRepository.createSubRoutines([
+                                  SubRoutineRequestModel(
+                                    routineId: widget.id,
+                                    goal: titleController.text.trim(),
+                                    emoji: _emoji,
+                                    duration: durationTime!.inSeconds,
+                                  )
+                                ]);
+
                           ref.invalidate(routineDetailProvider);
 
-                          _durationTime = null;
+                          durationTime = null;
                           bc.pop();
                         } catch (e) {
                           print('Failed to create routine: $e');
                         }
                       },
-                      title: '추가하기',
+                      title: subRoutine != null ? '수정하기' : '추가하기',
                       backgroundColor: AppColors.BRAND_SUB,
                       foregroundColor: AppColors.TEXT_BRAND,
                     ),
@@ -204,7 +218,13 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                             gap: 16,
                             children: routine.subRoutines.map((data) {
                               return ListItem(
-                                id: data.id,
+                                onTap: () {
+                                  setState(() {
+                                    _emoji = data.emoji;
+                                  });
+                                  _showAddRoutineModal(context, data);
+                                },
+                                routineId: data.routineId,
                                 title: data.goal,
                                 routinEmoji: data.emoji,
                                 subTitle: '${data.duration ~/ 60}분',
@@ -221,7 +241,8 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                               style: AppTextStyles.MEDIUM_16,
                             ),
                             CustomButton(
-                              onPressed: () => _showAddRoutineModal(context),
+                              onPressed: () =>
+                                  _showAddRoutineModal(context, null),
                               icon: const Icon(
                                 Icons.add_circle,
                                 size: 25,

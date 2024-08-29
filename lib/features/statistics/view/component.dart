@@ -614,10 +614,10 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
             const GapColumn(
               gap: 24,
               children: [
-                ListItem(id: 0, title: "창문열기"),
-                ListItem(id: 0, title: "창문열기"),
-                ListItem(id: 0, title: "창문열기"),
-                ListItem(id: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
               ],
             ),
         ],

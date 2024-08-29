@@ -105,7 +105,7 @@ class RoutineScreen extends ConsumerWidget {
                         gap: AppSpacing.SPACE_16,
                         children: routines.map((routine) {
                           return ListItem(
-                              id: routine.id,
+                              routineId: routine.id,
                               title: routine.name,
                               subTitle: formatDateTime(
                                   Duration(seconds: routine.startTime)),

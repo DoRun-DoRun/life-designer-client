@@ -54,7 +54,7 @@ class RoutineReviewEditScreen extends StatelessWidget {
                     SubRoutineModel subRoutine = data.subRoutine;
 
                     return ListItem(
-                      id: subRoutine.id,
+                      routineId: subRoutine.routineId,
                       title: subRoutine.goal,
                       routinEmoji: subRoutine.emoji,
                       subTitle: data.state == RoutineHistoyState.passed

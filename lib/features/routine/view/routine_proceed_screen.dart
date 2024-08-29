@@ -280,7 +280,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
                     int index = entry.key;
                     SubRoutineModel data = entry.value;
                     return ListItem(
-                      id: data.id,
+                      routineId: data.routineId,
                       title: data.goal,
                       routinEmoji: data.emoji,
                       subTitle: '${data.duration ~/ 60}분',

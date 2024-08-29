@@ -8,6 +8,7 @@ import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
+import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/routine/repository/routine_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -138,6 +139,7 @@ class _RoutineReviewScreenState extends ConsumerState<RoutineReviewScreen> {
                           ),
                         );
 
+                        ref.invalidate(routineListProvider);
                         context.go('/');
                       } catch (e) {
                         print('Failed to create routine: $e');

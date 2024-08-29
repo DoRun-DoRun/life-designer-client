@@ -89,7 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         children: routinesToShow
                             .map(
                               (routine) => ListItem(
-                                id: -1,
+                                routineId: -1,
                                 title: routine.goal,
                                 onTap: () {
                                   Navigator.push(
@@ -170,7 +170,7 @@ class TemplateDetailScreen extends ConsumerWidget {
                         const Text("세부 루틴", style: AppTextStyles.BOLD_20),
                         ...routine.subRoutines.map(
                           (subRoutine) => ListItem(
-                            id: 0,
+                            routineId: 0,
                             title: subRoutine.goal,
                             subTitle:
                                 '${(subRoutine.duration ~/ 60).toString()}분',
@@ -344,16 +344,25 @@ class _TemplateDetailAddScreenState
                           onTap: () {
                             showRoutineSelectionSheet(routineList);
                           },
-                          child: GapRow(
-                            gap: 8,
-                            children: [
-                              Text(
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            color: Colors.white,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
                                   selectedRoutine != null
                                       ? selectedRoutine!.name
-                                      : '선택된 루틴 없음',
-                                  style: AppTextStyles.MEDIUM_20),
-                              const Icon(Icons.keyboard_arrow_down, size: 30)
-                            ],
+                                      : '루틴을 선택해주세요.',
+                                  style: AppTextStyles.MEDIUM_20.copyWith(
+                                    color: selectedRoutine != null
+                                        ? Colors.black
+                                        : Colors.red,
+                                  ),
+                                ),
+                                const Icon(Icons.keyboard_arrow_down, size: 30)
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -367,7 +376,7 @@ class _TemplateDetailAddScreenState
                             style: AppTextStyles.BOLD_20),
                         ...widget.routine.subRoutines.map(
                           (subRoutine) => ListItem(
-                            id: 0,
+                            routineId: 0,
                             title: subRoutine.goal,
                             subTitle:
                                 '${(subRoutine.duration ~/ 60).toString()}분',
@@ -393,8 +402,8 @@ class _TemplateDetailAddScreenState
 
                       await routineRepository.createSubRoutines(
                         selectedSubRoutines.map((template) {
-                          return SubRoutineModel(
-                            id: selectedRoutine!.id,
+                          return SubRoutineRequestModel(
+                            routineId: selectedRoutine!.id,
                             goal: template.goal,
                             emoji: template.emoji,
                             duration: template.duration,
@@ -408,7 +417,7 @@ class _TemplateDetailAddScreenState
                     }
                   },
                   title: selectedRoutine == null
-                      ? "추가할 루틴을 선택해주세요"
+                      ? "어느 루틴에 추가할지 선택해주세요"
                       : selectedSubRoutines.isEmpty
                           ? '추가할 세부루틴을 선택해주세요'
                           : "세부 루틴 추가히기",

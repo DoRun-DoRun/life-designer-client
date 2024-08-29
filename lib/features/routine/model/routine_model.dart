@@ -64,23 +64,41 @@ class DetailRoutineModel {
 }
 
 @JsonSerializable()
-class SubRoutineModel {
+class SubRoutineModel extends SubRoutineRequestModel {
   final int id;
-  final String goal;
-  final String emoji;
-  final int duration;
 
   SubRoutineModel({
     required this.id,
-    required this.goal,
-    required this.emoji,
-    required this.duration,
+    required super.routineId,
+    required super.goal,
+    required super.emoji,
+    required super.duration,
   });
 
   factory SubRoutineModel.fromJson(Map<String, dynamic> json) =>
       _$SubRoutineModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$SubRoutineModelToJson(this);
+}
+
+class SubRoutineRequestModel {
+  final int routineId;
+  final String goal;
+  final String emoji;
+  final int duration;
+
+  SubRoutineRequestModel({
+    required this.routineId,
+    required this.goal,
+    required this.emoji,
+    required this.duration,
+  });
+
+  factory SubRoutineRequestModel.fromJson(Map<String, dynamic> json) =>
+      _$SubRoutineRequestModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubRoutineRequestModelToJson(this);
 }
 
 enum RoutineHistoyState { passed, complete }
