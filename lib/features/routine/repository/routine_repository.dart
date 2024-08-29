@@ -34,15 +34,18 @@ abstract class RoutineRepository {
 
   @POST("/sub_routine")
   @Headers({'accessToken': 'true'})
-  Future<List<SubRoutineRequestModel>> createSubRoutines(
+  Future<void> createSubRoutines(
     @Body() List<SubRoutineRequestModel> subRoutines,
   );
 
-  @PUT("/sub_routine")
+  @PUT("/sub_routine/{id}")
   @Headers({'accessToken': 'true'})
-  Future<SubRoutineModel> editSubRoutine(
-    @Body() SubRoutineModel subRoutine,
-  );
+  Future<void> editSubRoutine(
+      @Body() SubRoutineRequestModel subRoutine, @Path('id') int id);
+
+  @DELETE("/sub_routine/{id}")
+  @Headers({'accessToken': 'true'})
+  Future<void> deleteSubRoutine(@Path('id') int id);
 
   @POST("/routine/review")
   @Headers({'accessToken': 'true'})

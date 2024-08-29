@@ -82,6 +82,7 @@ class SubRoutineModel extends SubRoutineRequestModel {
   Map<String, dynamic> toJson() => _$SubRoutineModelToJson(this);
 }
 
+@JsonSerializable()
 class SubRoutineRequestModel {
   final int routineId;
   final String goal;

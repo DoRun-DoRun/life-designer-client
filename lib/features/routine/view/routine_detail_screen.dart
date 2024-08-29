@@ -1,5 +1,6 @@
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
+import 'package:dorun_app_flutter/common/component/gap_row.dart';
 import 'package:dorun_app_flutter/common/component/input_box.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
@@ -36,6 +37,9 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
 
     final TextEditingController titleController =
         TextEditingController(text: subRoutine?.goal);
+
+    bool isFormValid =
+        durationTime != null && titleController.text.trim().isNotEmpty;
 
     showModalBottomSheet(
         context: context,
@@ -97,46 +101,78 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    CustomButton(
-                      onPressed: () async {
-                        final routineRepository =
-                            ref.read(routineRepositoryProvider);
+                    GapRow(
+                      gap: 16,
+                      children: [
+                        if (subRoutine != null)
+                          Expanded(
+                            child: CustomButton(
+                              onPressed: () async {
+                                final routineRepository =
+                                    ref.read(routineRepositoryProvider);
 
-                        if (durationTime == null ||
-                            titleController.text.trim() == '') {
-                          return;
-                        }
-                        try {
-                          subRoutine != null
-                              ? await routineRepository.editSubRoutine(
-                                  SubRoutineModel(
-                                    id: subRoutine.id,
-                                    routineId: widget.id,
-                                    goal: titleController.text.trim(),
-                                    emoji: _emoji,
-                                    duration: durationTime!.inSeconds,
-                                  ),
-                                )
-                              : await routineRepository.createSubRoutines([
-                                  SubRoutineRequestModel(
-                                    routineId: widget.id,
-                                    goal: titleController.text.trim(),
-                                    emoji: _emoji,
-                                    duration: durationTime!.inSeconds,
-                                  )
-                                ]);
+                                try {
+                                  await routineRepository
+                                      .deleteSubRoutine(subRoutine.id);
+                                  durationTime = null;
+                                  ref.invalidate(routineDetailProvider);
+                                  bc.pop();
+                                } catch (e) {
+                                  print('Failed to create routine: $e');
+                                }
+                              },
+                              title: '삭제하기',
+                              backgroundColor: AppColors.BRAND_SUB,
+                              foregroundColor: AppColors.TEXT_BRAND,
+                            ),
+                          ),
+                        Expanded(
+                          child: CustomButton(
+                            onPressed: () async {
+                              final routineRepository =
+                                  ref.read(routineRepositoryProvider);
 
-                          ref.invalidate(routineDetailProvider);
+                              if (isFormValid) return;
 
-                          durationTime = null;
-                          bc.pop();
-                        } catch (e) {
-                          print('Failed to create routine: $e');
-                        }
-                      },
-                      title: subRoutine != null ? '수정하기' : '추가하기',
-                      backgroundColor: AppColors.BRAND_SUB,
-                      foregroundColor: AppColors.TEXT_BRAND,
+                              try {
+                                subRoutine != null
+                                    ? await routineRepository.editSubRoutine(
+                                        SubRoutineRequestModel(
+                                          routineId: widget.id,
+                                          goal: titleController.text.trim(),
+                                          emoji: _emoji,
+                                          duration: durationTime!.inSeconds,
+                                        ),
+                                        subRoutine.id,
+                                      )
+                                    : await routineRepository
+                                        .createSubRoutines([
+                                        SubRoutineRequestModel(
+                                          routineId: widget.id,
+                                          goal: titleController.text.trim(),
+                                          emoji: _emoji,
+                                          duration: durationTime!.inSeconds,
+                                        )
+                                      ]);
+
+                                ref.invalidate(routineDetailProvider);
+
+                                durationTime = null;
+                                bc.pop();
+                              } catch (e) {
+                                print('Failed to create routine: $e');
+                              }
+                            },
+                            title: subRoutine != null ? '수정하기' : '추가하기',
+                            backgroundColor: isFormValid
+                                ? AppColors.BRAND
+                                : AppColors.TEXT_INVERT,
+                            foregroundColor: isFormValid
+                                ? Colors.white
+                                : AppColors.TEXT_SECONDARY,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

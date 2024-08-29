@@ -238,6 +238,24 @@ class _TemplateDetailAddScreenState
   void initState() {
     selectedSubRoutines.add(widget.selectedRoutine);
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchAndShowRoutineSelectionSheet();
+    });
+  }
+
+  Future<void> _fetchAndShowRoutineSelectionSheet() async {
+    final routineList = ref.read(routineListProvider);
+
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    routineList.when(
+      data: (routines) {
+        showRoutineSelectionSheet(routineList);
+      },
+      loading: () {},
+      error: (error, stack) {},
+    );
   }
 
   void toggleSubRoutine(SubRoutineTemplate subRoutine) {
@@ -422,10 +440,11 @@ class _TemplateDetailAddScreenState
                           ? '추가할 세부루틴을 선택해주세요'
                           : "세부 루틴 추가히기",
                   backgroundColor: !isSelectionValid
-                      ? AppColors.BACKGROUND_SUB
+                      ? AppColors.TEXT_INVERT
                       : AppColors.BRAND,
-                  foregroundColor:
-                      !isSelectionValid ? AppColors.TEXT_SUB : Colors.white,
+                  foregroundColor: !isSelectionValid
+                      ? AppColors.TEXT_SECONDARY
+                      : Colors.white,
                 ),
               )
             ],
