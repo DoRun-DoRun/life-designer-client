@@ -34,12 +34,9 @@ abstract class RoutineRepository {
 
   @POST("/sub_routine")
   @Headers({'accessToken': 'true'})
-  Future createSubRoutine({
-    @Field('id') required int id,
-    @Field('goal') required String goal,
-    @Field('emoji') required String emoji,
-    @Field('duration') required int duration,
-  });
+  Future<List<SubRoutineModel>> createSubRoutines(
+    @Body() List<SubRoutineModel> subRoutines,
+  );
 
   @POST("/routine/review")
   @Headers({'accessToken': 'true'})

@@ -8,6 +8,7 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/routine/repository/routine_repository.dart';
 import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
@@ -103,12 +104,14 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                           return;
                         }
                         try {
-                          await routineRepository.createSubRoutine(
-                            id: widget.id,
-                            goal: titleController.text.trim(),
-                            emoji: _emoji,
-                            duration: _durationTime!.inSeconds,
-                          );
+                          await routineRepository.createSubRoutines([
+                            SubRoutineModel(
+                              id: widget.id,
+                              goal: titleController.text.trim(),
+                              emoji: _emoji,
+                              duration: _durationTime!.inSeconds,
+                            )
+                          ]);
                           ref.invalidate(routineDetailProvider);
 
                           _durationTime = null;
