@@ -195,7 +195,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void initState() {
     super.initState();
     final user = ref.read(userMeProvider) as UserModel;
-    print(user.challenges);
+
     nameController.text = user.name ?? '';
     selectedAge = user.age ?? '';
     selectedGender = user.gender ?? '';
@@ -626,10 +626,12 @@ class SystemSettingScreen extends StatelessWidget {
 
 class SystemSettingListItem extends StatefulWidget {
   final String title;
+  final TextStyle textStyle;
 
   const SystemSettingListItem({
     super.key,
     required this.title,
+    this.textStyle = AppTextStyles.MEDIUM_16,
   });
 
   @override
@@ -646,7 +648,7 @@ class SystemSettingListItemState extends State<SystemSettingListItem> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(widget.title, style: const TextStyle(fontSize: 16)),
+          Text(widget.title, style: widget.textStyle),
           Transform.scale(
             scale: 0.8,
             child: Switch(

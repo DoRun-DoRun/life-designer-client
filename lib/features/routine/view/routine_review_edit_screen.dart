@@ -1,7 +1,6 @@
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
-// import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';

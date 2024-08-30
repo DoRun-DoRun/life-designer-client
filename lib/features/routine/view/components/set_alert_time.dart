@@ -95,9 +95,7 @@ Future<Duration?> setProcessTime({
                 child: CupertinoTimerPicker(
                   mode: CupertinoTimerPickerMode.hm,
                   initialTimerDuration: initialTime != null
-                      ? Duration(
-                          hours: initialTime.inHours,
-                          minutes: initialTime.inMinutes)
+                      ? Duration(minutes: initialTime.inMinutes)
                       : const Duration(minutes: 10),
                   minuteInterval: 1,
                   onTimerDurationChanged: (Duration newDuration) {
@@ -110,18 +108,6 @@ Future<Duration?> setProcessTime({
               ),
               Row(
                 children: [
-                  Expanded(
-                    child: CustomButton(
-                      onPressed: () {
-                        selectedTime = null; // 알림 없이 선택
-                        Navigator.of(context).pop();
-                      },
-                      title: '취소하기',
-                      backgroundColor: AppColors.BRAND_SUB,
-                      foregroundColor: AppColors.TEXT_BRAND,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
                   Expanded(
                     child: CustomButton(
                       onPressed: () {

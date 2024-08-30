@@ -6,7 +6,7 @@ String formattedAlertTime(Duration? time) {
   if (time == null) return formattedTime;
 
   if (time.inHours > 0) {
-    formattedTime = '${time.inHours}시간 ${time.inMinutes}분 전';
+    formattedTime = '${time.inHours}시간 ${time.inMinutes ~/ 60}분 전';
   } else {
     formattedTime = '${time.inMinutes}분 전';
   }
@@ -18,7 +18,7 @@ String formattedProcessTime(Duration? time) {
   if (time == null) return formattedTime;
 
   if (time.inHours > 0) {
-    formattedTime = '${time.inHours}시간 ${time.inMinutes}분';
+    formattedTime = '${time.inHours}시간 ${time.inMinutes ~/ 60}분';
   } else {
     formattedTime = '${time.inMinutes}분';
   }

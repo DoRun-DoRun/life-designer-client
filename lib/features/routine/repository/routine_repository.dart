@@ -32,6 +32,10 @@ abstract class RoutineRepository {
   @Headers({'accessToken': 'true'})
   Future<DetailRoutineModel> getRoutineDetail(@Path('id') int id);
 
+  @DELETE('/detail/{id}')
+  @Headers({'accessToken': 'true'})
+  Future<void> deleteRoutine(@Path('id') int id);
+
   @POST("/sub_routine")
   @Headers({'accessToken': 'true'})
   Future<void> createSubRoutines(

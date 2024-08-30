@@ -38,14 +38,21 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
     final TextEditingController titleController =
         TextEditingController(text: subRoutine?.goal);
 
-    bool isFormValid =
-        durationTime != null && titleController.text.trim().isNotEmpty;
-
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (BuildContext bc) {
           return StatefulBuilder(builder: (context, setState) {
+            bool isFormValid =
+                durationTime != null && titleController.text.trim().isNotEmpty;
+
+            titleController.addListener(() {
+              setState(() {
+                isFormValid = durationTime != null &&
+                    titleController.text.trim().isNotEmpty;
+              });
+            });
+
             return Padding(
               padding: MediaQuery.of(context).viewInsets,
               child: Container(
@@ -131,8 +138,8 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                             onPressed: () async {
                               final routineRepository =
                                   ref.read(routineRepositoryProvider);
-
-                              if (isFormValid) return;
+                              print(isFormValid);
+                              if (!isFormValid) return;
 
                               try {
                                 subRoutine != null
@@ -215,6 +222,12 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
         final totalDurtation = Duration(seconds: routine.totalDuration);
 
         return DefaultLayout(
+          rightIcon: IconButton(
+            onPressed: () {
+              context.push('/routine_edit/${widget.id}');
+            },
+            icon: const Icon(Icons.edit),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
