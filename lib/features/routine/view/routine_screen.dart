@@ -19,114 +19,128 @@ class RoutineScreen extends ConsumerWidget {
   const RoutineScreen({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final routineListAsyncValue = ref.watch(routineListProvider);
 
-    return DefaultLayout(
-      rightIcon: IconButton(
-        icon: const Icon(
-          Icons.notifications,
-          size: 30,
-          color: AppColors.TEXT_SUB,
-        ),
-        onPressed: () {
-          // 알림 버튼 클릭 이벤트 처리
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.BRAND,
-        shape: const CircleBorder(),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RoutineCreateScreen(),
+    return routineListAsyncValue.when(
+      data: (routines) {
+        final completedCount =
+            routines.where((routine) => routine.isFinished).length;
+        final totalCount = routines.length;
+        final double progress =
+            totalCount > 0 ? completedCount / totalCount : 0.0;
+
+        return DefaultLayout(
+          rightIcon: IconButton(
+            icon: const Icon(
+              Icons.notifications,
+              size: 30,
+              color: AppColors.TEXT_SUB,
             ),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-      child: GapColumn(
-        gap: 16,
-        children: [
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 24, bottom: 24, right: 24),
-              child: GapColumn(
-                gap: 16,
-                children: [
-                  const DateSelector(),
-                  const SizedBox(height: 8),
-                  const Text('오늘의 루틴입니다', style: AppTextStyles.BOLD_20),
-                  const Text('이제 시작이네요!', style: AppTextStyles.MEDIUM_14),
-                  LinearProgressIndicator(
-                    value: 0.1, // 진행 상태 값
-                    backgroundColor: Colors.grey[300],
-                    minHeight: 8,
-                    borderRadius: AppRadius.ROUNDED_8,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.blue),
-                  ),
-                ],
-              ),
-            ),
+            onPressed: () {
+              // 알림 버튼 클릭 이벤트 처리
+            },
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
+          floatingActionButton: FloatingActionButton(
+            foregroundColor: Colors.white,
+            backgroundColor: AppColors.BRAND,
+            shape: const CircleBorder(),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RoutineCreateScreen(),
+                ),
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+          child: GapColumn(
+            gap: 16,
+            children: [
+              Container(
                 color: Colors.white,
                 child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: routineListAsyncValue.when(
-                    data: (routines) {
-                      if (routines.isEmpty) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const RoutineCreateScreen(),
-                              ),
-                            );
-                          },
-                          child: const SizedBox(
-                            width: double.infinity,
-                            child: Center(
-                              child: Text("루틴을 생성해주세요",
-                                  style: AppTextStyles.MEDIUM_14),
-                            ),
-                          ),
-                        );
-                      }
-                      return GapColumn(
-                        gap: AppSpacing.SPACE_16,
-                        children: routines.map((routine) {
-                          return ListItem(
-                              routineId: routine.id,
-                              title: routine.name,
-                              subTitle: formatDateTime(
-                                  Duration(seconds: routine.startTime)),
-                              isButton: !routine.isFinished,
-                              isDone: routine.isFinished,
-                              onTap: () {
-                                context.push('/routine_detail/${routine.id}');
-                              });
-                        }).toList(),
-                      );
-                    },
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (error, stack) =>
-                        const Center(child: Text('Failed to load routines')),
+                  padding:
+                      const EdgeInsets.only(left: 24, bottom: 24, right: 24),
+                  child: GapColumn(
+                    gap: 16,
+                    children: [
+                      const DateSelector(),
+                      const SizedBox(height: 8),
+                      const Text('오늘의 루틴입니다', style: AppTextStyles.BOLD_20),
+                      const Text('이제 시작이네요!', style: AppTextStyles.MEDIUM_14),
+                      LinearProgressIndicator(
+                        value: progress, // 진행 상태 값
+                        backgroundColor: Colors.grey[300],
+                        minHeight: 8,
+                        borderRadius: AppRadius.ROUNDED_8,
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.blue),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: routines.isEmpty
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const RoutineCreateScreen(),
+                                  ),
+                                );
+                              },
+                              child: const SizedBox(
+                                width: double.infinity,
+                                child: Center(
+                                  child: Text("루틴을 생성해주세요",
+                                      style: AppTextStyles.MEDIUM_14),
+                                ),
+                              ),
+                            )
+                          : GapColumn(
+                              gap: AppSpacing.SPACE_16,
+                              children: routines.map((routine) {
+                                return ListItem(
+                                  routineId: routine.id,
+                                  title: routine.name,
+                                  subTitle: formatDateTime(
+                                      Duration(seconds: routine.startTime)),
+                                  isButton: !routine.isFinished,
+                                  isDone: routine.isFinished,
+                                  onTap: () {
+                                    context
+                                        .push('/routine_detail/${routine.id}');
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        );
+      },
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => const Scaffold(
+        body: Center(
+          child: Text('Failed to load routines'),
+        ),
       ),
     );
   }
@@ -149,7 +163,7 @@ class DateSelector extends StatelessWidget {
         gap: 8,
         children: [
           Text(getFormattedDate(), style: AppTextStyles.MEDIUM_20),
-          const Icon(Icons.keyboard_arrow_down, size: 30),
+          // const Icon(Icons.keyboard_arrow_down, size: 30),
         ],
       ),
     );
