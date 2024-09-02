@@ -1,9 +1,11 @@
 import 'package:dorun_app_flutter/common/component/custom_bottom_sheet.dart';
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
-import 'package:dorun_app_flutter/common/component/custom_toggle.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
+import 'package:dorun_app_flutter/common/component/gap_row.dart';
+import 'package:dorun_app_flutter/common/component/input_box.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
+import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
@@ -71,6 +73,8 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
   @override
   Widget build(BuildContext context) {
     final routineRepository = ref.read(routineRepositoryProvider);
+    TextEditingController textEditingController =
+        TextEditingController(text: widget.routine.name);
 
     void updateServerWithToggleValue(bool newValue) {
       print("API 호출 - 알람 상태: $newValue");
@@ -83,9 +87,11 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
       );
 
       if (selectedTime != null) {
-        setState(() {
-          startTime = selectedTime;
-        });
+        setState(
+          () {
+            startTime = selectedTime;
+          },
+        );
       }
     }
 
@@ -97,7 +103,10 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
           children: [
             PaddingContainer(
               width: double.infinity,
-              child: Text(widget.routine.name, style: AppTextStyles.BOLD_20),
+              child: InputBox(
+                controller: textEditingController,
+                hintText: '루틴 이름',
+              ),
             ),
             PaddingContainer(
               child: GapColumn(
@@ -122,13 +131,18 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
               child: GapColumn(
                 gap: 16,
                 children: [
-                  CustomToggle(
-                    title: '알림',
-                    textStyle: AppTextStyles.BOLD_20,
-                    padding: 0,
-                    isSwitched: widget.routine.notificationTime != null,
-                    onToggle: updateServerWithToggleValue,
+                  const Text(
+                    '알림',
+                    style: AppTextStyles.BOLD_20,
                   ),
+                  const SizedBox(height: 16),
+                  // CustomToggle(
+                  //   title: '알림',
+                  //   textStyle: AppTextStyles.BOLD_20,
+                  //   padding: 0,
+                  //   isSwitched: widget.routine.notificationTime != null,
+                  //   onToggle: updateServerWithToggleValue,
+                  // ),
                   ListItem(
                     onTap: () async {
                       alertTime = await setAlertTime(
@@ -164,38 +178,70 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
               ),
             ),
             PaddingContainer(
-              child: CustomButton(
-                onPressed: () async {
-                  final routineHistory =
-                      await _fetchRoutineReview(ref, widget.routine.id);
+              child: GapRow(
+                gap: 24,
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      foregroundColor: Colors.red,
+                      onPressed: () {
+                        try {
+                          routineRepository.deleteRoutine(widget.routine.id);
+                          context.go('/');
+                          ref.invalidate(routineListProvider);
+                        } catch (e) {
+                          print('Failed to create routine: $e');
+                        }
+                      },
+                      title: '루틴 삭제하기',
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButton(
+                      onPressed: () async {
+                        final routineHistory =
+                            await _fetchRoutineReview(ref, widget.routine.id);
 
-                  if (routineHistory == null) {
-                    context.pop();
-                    // TODO
-                    // 루틴 생성이 필요하다고 사용자에게 알려주기.
+                        if (routineHistory == null) {
+                          context.pop();
+                          // TODO
+                          // 루틴 생성이 필요하다고 사용자에게 알려주기.
 
-                    return;
-                  }
-                  context.push(
-                    '/routine_review/${widget.routine.id}',
-                    extra: routineHistory,
-                  );
-                },
-                title: '루틴 쉬어가기',
+                          return;
+                        }
+                        context.push(
+                          '/routine_review/${widget.routine.id}',
+                          extra: routineHistory,
+                        );
+                      },
+                      title: '루틴 쉬어가기',
+                    ),
+                  ),
+                ],
               ),
             ),
             PaddingContainer(
               child: CustomButton(
+                backgroundColor: AppColors.BRAND_SUB,
+                foregroundColor: AppColors.BRAND,
                 onPressed: () {
                   try {
-                    routineRepository.deleteRoutine(widget.routine.id);
+                    routineRepository.editRoutines(
+                      EditRoutineModel(
+                        routineId: widget.routine.id,
+                        goal: textEditingController.text,
+                        startTime: startTime?.inSeconds ?? 0,
+                        repeatDays: selectedDays,
+                      ),
+                    );
                     context.go('/');
                     ref.invalidate(routineListProvider);
+                    ref.invalidate(routineDetailProvider(widget.routine.id));
                   } catch (e) {
                     print('Failed to create routine: $e');
                   }
                 },
-                title: '루틴 삭제하기',
+                title: '루틴 수정하기',
               ),
             ),
           ],

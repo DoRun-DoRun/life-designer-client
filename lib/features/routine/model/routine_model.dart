@@ -26,6 +26,28 @@ class CreateRoutineModel {
 }
 
 @JsonSerializable()
+class EditRoutineModel {
+  final int routineId;
+  final String goal;
+  final int startTime;
+  final List<bool> repeatDays;
+  final int? notificationTime;
+
+  EditRoutineModel({
+    required this.routineId,
+    required this.goal,
+    required this.startTime,
+    required this.repeatDays,
+    this.notificationTime,
+  });
+
+  factory EditRoutineModel.fromJson(Map<String, dynamic> json) =>
+      _$EditRoutineModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EditRoutineModelToJson(this);
+}
+
+@JsonSerializable()
 class RoutineModel {
   final int id;
   final int startTime;
