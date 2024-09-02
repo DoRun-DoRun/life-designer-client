@@ -1,4 +1,5 @@
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
+import 'package:dorun_app_flutter/common/component/custom_toggle.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/gap_row.dart';
 import 'package:dorun_app_flutter/common/component/input_box.dart';
@@ -582,6 +583,10 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 class SystemSettingScreen extends StatelessWidget {
   const SystemSettingScreen({super.key});
 
+  void updateServerWithToggleValue(bool newValue) {
+    print("API 호출 - 알람 상태: $newValue");
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
@@ -594,13 +599,22 @@ class SystemSettingScreen extends StatelessWidget {
               decoration: const BoxDecoration(color: Colors.white),
               padding: const EdgeInsets.only(
                   left: 24, right: 24, top: 16, bottom: 8),
-              child: const GapColumn(
+              child: GapColumn(
                 children: [
-                  Text("시스템", style: AppTextStyles.BOLD_16),
-                  SizedBox(height: 16),
-                  SystemSettingListItem(title: '전체 푸시 알림'),
-                  SystemSettingListItem(title: '습관 관련 마케팅 알림'),
-                  SystemSettingListItem(title: '야간 알림 (21:00~08:00)'),
+                  const Text("시스템", style: AppTextStyles.BOLD_16),
+                  const SizedBox(height: 16),
+                  CustomToggle(
+                      title: '전체 푸시 알림',
+                      isSwitched: false,
+                      onToggle: updateServerWithToggleValue),
+                  CustomToggle(
+                      title: '습관 관련 마케팅 알림',
+                      isSwitched: false,
+                      onToggle: updateServerWithToggleValue),
+                  CustomToggle(
+                      title: '야간 알림 (21:00~08:00)',
+                      isSwitched: false,
+                      onToggle: updateServerWithToggleValue),
                 ],
               ),
             ),
@@ -608,64 +622,23 @@ class SystemSettingScreen extends StatelessWidget {
               decoration: const BoxDecoration(color: Colors.white),
               padding: const EdgeInsets.only(
                   left: 24, right: 24, top: 16, bottom: 8),
-              child: const GapColumn(
+              child: GapColumn(
                 children: [
-                  Text("세부 루틴 기본값", style: AppTextStyles.BOLD_16),
-                  SizedBox(height: 16),
-                  SystemSettingListItem(title: '타이머 완료 시 자동으로 넘어가기'),
-                  SystemSettingListItem(title: '타이머 완료 시 알림으로 알리기'),
+                  const Text("세부 루틴 기본값", style: AppTextStyles.BOLD_16),
+                  const SizedBox(height: 16),
+                  CustomToggle(
+                      title: '타이머 완료 시 자동으로 넘어가기',
+                      isSwitched: false,
+                      onToggle: updateServerWithToggleValue),
+                  CustomToggle(
+                      title: '타이머 완료 시 알림으로 알리기',
+                      isSwitched: false,
+                      onToggle: updateServerWithToggleValue),
                 ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class SystemSettingListItem extends StatefulWidget {
-  final String title;
-  final TextStyle textStyle;
-
-  const SystemSettingListItem({
-    super.key,
-    required this.title,
-    this.textStyle = AppTextStyles.MEDIUM_16,
-  });
-
-  @override
-  SystemSettingListItemState createState() => SystemSettingListItemState();
-}
-
-class SystemSettingListItemState extends State<SystemSettingListItem> {
-  bool isSwitched = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 19.5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(widget.title, style: widget.textStyle),
-          Transform.scale(
-            scale: 0.8,
-            child: Switch(
-              activeColor: Colors.white,
-              activeTrackColor: AppColors.BRAND,
-              inactiveTrackColor: AppColors.TEXT_INVERT,
-              inactiveThumbColor: Colors.white,
-              trackOutlineWidth: WidgetStateProperty.all(0),
-              value: isSwitched,
-              onChanged: (bool value) {
-                setState(() {
-                  isSwitched = value;
-                });
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

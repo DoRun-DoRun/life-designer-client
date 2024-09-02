@@ -55,7 +55,6 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
             });
           }
         }).catchError((error) {
-          // 오류 처리
           print("오류 발생: $error");
         });
       },
@@ -70,7 +69,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
           return SubRoutineHistory(
             subRoutine: data,
             duration: data.duration,
-            state: RoutineHistoyState.passed,
+            state: RoutineHistoryState.passed,
           );
         }).toList(),
       );
@@ -102,7 +101,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
 
       routineHistory!.setDurtaionTime(originTime - remainingTime, currentIndex);
       routineHistory!
-          .setRoutineState(RoutineHistoyState.complete, currentIndex);
+          .setRoutineState(RoutineHistoryState.complete, currentIndex);
 
       if (routineHistory!.histories.length > currentIndex + 1) {
         remainingTime = routineHistory!.histories[currentIndex + 1].duration;

@@ -56,11 +56,11 @@ class RoutineReviewEditScreen extends StatelessWidget {
                       routineId: subRoutine.routineId,
                       title: subRoutine.goal,
                       routinEmoji: subRoutine.emoji,
-                      subTitle: data.state == RoutineHistoyState.passed
+                      subTitle: data.state == RoutineHistoryState.passed
                           ? "건너뜀"
                           : '${data.duration ~/ 60}분 ${data.duration % 60}초',
                       actionIcon: Icons.edit,
-                      isDone: data.state == RoutineHistoyState.passed,
+                      isDone: data.state == RoutineHistoryState.passed,
                     );
                   }).toList(),
                 ),

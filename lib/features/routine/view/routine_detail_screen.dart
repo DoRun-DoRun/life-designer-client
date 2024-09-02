@@ -138,7 +138,7 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                             onPressed: () async {
                               final routineRepository =
                                   ref.read(routineRepositoryProvider);
-                              print(isFormValid);
+
                               if (!isFormValid) return;
 
                               try {
@@ -224,7 +224,7 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
         return DefaultLayout(
           rightIcon: IconButton(
             onPressed: () {
-              context.push('/routine_edit/${widget.id}');
+              context.push('/routine_edit', extra: routine);
             },
             icon: const Icon(Icons.edit),
           ),

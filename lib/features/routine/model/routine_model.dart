@@ -7,7 +7,7 @@ part 'routine_model.g.dart';
 class CreateRoutineModel {
   final String goal;
   final int startTime;
-  final String repeatDays;
+  final List<bool> repeatDays;
   final int? notificationTime;
   final List<SubRoutineTemplate>? subRoutines;
 
@@ -49,10 +49,16 @@ class DetailRoutineModel {
   final int id;
   final String name;
   final int totalDuration;
+  final int? notificationTime;
+  final List<bool> repeatDays;
+  final int startTime;
   final List<SubRoutineModel> subRoutines;
 
   DetailRoutineModel({
+    required this.notificationTime,
     required this.totalDuration,
+    required this.startTime,
+    required this.repeatDays,
     required this.name,
     required this.subRoutines,
     required this.id,
@@ -102,7 +108,7 @@ class SubRoutineRequestModel {
   Map<String, dynamic> toJson() => _$SubRoutineRequestModelToJson(this);
 }
 
-enum RoutineHistoyState { passed, complete }
+enum RoutineHistoryState { passed, complete }
 
 class RoutineHistory {
   final int routineId;
@@ -117,7 +123,7 @@ class RoutineHistory {
     histories[index].duration = duration;
   }
 
-  void setRoutineState(RoutineHistoyState state, int index) {
+  void setRoutineState(RoutineHistoryState state, int index) {
     histories[index].state = state;
   }
 }
@@ -125,7 +131,7 @@ class RoutineHistory {
 class SubRoutineHistory {
   SubRoutineModel subRoutine;
   int duration;
-  RoutineHistoyState state;
+  RoutineHistoryState state;
 
   SubRoutineHistory({
     required this.subRoutine,

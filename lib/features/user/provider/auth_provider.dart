@@ -82,12 +82,11 @@ class AuthProvider extends ChangeNotifier {
           },
         ),
         GoRoute(
-          path: '/routine_edit/:id',
+          path: '/routine_edit',
           name: RoutineEditScreen.routeName,
           builder: (context, state) {
-            final id = state.pathParameters['id']!;
             return RoutineEditScreen(
-              id: int.parse(id),
+              routine: state.extra as DetailRoutineModel,
             );
           },
         ),
