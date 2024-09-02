@@ -104,11 +104,8 @@ String formatRoutineDays(List<bool> days) {
 
   if (days.every((day) => day)) {
     return "매일";
-  } else if (days[0] &&
-      !days.sublist(1, 5).contains(false) &&
-      !days[5] &&
-      !days[6]) {
-    return "평일";
+  } else if (days.sublist(0, 5).every((day) => day) && !days[5] && !days[6]) {
+    return '평일';
   } else if (!days[0] &&
       !days.sublist(1, 5).contains(true) &&
       days[5] &&
@@ -131,10 +128,7 @@ String formatRoutineDays(List<bool> days) {
 RepeatCycle formatRoutineType(List<bool> days) {
   if (days.every((day) => day)) {
     return RepeatCycle.daily;
-  } else if (days[0] &&
-      !days.sublist(1, 5).contains(false) &&
-      !days[5] &&
-      !days[6]) {
+  } else if (days.sublist(0, 5).every((day) => day) && !days[5] && !days[6]) {
     return RepeatCycle.weekdays;
   } else if (!days[0] &&
       !days.sublist(1, 5).contains(true) &&

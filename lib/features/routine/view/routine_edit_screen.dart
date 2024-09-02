@@ -112,7 +112,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
               child: GapColumn(
                 gap: 32,
                 children: [
-                  const Text('시작 시간', style: AppTextStyles.BOLD_20),
+                  const Text('루틴 수행', style: AppTextStyles.BOLD_20),
                   ListItem(
                     onTap: () {
                       setStartTime(context);
@@ -124,6 +124,23 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                       widget.routine.totalDuration,
                     ),
                   ),
+                  ListItem(
+                    onTap: () async {
+                      List<bool>? selectedDaysData = await showRepeatOptions(
+                          context,
+                          initialRepeatCycle: formatRoutineType(selectedDays),
+                          initialWeekDays: selectedDays);
+
+                      if (selectedDaysData != null) {
+                        setState(() {
+                          selectedDays = selectedDaysData;
+                        });
+                      }
+                    },
+                    routineId: 0,
+                    title: '주기',
+                    subTitle: formatRoutineDays(selectedDays),
+                  )
                 ],
               ),
             ),
@@ -157,23 +174,6 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                         ? '알림 없음'
                         : formattedAlertTime(alertTime),
                   ),
-                  ListItem(
-                    onTap: () async {
-                      List<bool>? selectedDaysData = await showRepeatOptions(
-                          context,
-                          initialRepeatCycle: formatRoutineType(selectedDays),
-                          initialWeekDays: selectedDays);
-
-                      if (selectedDaysData != null) {
-                        setState(() {
-                          selectedDays = selectedDaysData;
-                        });
-                      }
-                    },
-                    routineId: 0,
-                    title: '주기',
-                    subTitle: formatRoutineDays(selectedDays),
-                  )
                 ],
               ),
             ),
@@ -226,6 +226,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                 foregroundColor: AppColors.BRAND,
                 onPressed: () {
                   try {
+                    print(selectedDays);
                     routineRepository.editRoutines(
                       EditRoutineModel(
                         routineId: widget.routine.id,

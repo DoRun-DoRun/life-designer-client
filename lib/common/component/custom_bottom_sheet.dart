@@ -138,7 +138,7 @@ class _RepeatOptionsModalState extends State<_RepeatOptionsModal> {
                 child: _buildRepeatOptionButton(
                     '평일', _repeatCycle == RepeatCycle.weekdays, () {
                   setState(() {
-                    _weekDays = [false, true, true, true, true, true, false];
+                    _weekDays = [true, true, true, true, true, false, false];
                     _repeatCycle = RepeatCycle.weekdays;
                   });
                   Navigator.pop(context, _weekDays);
