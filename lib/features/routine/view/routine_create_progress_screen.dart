@@ -69,16 +69,6 @@ class _RoutineCreateProgressScreenState
     return formattedTime;
   }
 
-  String convertRepeatDaysToString(List<bool> repeatDays) {
-    List<int> days = [];
-    for (int i = 0; i < repeatDays.length; i++) {
-      if (repeatDays[i]) {
-        days.add(i + 1);
-      }
-    }
-    return days.join(',');
-  }
-
   Future<void> createRoutine() async {
     final routineRepository = ref.read(routineRepositoryProvider);
 
@@ -87,7 +77,7 @@ class _RoutineCreateProgressScreenState
         CreateRoutineModel(
           goal: widget.routineGoal,
           startTime: widget.startTime.inSeconds,
-          repeatDays: convertRepeatDaysToString(widget.weekDays),
+          repeatDays: widget.weekDays,
           notificationTime: widget.alertTime?.inSeconds,
           subRoutines: widget.subRoutines,
         ),
@@ -114,6 +104,7 @@ class _RoutineCreateProgressScreenState
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
+      backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
         child: Column(

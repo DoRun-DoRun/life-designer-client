@@ -1,3 +1,4 @@
+import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:intl/intl.dart';
 
@@ -46,7 +47,7 @@ List<SubRoutineReviewModel> convertToSubRoutineReviews(
     return SubRoutineReviewModel(
       subRoutineId: history.subRoutine.id,
       timeSpent: history.duration,
-      isSkipped: history.state == RoutineHistoyState.passed,
+      isSkipped: history.state == RoutineHistoryState.passed,
     );
   }).toList();
 }
@@ -80,4 +81,67 @@ String formatTime(int seconds) {
       : "$twoDigitMinutes:$twoDigitSeconds";
 
   return isNegative ? "-$formattedTime" : formattedTime;
+}
+
+String formatTimeRange(int startTimeInSeconds, int durationInSeconds) {
+  final startTime =
+      DateTime(0, 0, 0).add(Duration(seconds: startTimeInSeconds));
+
+  final endTime = startTime.add(Duration(seconds: durationInSeconds));
+
+  final startFormatted =
+      "${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}";
+  final endFormatted =
+      "${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}";
+
+  return "$startFormatted ~ $endFormatted";
+}
+
+String formatRoutineDays(List<bool> days) {
+  if (days.every((day) => !day)) {
+    return '반복안함';
+  }
+
+  if (days.every((day) => day)) {
+    return "매일";
+  } else if (days[0] &&
+      !days.sublist(1, 5).contains(false) &&
+      !days[5] &&
+      !days[6]) {
+    return "평일";
+  } else if (!days[0] &&
+      !days.sublist(1, 5).contains(true) &&
+      days[5] &&
+      days[6]) {
+    return "주말";
+  } else {
+    List<String> dayNames = [];
+    List<String> dayMapping = ["월", "화", "수", "목", "금", "토", "일"];
+
+    for (int i = 0; i < days.length; i++) {
+      if (days[i]) {
+        dayNames.add(dayMapping[i]);
+      }
+    }
+
+    return "커스텀(${dayNames.join(", ")})";
+  }
+}
+
+RepeatCycle formatRoutineType(List<bool> days) {
+  if (days.every((day) => day)) {
+    return RepeatCycle.daily;
+  } else if (days[0] &&
+      !days.sublist(1, 5).contains(false) &&
+      !days[5] &&
+      !days[6]) {
+    return RepeatCycle.weekdays;
+  } else if (!days[0] &&
+      !days.sublist(1, 5).contains(true) &&
+      days[5] &&
+      days[6]) {
+    return RepeatCycle.weekends;
+  } else {
+    return RepeatCycle.custom;
+  }
 }

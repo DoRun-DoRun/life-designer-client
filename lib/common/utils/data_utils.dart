@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 
@@ -10,7 +12,7 @@ class DataUtils {
   }
 
   static String plainToBase64(String plain) {
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    var stringToBase64 = utf8.fuse(base64);
 
     String encoded = stringToBase64.encode(plain);
 
@@ -34,5 +36,20 @@ String calculateTotalDuration(RoutineHistory routineHistory) {
     return "${twoDigits(minutes)}분 ${twoDigits(seconds)}초";
   } else {
     return "${twoDigits(seconds)}초";
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback? action;
+  Timer? _timer;
+
+  Debouncer({required this.milliseconds});
+
+  run(VoidCallback action) {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

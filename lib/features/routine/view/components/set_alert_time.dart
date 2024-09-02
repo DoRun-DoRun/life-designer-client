@@ -12,6 +12,10 @@ Future<Duration?> setAlertTime({
 
   await showModalBottomSheet(
     context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    backgroundColor: Colors.white,
     builder: (BuildContext builder) {
       return SizedBox(
         height: 375,
@@ -82,6 +86,10 @@ Future<Duration?> setProcessTime({
 
   await showModalBottomSheet(
     context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    backgroundColor: Colors.white,
     builder: (BuildContext builder) {
       return SizedBox(
         height: 375,

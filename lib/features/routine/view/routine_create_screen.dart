@@ -1,5 +1,5 @@
+import 'package:dorun_app_flutter/common/component/custom_bottom_sheet.dart';
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
-import 'package:dorun_app_flutter/common/component/custom_icon.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/gap_row.dart';
 import 'package:dorun_app_flutter/common/component/input_box.dart';
@@ -7,10 +7,10 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/features/routine/view/components/repeat_button.dart';
 import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:dorun_app_flutter/features/search/model/search_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -74,91 +74,16 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   }
 
   Future<void> _setStartTime(BuildContext context) async {
-    DateTime tempSelectedTime = DateTime.now();
-    DateTime initialDateTime = DateTime.now();
+    Duration? selectedTime = await showTimeSelectionModal(
+      context,
+      initialTime: _selectedTime,
+    );
 
-    if (_selectedTime != null) {
-      initialDateTime = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-        _selectedTime!.inHours,
-        _selectedTime!.inMinutes,
-      );
+    if (selectedTime != null) {
+      setState(() {
+        _selectedTime = selectedTime;
+      });
     }
-
-    await showModalBottomSheet(
-      context: context,
-      builder: (BuildContext builder) {
-        return SizedBox(
-          height: 375,
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: GapColumn(
-              gap: 24,
-              children: [
-                const Text('몇시에 시작하시나요?', style: AppTextStyles.BOLD_20),
-                Expanded(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    initialDateTime: initialDateTime,
-                    onDateTimeChanged: (DateTime newTime) {
-                      tempSelectedTime = newTime;
-                    },
-                  ),
-                ),
-                CustomButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedTime = Duration(
-                          hours: tempSelectedTime.hour,
-                          minutes: tempSelectedTime.minute);
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  title: "저장",
-                  backgroundColor: AppColors.BRAND_SUB,
-                  foregroundColor: AppColors.TEXT_BRAND,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildRepeatOptionButton(String label, RepeatCycle cycle) {
-    bool isSelected = _repeatCycle == cycle;
-    return CustomButton(
-      onPressed: () {
-        setState(() {
-          _repeatCycle = cycle;
-        });
-      },
-      title: label,
-      foregroundColor: isSelected ? AppColors.BRAND : AppColors.TEXT_SECONDARY,
-      backgroundColor:
-          isSelected ? AppColors.BRAND_SUB : AppColors.BACKGROUND_SUB,
-    );
-  }
-
-  Widget _buildDayButton(String dayLabel, int index) {
-    bool isSelected = _weekDays[index];
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _weekDays[index] = !isSelected;
-        });
-      },
-      child: CustomIcon(
-        size: 36,
-        text: dayLabel,
-        primaryColor:
-            isSelected ? AppColors.BRAND_SUB : AppColors.BACKGROUND_SUB,
-        secondaryColor: isSelected ? AppColors.BRAND : AppColors.TEXT_SECONDARY,
-      ),
-    );
   }
 
   @override
@@ -205,12 +130,22 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                             gap: 16,
                             children: [
                               Expanded(
-                                child: _buildRepeatOptionButton(
-                                    '매일', RepeatCycle.daily),
+                                child: buildRepeatOptionButton(
+                                    '매일', _repeatCycle == RepeatCycle.daily,
+                                    () {
+                                  setState(() {
+                                    _repeatCycle = RepeatCycle.daily;
+                                  });
+                                }),
                               ),
                               Expanded(
-                                child: _buildRepeatOptionButton(
-                                    '평일', RepeatCycle.weekdays),
+                                child: buildRepeatOptionButton(
+                                    '평일', _repeatCycle == RepeatCycle.weekdays,
+                                    () {
+                                  setState(() {
+                                    _repeatCycle = RepeatCycle.weekdays;
+                                  });
+                                }),
                               ),
                             ],
                           ),
@@ -218,24 +153,43 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                             gap: 16,
                             children: [
                               Expanded(
-                                child: _buildRepeatOptionButton(
-                                    '주말', RepeatCycle.weekends),
+                                child: buildRepeatOptionButton(
+                                    '주말', _repeatCycle == RepeatCycle.weekends,
+                                    () {
+                                  setState(() {
+                                    _repeatCycle = RepeatCycle.weekends;
+                                  });
+                                }),
                               ),
                               Expanded(
-                                child: _buildRepeatOptionButton(
-                                    '직접 선택', RepeatCycle.custom),
+                                child: buildRepeatOptionButton(
+                                    '직접 선택', _repeatCycle == RepeatCycle.custom,
+                                    () {
+                                  setState(() {
+                                    _repeatCycle = RepeatCycle.custom;
+                                  });
+                                }),
                               ),
                             ],
                           ),
                           if (_repeatCycle == RepeatCycle.custom)
                             GapRow(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: List.generate(7, (index) {
-                                return _buildDayButton(
-                                  ['월', '화', '수', '목', '금', '토', '일'][index],
-                                  index,
-                                );
-                              }),
+                              children: List.generate(
+                                7,
+                                (index) {
+                                  return buildDayButton(
+                                    ['월', '화', '수', '목', '금', '토', '일'][index],
+                                    index,
+                                    _weekDays[index],
+                                    () {
+                                      setState(() {
+                                        _weekDays[index] = !_weekDays[index];
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
                             ),
                         ],
                       ),
