@@ -1,22 +1,21 @@
+import 'package:dorun_app_flutter/features/user/repository/user_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../../common/constant/data.dart';
 import '../../../common/secure_storage/secure_storage.dart';
 import '../model/user_model.dart';
 import '../repository/auth_repository.dart';
-import '../repository/user_me_repository.dart';
 
 final userMeProvider =
     StateNotifierProvider<UserMeStateNotifier, UserModelBase?>(
   (ref) {
     final authRepository = ref.watch(authRepositoryProvider);
-    final userMeRepository = ref.watch(userMeRepositoryProvider);
+    final userRepository = ref.watch(userRepositoryProvider);
     final storage = ref.watch(secureStorageProvider);
 
     return UserMeStateNotifier(
       authRepository: authRepository,
-      repository: userMeRepository,
+      repository: userRepository,
       storage: storage,
     );
   },
@@ -24,8 +23,14 @@ final userMeProvider =
 
 class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
   final AuthRepository authRepository;
-  final UserMeRepository repository;
+  final UserRepository repository;
   final FlutterSecureStorage storage;
+
+  @override
+  set state(UserModelBase? value) {
+    print('State is changing to: $value');
+    super.state = value;
+  }
 
   UserMeStateNotifier({
     required this.authRepository,
@@ -39,70 +44,23 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
-    // TODO: Must Remove after Testing
-    if (accessToken == 'dummy_access_token' &&
-        refreshToken == 'dummy_refresh_token') {
-      final dummyUser = UserModel(
-        id: '1',
-        username: 'test',
-        imageUrl: '/asset/images/character/bear-example.png',
-      );
-      state = dummyUser;
-      return;
-    }
+    print("GET ME");
 
     if (refreshToken == null || accessToken == null) {
       state = null;
       return;
     }
 
-    final resp = await repository.getMe();
+    print(
+        'Tokens found: refreshToken = $refreshToken, accessToken = $accessToken');
 
-    state = resp;
-  }
-
-  Future<UserModelBase> login({
-    required String username,
-    required String password,
-  }) async {
     try {
-      state = UserModelLoading();
-
-      // TODO: Must Remove after Testing
-      if (username == 'test@test.com' && password == 't12345') {
-        const dummyAccessToken = 'dummy_access_token';
-        const dummyRefreshToken = 'dummy_refresh_token';
-
-        await storage.write(key: REFRESH_TOKEN_KEY, value: dummyRefreshToken);
-        await storage.write(key: ACCESS_TOKEN_KEY, value: dummyAccessToken);
-
-        final userResp = UserModel(
-          id: '1',
-          username: 'test',
-          imageUrl: '/asset/images/character/bear-example.png',
-        );
-
-        state = userResp;
-        return userResp;
-      }
-
-      final resp = await authRepository.login(
-        username: username,
-        password: password,
-      );
-
-      await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
-      await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
-
-      final userResp = await repository.getMe();
-
-      state = userResp;
-
-      return userResp;
-    } catch (e) {
-      state = UserModelError(message: '로그인에 실패했습니다.');
-
-      return Future.value(state);
+      final resp = await repository.getMe();
+      print('User data fetched successfully: $resp');
+      state = resp;
+    } catch (error) {
+      print('Error fetching user data: $error');
+      state = null;
     }
   }
 
@@ -115,5 +73,25 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
         storage.delete(key: ACCESS_TOKEN_KEY),
       ],
     );
+  }
+
+  Future<void> signOut() async {
+    try {
+      await repository.deleteUser();
+
+      state = null;
+      // TODO
+      // 기타 캐시 invalidate 처리하기
+
+      await Future.wait(
+        [
+          storage.delete(key: REFRESH_TOKEN_KEY),
+          storage.delete(key: ACCESS_TOKEN_KEY),
+        ],
+      );
+    } catch (error) {
+      print('Error fetching user data: $error');
+      state = null;
+    }
   }
 }

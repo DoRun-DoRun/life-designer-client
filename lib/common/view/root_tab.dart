@@ -45,14 +45,13 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      customAppBar: AppBar(
-        toolbarHeight: 0,
-      ),
+      customAppBar: AppBar(toolbarHeight: 0),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_COLOR,
         unselectedItemColor: BODY_TEXT_COLOR,
         selectedFontSize: 10,
         unselectedFontSize: 10,
+        backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
           controller.animateTo(index);
@@ -64,12 +63,12 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            label: '둘러보기',
+            icon: Icon(Icons.bar_chart_outlined),
+            label: '통계',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            label: '통계',
+            icon: Icon(Icons.search_outlined),
+            label: '둘러보기',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outlined),
@@ -82,8 +81,8 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         controller: controller,
         children: const [
           RoutineScreen(),
-          SearchScreen(),
           StatisticsScreen(),
+          SearchScreen(),
           ProfileScreen()
         ],
       ),

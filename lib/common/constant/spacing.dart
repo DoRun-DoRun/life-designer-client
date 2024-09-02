@@ -17,5 +17,6 @@ class AppRadius {
   static const BorderRadius ROUNDED_4 = BorderRadius.all(Radius.circular(4));
   static const BorderRadius ROUNDED_8 = BorderRadius.all(Radius.circular(8));
   static const BorderRadius ROUNDED_16 = BorderRadius.all(Radius.circular(16));
+  static const BorderRadius ROUNDED_36 = BorderRadius.all(Radius.circular(36));
   static const BorderRadius FULL = BorderRadius.all(Radius.circular(360));
 }

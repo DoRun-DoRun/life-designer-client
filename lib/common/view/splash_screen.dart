@@ -15,15 +15,10 @@ class SplashScreen extends ConsumerWidget {
       backgroundColor: PRIMARY_COLOR,
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'asset/images/character/bear-example.png',
-              width: MediaQuery.of(context).size.width / 2,
-            ),
-            const SizedBox(height: 16.0),
-            const CircularProgressIndicator(
+            CircularProgressIndicator(
               color: Colors.white,
             ),
           ],

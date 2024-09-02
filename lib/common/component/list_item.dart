@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ListItem extends StatelessWidget {
-  final int id;
+  final int routineId;
   final String title;
   final String subTitle;
   final String routinEmoji;
@@ -18,7 +18,7 @@ class ListItem extends StatelessWidget {
 
   const ListItem({
     super.key,
-    required this.id,
+    required this.routineId,
     required this.title,
     this.subTitle = '',
     this.routinEmoji = '',
@@ -37,7 +37,7 @@ class ListItem extends StatelessWidget {
         height: 62,
         decoration: const BoxDecoration(
           color: AppColors.BACKGROUND_SUB,
-          borderRadius: AppRadius.ROUNDED_8,
+          borderRadius: AppRadius.ROUNDED_16,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.SPACE_16),
@@ -71,7 +71,8 @@ class ListItem extends StatelessWidget {
               ),
               if (isButton)
                 ElevatedButton(
-                  onPressed: () => {context.push('/routine_detail/$id')},
+                  onPressed: () =>
+                      {context.push('/routine_proceed/$routineId')},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.BRAND_SUB,
                     shape: const RoundedRectangleBorder(

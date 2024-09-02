@@ -64,10 +64,10 @@ class CustomInterceptor extends Interceptor {
       return handler.reject(err);
     }
 
-    final isStatus401 = err.response?.statusCode == 401;
+    final isStatus403 = err.response?.statusCode == 403;
     final isPathRefresh = err.requestOptions.path == '/auth/token';
 
-    if (isStatus401 && !isPathRefresh) {
+    if (isStatus403 && !isPathRefresh) {
       final dio = Dio();
 
       try {

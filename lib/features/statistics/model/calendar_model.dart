@@ -11,14 +11,14 @@ class CalendarModel extends CalendarModelBase {
 
   final int sucessRoutine;
   final int failedRoutine;
-  final int passedRoutine;
+  // final int passedRoutine;
 
   CalendarModel(
     this.date,
     this.dailyProgress,
     this.sucessRoutine,
     this.failedRoutine,
-    this.passedRoutine,
+    // this.passedRoutine,
   );
 
   factory CalendarModel.fromJson(Map<String, dynamic> json) =>

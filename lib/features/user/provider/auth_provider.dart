@@ -1,12 +1,17 @@
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_detail_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_edit_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_proceed_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_review_edit_screen.dart';
+import 'package:dorun_app_flutter/features/routine/view/routine_review_screen.dart';
+import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../common/constant/data.dart';
 import '../../../common/view/root_tab.dart';
 import '../../../common/view/splash_screen.dart';
 import '../model/user_model.dart';
@@ -38,26 +43,63 @@ class AuthProvider extends ChangeNotifier {
         GoRoute(
           path: '/routine_create',
           name: RoutineCreateScreen.routeName,
-          builder: (_, state) => const RoutineCreateScreen(),
+          builder: (context, state) => const RoutineCreateScreen(),
           routes: [
             GoRoute(
               path: 'routine_create_progress',
               name: RoutineCreateProgressScreen.routeName,
-              builder: (_, state) {
-                // state.extra에 대한 null 체크와 기본값 처리
+              builder: (context, state) {
                 final args = state.extra as Map<String, dynamic>? ?? {};
                 return RoutineCreateProgressScreen(
                   routineGoal: args['routineGoal'] as String? ?? 'Default Goal',
-                  startTime: args['startTime'] as TimeOfDay? ?? TimeOfDay.now(),
-                  repeatCycle:
-                      args['repeatCycle'] as RepeatCycle? ?? RepeatCycle.daily,
+                  startTime: args['startTime'] as Duration,
                   weekDays:
                       args['weekDays'] as List<bool>? ?? List.filled(7, false),
-                  alertTime: args['alertTime'] as String? ?? 'No Alert',
+                  alertTime: args['alertTime'] as Duration?,
+                  subRoutines: args['subRoutines'] as List<SubRoutineTemplate>?,
                 );
               },
             ),
           ],
+        ),
+        GoRoute(
+          path: '/routine_proceed/:id',
+          name: RoutineProceedScreen.routeName,
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return RoutineProceedScreen(id: int.parse(id));
+          },
+        ),
+        GoRoute(
+          path: '/routine_review_edit/:id',
+          name: RoutineReviewEditScreen.routeName,
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return RoutineReviewEditScreen(
+              id: int.parse(id),
+              routineHistory: state.extra as RoutineHistory,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/routine_edit',
+          name: RoutineEditScreen.routeName,
+          builder: (context, state) {
+            return RoutineEditScreen(
+              routine: state.extra as DetailRoutineModel,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/routine_review/:id',
+          name: RoutineReviewScreen.routeName,
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return RoutineReviewScreen(
+              id: int.parse(id),
+              routineHistory: state.extra as RoutineHistory,
+            );
+          },
         ),
         GoRoute(
           path: '/routine_detail/:id',
@@ -81,6 +123,10 @@ class AuthProvider extends ChangeNotifier {
 
   void logout() {
     ref.read(userMeProvider.notifier).logout();
+  }
+
+  void signOut() {
+    ref.read(userMeProvider.notifier).signOut();
   }
 
   String? redirectLogic(BuildContext context, GoRouterState state) {

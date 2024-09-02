@@ -22,6 +22,7 @@ class StatisticsScreen extends StatelessWidget {
       child: DefaultLayout(
         customAppBar: AppBar(
           title: const Text('통계', style: AppTextStyles.MEDIUM_16),
+          backgroundColor: Colors.white,
           bottom: const TabBar(
               indicator: UnderlineTabIndicator(
                 borderSide: BorderSide(width: 4, color: AppColors.BRAND),
@@ -104,7 +105,7 @@ class StatisticsRoutineScreen extends StatelessWidget {
       gap: 24,
       children: [
         ListItem(
-          id: 0,
+          routineId: 0,
           title: "아침 조깅하기",
           onTap: () {
             Navigator.push(
@@ -114,10 +115,10 @@ class StatisticsRoutineScreen extends StatelessWidget {
             );
           },
         ),
-        const ListItem(id: 0, title: "아침 조깅하기"),
-        const ListItem(id: 0, title: "아침 조깅하기"),
-        const ListItem(id: 0, title: "아침 조깅하기"),
-        const ListItem(id: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
+        const ListItem(routineId: 0, title: "아침 조깅하기"),
       ],
     ));
   }

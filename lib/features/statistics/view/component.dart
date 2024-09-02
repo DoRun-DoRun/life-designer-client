@@ -10,6 +10,7 @@ import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
 import 'package:dorun_app_flutter/features/statistics/view/statistics_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class WeeklyRoutine extends StatelessWidget {
   final String routineId;
@@ -44,10 +45,8 @@ class WeeklyRoutine extends StatelessWidget {
                   children: [
                     CustomIcon(
                       text: "07",
-                      primaryColor: Colors.transparent,
-                      secondaryColor: Colors.black,
+                      primaryColor: AppColors.TEXT_INVERT,
                       size: 28,
-                      progress: .4,
                     ),
                     Text(
                       "월",
@@ -81,21 +80,6 @@ class WeeklyRoutine extends StatelessWidget {
                     ),
                     Text(
                       "수",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      icon: Icons.check,
-                      primaryColor: AppColors.BRAND,
-                      size: 28,
-                    ),
-                    Text(
-                      "월",
                       style: AppTextStyles.REGULAR_12,
                     )
                   ],
@@ -144,7 +128,22 @@ class WeeklyRoutine extends StatelessWidget {
                       style: AppTextStyles.REGULAR_12,
                     )
                   ],
-                )
+                ),
+                GapColumn(
+                  gap: 4,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CustomIcon(
+                      text: "14",
+                      primaryColor: AppColors.TEXT_INVERT,
+                      size: 28,
+                    ),
+                    Text(
+                      "일",
+                      style: AppTextStyles.REGULAR_12,
+                    )
+                  ],
+                ),
               ],
             ),
           ],
@@ -343,6 +342,21 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
     required this.periodStatData,
   });
 
+  String getWeekRange() {
+    DateTime now = DateTime.now();
+    int currentWeekday = now.weekday;
+    DateTime startOfWeek =
+        now.subtract(Duration(days: currentWeekday - 1)); // Monday
+    DateTime endOfWeek = now
+        .add(Duration(days: DateTime.daysPerWeek - currentWeekday)); // Sunday
+
+    DateFormat formatter = DateFormat('MM.dd');
+    String formattedStartOfWeek = formatter.format(startOfWeek);
+    String formattedEndOfWeek = formatter.format(endOfWeek);
+
+    return '$formattedStartOfWeek ~ $formattedEndOfWeek';
+  }
+
   @override
   Widget build(BuildContext context) {
     int difference = (periodStatData.currentWeeklyProgress * 100).toInt() -
@@ -370,7 +384,7 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Text("04.21 ~ 04.27", style: AppTextStyles.REGULAR_14)
+                  Text(getWeekRange(), style: AppTextStyles.REGULAR_14)
                 ],
               ),
               CircularProgress(
@@ -403,18 +417,6 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                   style: AppTextStyles.BOLD_16)
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const IconListView(
-                text: '건너뛴 루틴',
-                icon: Icons.keyboard_double_arrow_right,
-                color: AppColors.TEXT_SECONDARY,
-              ),
-              Text('${periodStatData.passedRoutine}개',
-                  style: AppTextStyles.BOLD_16)
-            ],
-          ),
           CustomButton(
             onPressed: () {
               Navigator.push(
@@ -424,7 +426,6 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
               );
             },
             title: '자세히 보기',
-            align: TextAlign.center,
             backgroundColor: AppColors.BRAND_SUB,
             foregroundColor: AppColors.TEXT_BRAND,
           )
@@ -463,22 +464,22 @@ class DailyRoutineReportContainerState
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                RichText(
-                  text: const TextSpan(
-                      style: AppTextStyles.REGULAR_16,
+                GapRow(
+                  gap: 16,
+                  children: [
+                    const Text("22일 월요일", style: AppTextStyles.REGULAR_14),
+                    Row(
                       children: [
-                        TextSpan(
-                          text: "완료1   ",
-                          style: TextStyle(
-                            color: AppColors.TEXT_BRAND,
-                          ),
+                        Text(
+                          "완료 1",
+                          style: AppTextStyles.BOLD_16
+                              .copyWith(color: AppColors.TEXT_BRAND),
                         ),
-                        TextSpan(text: "실패2   "),
-                        TextSpan(
-                          text: "건너뜀1",
-                          style: TextStyle(color: AppColors.TEXT_SUB),
-                        )
-                      ]),
+                        const SizedBox(width: 10),
+                        const Text("실패 2", style: AppTextStyles.BOLD_16),
+                      ],
+                    ),
+                  ],
                 ),
                 Icon(
                   _isExpanded
@@ -613,10 +614,10 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
             const GapColumn(
               gap: 24,
               children: [
-                ListItem(id: 0, title: "창문열기"),
-                ListItem(id: 0, title: "창문열기"),
-                ListItem(id: 0, title: "창문열기"),
-                ListItem(id: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
+                ListItem(routineId: 0, title: "창문열기"),
               ],
             ),
         ],

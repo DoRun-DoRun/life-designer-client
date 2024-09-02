@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../common/constant/data.dart';
 import '../../../common/dio/dio.dart';
-import '../../../common/model/login_response.dart';
 import '../../../common/model/token_response.dart';
-import '../../../common/utils/data_utils.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final dio = ref.watch(dioProvider);
@@ -14,7 +12,6 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 });
 
 class AuthRepository {
-  // http://$ip/auth
   final String baseUrl;
   final Dio dio;
 
@@ -23,27 +20,7 @@ class AuthRepository {
     required this.dio,
   });
 
-  Future<LoginResponse> login({
-    required String username,
-    required String password,
-  }) async {
-    final serialized = DataUtils.plainToBase64('$username:$password');
-
-    final resp = await dio.post(
-      '$baseUrl/login',
-      options: Options(
-        headers: {
-          'authorization': 'Basic $serialized',
-        },
-      ),
-    );
-
-    return LoginResponse.fromJson(
-      resp.data,
-    );
-  }
-
-  Future<TokenResponse> token()async{
+  Future<TokenResponse> token() async {
     final resp = await dio.post(
       '$baseUrl/token',
       options: Options(
