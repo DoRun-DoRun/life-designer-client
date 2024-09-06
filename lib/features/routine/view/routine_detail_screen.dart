@@ -232,77 +232,123 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  child: GapColumn(
-                    gap: 16,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PaddingContainer(
-                        width: double.infinity,
-                        child: GapColumn(
-                          gap: 24,
-                          children: [
-                            Text(routine.name, style: AppTextStyles.BOLD_20),
-                            GapColumn(
-                              gap: 8,
-                              children: [
-                                Text(
-                                  "총 소요시간",
-                                  style: AppTextStyles.MEDIUM_14.copyWith(
-                                    color: AppColors.TEXT_SUB,
-                                  ),
+                child: GapColumn(
+                  gap: 16,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PaddingContainer(
+                      width: double.infinity,
+                      child: GapColumn(
+                        gap: 24,
+                        children: [
+                          Text(routine.name, style: AppTextStyles.BOLD_20),
+                          GapColumn(
+                            gap: 8,
+                            children: [
+                              Text(
+                                "총 소요시간",
+                                style: AppTextStyles.MEDIUM_14.copyWith(
+                                  color: AppColors.TEXT_SUB,
                                 ),
-                                Text(
-                                  "${totalDurtation.inMinutes} 분",
-                                  style: AppTextStyles.MEDIUM_20,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                              Text(
+                                "${totalDurtation.inMinutes} 분",
+                                style: AppTextStyles.MEDIUM_20,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      if (routine.subRoutines.isNotEmpty)
-                        PaddingContainer(
-                          child: GapColumn(
-                            gap: 16,
-                            children: routine.subRoutines.map((data) {
-                              return ListItem(
-                                onTap: () {
-                                  setState(() {
-                                    _emoji = data.emoji;
-                                  });
-                                  _showAddRoutineModal(context, data);
-                                },
-                                routineId: data.routineId,
-                                title: data.goal,
-                                routinEmoji: data.emoji,
-                                subTitle: '${data.duration ~/ 60}분',
+                    ),
+                    if (routine.subRoutines.isNotEmpty)
+                      Expanded(
+                        child: PaddingContainer(
+                          child: ReorderableListView.builder(
+                            onReorder: (oldIndex, newIndex) async {
+                              final routineRepository =
+                                  ref.read(routineRepositoryProvider);
+
+                              setState(() {
+                                if (newIndex > oldIndex) {
+                                  newIndex -= 1;
+                                }
+
+                                // 순서를 변경
+                                final subRoutine =
+                                    routine.subRoutines.removeAt(oldIndex);
+                                routine.subRoutines
+                                    .insert(newIndex, subRoutine);
+
+                                // 모든 subRoutine의 index를 갱신
+                                for (int i = 0;
+                                    i < routine.subRoutines.length;
+                                    i++) {
+                                  routine.subRoutines[i] =
+                                      routine.subRoutines[i].copyWith(index: i);
+                                }
+                              });
+
+                              // 변경된 index 값을 서버로 전송
+                              await routineRepository.editSubRoutineOrder(
+                                routine.subRoutines
+                                    .map((subRoutine) => SubRoutineOrderModel(
+                                          id: subRoutine.id,
+                                          index: subRoutine
+                                              .index, // 변경된 index 값을 사용
+                                        ))
+                                    .toList(),
+                                widget.id,
                               );
-                            }).toList(),
+                            },
+                            itemCount: routine.subRoutines.length,
+                            itemBuilder: (context, index) {
+                              final data = routine.subRoutines[index];
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: AppRadius.ROUNDED_16,
+                                ),
+                                key: ValueKey(data.id),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                child: ListItem(
+                                  onTap: () {
+                                    setState(() {
+                                      _emoji = data.emoji;
+                                    });
+                                    _showAddRoutineModal(context, data);
+                                  },
+                                  routineId: data.routineId,
+                                  title: data.goal,
+                                  routinEmoji: data.emoji,
+                                  subTitle: '${data.duration ~/ 60}분',
+                                ),
+                              );
+                            },
                           ),
                         ),
-                      PaddingContainer(
-                        child: GapColumn(
-                          gap: 16,
-                          children: [
-                            const Text(
-                              "루틴을 수행하고 있는지 작성해주세요",
-                              style: AppTextStyles.MEDIUM_16,
-                            ),
-                            CustomButton(
-                              onPressed: () =>
-                                  _showAddRoutineModal(context, null),
-                              icon: const Icon(
-                                Icons.add_circle,
-                                size: 25,
-                                color: AppColors.TEXT_BRAND,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
-                    ],
-                  ),
+                    PaddingContainer(
+                      child: GapColumn(
+                        gap: 16,
+                        children: [
+                          const Text(
+                            "루틴을 수행하고 있는지 작성해주세요",
+                            style: AppTextStyles.MEDIUM_16,
+                          ),
+                          CustomButton(
+                            onPressed: () =>
+                                _showAddRoutineModal(context, null),
+                            icon: const Icon(
+                              Icons.add_circle,
+                              size: 25,
+                              color: AppColors.TEXT_BRAND,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               PaddingContainer(

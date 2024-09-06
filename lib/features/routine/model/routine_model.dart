@@ -94,14 +94,34 @@ class DetailRoutineModel {
 @JsonSerializable()
 class SubRoutineModel extends SubRoutineRequestModel {
   final int id;
+  final int index;
 
   SubRoutineModel({
     required this.id,
+    required this.index,
     required super.routineId,
     required super.goal,
     required super.emoji,
     required super.duration,
   });
+
+  SubRoutineModel copyWith({
+    int? id,
+    int? index,
+    int? routineId,
+    String? goal,
+    String? emoji,
+    int? duration,
+  }) {
+    return SubRoutineModel(
+      id: id ?? this.id,
+      index: index ?? this.index,
+      routineId: routineId ?? this.routineId,
+      goal: goal ?? this.goal,
+      emoji: emoji ?? this.emoji,
+      duration: duration ?? this.duration,
+    );
+  }
 
   factory SubRoutineModel.fromJson(Map<String, dynamic> json) =>
       _$SubRoutineModelFromJson(json);
@@ -128,6 +148,19 @@ class SubRoutineRequestModel {
       _$SubRoutineRequestModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubRoutineRequestModelToJson(this);
+}
+
+@JsonSerializable()
+class SubRoutineOrderModel {
+  final int id;
+  final int index;
+
+  SubRoutineOrderModel({required this.id, required this.index});
+
+  factory SubRoutineOrderModel.fromJson(Map<String, dynamic> json) =>
+      _$SubRoutineOrderModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubRoutineOrderModelToJson(this);
 }
 
 enum RoutineHistoryState { passed, complete }

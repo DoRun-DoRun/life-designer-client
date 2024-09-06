@@ -23,7 +23,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    controller = TabController(length: 4, vsync: this);
+    controller = TabController(length: 3, vsync: this);
 
     controller.addListener(tabListener);
   }

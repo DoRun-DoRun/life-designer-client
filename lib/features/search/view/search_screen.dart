@@ -287,39 +287,43 @@ class _TemplateDetailAddScreenState
               const Text('루틴을 선택해주세요.', style: AppTextStyles.BOLD_20),
               const SizedBox(height: 36),
               routineList.when(
-                data: (routines) => Column(
-                  children: routines.map((routine) {
-                    final isSelected = routine == selectedRoutine;
+                data: (routines) => Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: routines.map((routine) {
+                        final isSelected = routine == selectedRoutine;
 
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedRoutine = routine;
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 16.0),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.BRAND_SUB
-                              : AppColors.BACKGROUND_SUB,
-                          borderRadius: AppRadius.ROUNDED_16,
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: Center(
-                          child: Text(
-                            routine.name,
-                            style: AppTextStyles.MEDIUM_16.copyWith(
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedRoutine = routine;
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 16.0),
+                            decoration: BoxDecoration(
                               color: isSelected
-                                  ? AppColors.BRAND
-                                  : AppColors.TEXT_SECONDARY,
+                                  ? AppColors.BRAND_SUB
+                                  : AppColors.BACKGROUND_SUB,
+                              borderRadius: AppRadius.ROUNDED_16,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            child: Center(
+                              child: Text(
+                                routine.name,
+                                style: AppTextStyles.MEDIUM_16.copyWith(
+                                  color: isSelected
+                                      ? AppColors.BRAND
+                                      : AppColors.TEXT_SECONDARY,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) =>

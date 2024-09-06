@@ -52,6 +52,11 @@ abstract class RoutineRepository {
   Future<void> editSubRoutine(
       @Body() SubRoutineRequestModel subRoutine, @Path('id') int id);
 
+  @PUT("/sub_routine/order/{id}")
+  @Headers({'accessToken': 'true'})
+  Future<void> editSubRoutineOrder(
+      @Body() List<SubRoutineOrderModel> subRoutines, @Path('id') int id);
+
   @DELETE("/sub_routine/{id}")
   @Headers({'accessToken': 'true'})
   Future<void> deleteSubRoutine(@Path('id') int id);
