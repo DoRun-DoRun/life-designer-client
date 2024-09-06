@@ -2,7 +2,6 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/features/profile/view/profile_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_screen.dart';
 import 'package:dorun_app_flutter/features/search/view/search_screen.dart';
-import 'package:dorun_app_flutter/features/statistics/view/statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../layout/default_layout.dart';
@@ -62,10 +61,10 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
             icon: Icon(Icons.home_outlined),
             label: '홈',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            label: '통계',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.bar_chart_outlined),
+          //   label: '통계',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search_outlined),
             label: '둘러보기',
@@ -81,7 +80,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         controller: controller,
         children: const [
           RoutineScreen(),
-          StatisticsScreen(),
+          // StatisticsScreen(),
           SearchScreen(),
           ProfileScreen()
         ],

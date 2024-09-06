@@ -6,11 +6,13 @@ import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
 import 'package:dorun_app_flutter/features/statistics/view/calendar_widget.dart';
 import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -95,37 +97,47 @@ class StatisticsPeriodScreen extends StatelessWidget {
   }
 }
 
-class StatisticsRoutineScreen extends StatelessWidget {
+class StatisticsRoutineScreen extends ConsumerWidget {
   const StatisticsRoutineScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final routineListAsyncValue = ref.watch(routineListProvider);
+
     return PaddingContainer(
-        child: GapColumn(
-      gap: 24,
-      children: [
-        ListItem(
-          routineId: 0,
-          title: "아침 조깅하기",
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const StatisticsRoutineDetail()),
-            );
-          },
-        ),
-        const ListItem(routineId: 0, title: "아침 조깅하기"),
-        const ListItem(routineId: 0, title: "아침 조깅하기"),
-        const ListItem(routineId: 0, title: "아침 조깅하기"),
-        const ListItem(routineId: 0, title: "아침 조깅하기"),
-      ],
-    ));
+      child: routineListAsyncValue.when(
+        data: (routines) {
+          return GapColumn(
+            gap: 24,
+            children: routines.map((routine) {
+              return ListItem(
+                routineId: routine.id,
+                title: routine.name,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          StatisticsRoutineDetail(routineId: routine.id),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) =>
+            const Center(child: Text('Failed to load routines')),
+      ),
+    );
   }
 }
 
 class StatisticsRoutineDetail extends StatelessWidget {
-  const StatisticsRoutineDetail({super.key});
+  final int routineId;
+
+  const StatisticsRoutineDetail({super.key, required this.routineId});
 
   Future<WeeklyModel> getWeeklyData() async {
     final routeFromJsonFile =
