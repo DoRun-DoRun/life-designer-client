@@ -179,7 +179,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                                 7,
                                 (index) {
                                   return buildDayButton(
-                                    ['월', '화', '수', '목', '금', '토', '일'][index],
+                                    ['일', '월', '화', '수', '목', '금', '토'][index],
                                     index,
                                     _weekDays[index],
                                     () {

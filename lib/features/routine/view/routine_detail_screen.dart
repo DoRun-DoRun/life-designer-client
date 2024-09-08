@@ -273,13 +273,11 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                                   newIndex -= 1;
                                 }
 
-                                // 순서를 변경
                                 final subRoutine =
                                     routine.subRoutines.removeAt(oldIndex);
                                 routine.subRoutines
                                     .insert(newIndex, subRoutine);
 
-                                // 모든 subRoutine의 index를 갱신
                                 for (int i = 0;
                                     i < routine.subRoutines.length;
                                     i++) {
@@ -288,13 +286,11 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                                 }
                               });
 
-                              // 변경된 index 값을 서버로 전송
                               await routineRepository.editSubRoutineOrder(
                                 routine.subRoutines
                                     .map((subRoutine) => SubRoutineOrderModel(
                                           id: subRoutine.id,
-                                          index: subRoutine
-                                              .index, // 변경된 index 값을 사용
+                                          index: subRoutine.index,
                                         ))
                                     .toList(),
                                 widget.id,

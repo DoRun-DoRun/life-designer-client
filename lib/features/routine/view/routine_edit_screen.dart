@@ -204,8 +204,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
 
                         if (routineHistory == null) {
                           context.pop();
-                          // TODO
-                          // 루틴 생성이 필요하다고 사용자에게 알려주기.
+                          // TODO 루틴 생성이 필요하다고 사용자에게 알려주기.
 
                           return;
                         }
@@ -226,7 +225,6 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                 foregroundColor: AppColors.BRAND,
                 onPressed: () {
                   try {
-                    print(selectedDays);
                     routineRepository.editRoutines(
                       EditRoutineModel(
                         routineId: widget.routine.id,

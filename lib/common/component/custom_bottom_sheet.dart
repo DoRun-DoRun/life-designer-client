@@ -138,7 +138,7 @@ class _RepeatOptionsModalState extends State<_RepeatOptionsModal> {
                 child: _buildRepeatOptionButton(
                     '평일', _repeatCycle == RepeatCycle.weekdays, () {
                   setState(() {
-                    _weekDays = [true, true, true, true, true, false, false];
+                    _weekDays = [false, true, true, true, true, true, false];
                     _repeatCycle = RepeatCycle.weekdays;
                   });
                   Navigator.pop(context, _weekDays);
@@ -152,7 +152,7 @@ class _RepeatOptionsModalState extends State<_RepeatOptionsModal> {
                 child: _buildRepeatOptionButton(
                     '주말', _repeatCycle == RepeatCycle.weekends, () {
                   setState(() {
-                    _weekDays = [false, false, false, false, false, true, true];
+                    _weekDays = [true, false, false, false, false, false, true];
                     _repeatCycle = RepeatCycle.weekends;
                   });
                   Navigator.pop(context, _weekDays);
@@ -178,7 +178,7 @@ class _RepeatOptionsModalState extends State<_RepeatOptionsModal> {
                   7,
                   (index) {
                     return _buildDayButton(
-                      ['월', '화', '수', '목', '금', '토', '일'][index],
+                      ['일', '월', '화', '수', '목', '금', '토'][index],
                       index,
                       _weekDays[index],
                       () {
