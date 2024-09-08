@@ -24,12 +24,12 @@ String getNextDay(List<bool> repeatDays) {
     int nextDay = (today + i) % 7;
     if (repeatDays[nextDay]) {
       String nextDayName = DateFormat('EEEE', 'ko_KR')
-          .format(DateTime.now().add(Duration(days: i + 1)));
-      return "$nextDayName에 시작";
+          .format(DateTime.now().add(Duration(days: i)));
+      return "$nextDayName 시작";
     }
   }
 
-  return "반복 일자 없음";
+  return "반복 안함";
 }
 
 class RoutineScreen extends ConsumerWidget {
@@ -45,7 +45,7 @@ class RoutineScreen extends ConsumerWidget {
       data: (routines) {
         final completedCount =
             routines.where((routine) => routine.isFinished).length;
-        final totalCount = routines.length;
+        final totalCount = routines.where((routine) => routine.isToday).length;
         final double progress =
             totalCount > 0 ? completedCount / totalCount : 0.0;
 
@@ -133,13 +133,15 @@ class RoutineScreen extends ConsumerWidget {
                                   subTitle: routine.isFinished
                                       ? "완료됨"
                                       : routine.isToday
-                                          ? getNextDay(routine.repeatDays)
-                                          : formatDateTime(
+                                          ? formatDateTime(
                                               Duration(
                                                   seconds: routine.startTime),
-                                            ),
-                                  isButton: !routine.isFinished,
-                                  isDone: routine.isFinished || routine.isToday,
+                                            )
+                                          : getNextDay(routine.repeatDays),
+                                  isButton:
+                                      !routine.isFinished && routine.isToday,
+                                  isDone:
+                                      routine.isFinished || !routine.isToday,
                                   onTap: () {
                                     context
                                         .push('/routine_detail/${routine.id}');
