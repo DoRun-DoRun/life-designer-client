@@ -31,7 +31,7 @@ abstract class RoutineRepository {
 
   @PUT('/')
   @Headers({'accessToken': 'true'})
-  Future<RoutineModel> editRoutines(@Body() EditRoutineModel editRoutineModel);
+  Future<void> editRoutines(@Body() EditRoutineModel editRoutineModel);
 
   @GET('/detail/{id}')
   @Headers({'accessToken': 'true'})

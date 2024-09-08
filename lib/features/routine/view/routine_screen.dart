@@ -13,6 +13,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+String getNextDay(List<bool> repeatDays) {
+  int today = DateTime.now().weekday % 7;
+
+  if (!repeatDays.contains(true)) {
+    return "반복 일자 없음";
+  }
+
+  for (int i = 0; i < 7; i++) {
+    int nextDay = (today + i) % 7;
+    if (repeatDays[nextDay]) {
+      String nextDayName = DateFormat('EEEE', 'ko_KR')
+          .format(DateTime.now().add(Duration(days: i + 1)));
+      return "$nextDayName에 시작";
+    }
+  }
+
+  return "반복 일자 없음";
+}
+
 class RoutineScreen extends ConsumerWidget {
   static String get routeName => 'routine';
 
@@ -37,9 +56,7 @@ class RoutineScreen extends ConsumerWidget {
               size: 30,
               color: AppColors.TEXT_SUB,
             ),
-            onPressed: () {
-              // 알림 버튼 클릭 이벤트 처리
-            },
+            onPressed: () {},
           ),
           floatingActionButton: FloatingActionButton(
             foregroundColor: Colors.white,
@@ -71,7 +88,7 @@ class RoutineScreen extends ConsumerWidget {
                       const Text('오늘의 루틴입니다', style: AppTextStyles.BOLD_20),
                       const Text('이제 시작이네요!', style: AppTextStyles.MEDIUM_14),
                       LinearProgressIndicator(
-                        value: progress, // 진행 상태 값
+                        value: progress,
                         backgroundColor: Colors.grey[300],
                         minHeight: 8,
                         borderRadius: AppRadius.ROUNDED_8,
@@ -113,10 +130,16 @@ class RoutineScreen extends ConsumerWidget {
                                 return ListItem(
                                   routineId: routine.id,
                                   title: routine.name,
-                                  subTitle: formatDateTime(
-                                      Duration(seconds: routine.startTime)),
+                                  subTitle: routine.isFinished
+                                      ? "완료됨"
+                                      : routine.isToday
+                                          ? getNextDay(routine.repeatDays)
+                                          : formatDateTime(
+                                              Duration(
+                                                  seconds: routine.startTime),
+                                            ),
                                   isButton: !routine.isFinished,
-                                  isDone: routine.isFinished,
+                                  isDone: routine.isFinished || routine.isToday,
                                   onTap: () {
                                     context
                                         .push('/routine_detail/${routine.id}');
@@ -163,7 +186,6 @@ class DateSelector extends StatelessWidget {
         gap: 8,
         children: [
           Text(getFormattedDate(), style: AppTextStyles.MEDIUM_20),
-          // const Icon(Icons.keyboard_arrow_down, size: 30),
         ],
       ),
     );
