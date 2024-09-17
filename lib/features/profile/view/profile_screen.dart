@@ -8,6 +8,7 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/user/model/user_model.dart';
 import 'package:dorun_app_flutter/features/user/provider/auth_provider.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -23,6 +25,14 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final user = ref.read(userMeProvider) as UserModel;
+
+    Future<void> launchURL(url) async {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        throw 'Could not launch $url';
+      }
+    }
 
     return DefaultLayout(
       title: 'MY',
@@ -81,38 +91,57 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            ProfileListItem(
-              text: "시스템 설정",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SystemSettingScreen()),
-                );
-              },
-            ),
-            const Column(
+            // ProfileListItem(
+            //   text: "시스템 설정",
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => const SystemSettingScreen()),
+            //     );
+            //   },
+            // ),
+            Column(
               children: [
-                ProfileListItem(text: "공지 사항"),
-                ProfileListItem(text: "업데이트 정보"),
-                ProfileListItem(text: "FAQ"),
-                ProfileListItem(text: "피드백"),
-                ProfileListItem(text: "이용약관"),
                 ProfileListItem(
+                  text: "공지 사항",
+                  onTap: () => launchURL(
+                    Uri.parse('https://life-designer.notion.site/'),
+                  ),
+                ),
+                // const ProfileListItem(text: "업데이트 정보"),
+                // const ProfileListItem(text: "FAQ"),
+                // const ProfileListItem(text: "피드백"),
+                ProfileListItem(
+                  text: "이용약관",
+                  onTap: () => launchURL(
+                    Uri.parse(
+                        'https://life-designer.notion.site/104ddd0f35ba80d59d94ee77e8bdadd2'),
+                  ),
+                ),
+                const ProfileListItem(
                   text: "앱버전 1.0.1",
-                  isUpdate: true,
+                  isUpdate: false,
                 ),
               ],
             ),
             Column(
               children: [
                 ProfileListItem(
-                  onTap: () => {ref.read(authProvider.notifier).logout()},
+                  onTap: () => {
+                    ref.invalidate(routineListProvider),
+                    ref.invalidate(userMeProvider),
+                    ref.read(authProvider.notifier).logout(),
+                  },
                   text: "로그아웃",
                   color: AppColors.TEXT_SUB,
                 ),
                 ProfileListItem(
-                  onTap: () => {ref.read(authProvider.notifier).signOut()},
+                  onTap: () => {
+                    ref.invalidate(routineListProvider),
+                    ref.invalidate(userMeProvider),
+                    ref.read(authProvider.notifier).signOut()
+                  },
                   text: "회원탈퇴",
                   color: const Color(0xFFFF0000),
                 ),

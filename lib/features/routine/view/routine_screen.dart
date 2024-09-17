@@ -50,14 +50,14 @@ class RoutineScreen extends ConsumerWidget {
             totalCount > 0 ? completedCount / totalCount : 0.0;
 
         return DefaultLayout(
-          rightIcon: IconButton(
-            icon: const Icon(
-              Icons.notifications,
-              size: 30,
-              color: AppColors.TEXT_SUB,
-            ),
-            onPressed: () {},
-          ),
+          // rightIcon: IconButton(
+          //   icon: const Icon(
+          //     Icons.notifications,
+          //     size: 30,
+          //     color: AppColors.TEXT_SUB,
+          //   ),
+          //   onPressed: () {},
+          // ),
           floatingActionButton: FloatingActionButton(
             foregroundColor: Colors.white,
             backgroundColor: AppColors.BRAND,
@@ -135,7 +135,8 @@ class RoutineScreen extends ConsumerWidget {
                                       : routine.isToday
                                           ? formatDateTime(
                                               Duration(
-                                                  seconds: routine.startTime),
+                                                seconds: routine.startTime,
+                                              ),
                                             )
                                           : getNextDay(routine.repeatDays),
                                   isButton:
@@ -162,9 +163,9 @@ class RoutineScreen extends ConsumerWidget {
           child: CircularProgressIndicator(),
         ),
       ),
-      error: (error, stack) => const Scaffold(
+      error: (error, stack) => Scaffold(
         body: Center(
-          child: Text('Failed to load routines'),
+          child: Text('Failed to load routines $error'),
         ),
       ),
     );
