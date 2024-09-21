@@ -43,6 +43,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ref.read(userMeProvider.notifier).getMe();
       } catch (error) {
         if (mounted) {
+          print('로그인 실패: ${error.toString()}');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('로그인 실패: ${error.toString()}'),
