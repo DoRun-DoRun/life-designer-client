@@ -33,7 +33,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final userRepository = ref.watch(userRepositoryProvider);
 
-    void login(email, authProvider) async {
+    void login(email, String authProvider) async {
       try {
         final tokens = await userRepository.login(
           email: email,
@@ -42,7 +42,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         await saveTokens(tokens.accessToken, tokens.refreshToken);
         ref.read(userMeProvider.notifier).getMe();
       } catch (error) {
-        print('Login failed: $error');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('로그인 실패: ${error.toString()}'),
+            ),
+          );
+        } else {
+          print('로그인 실패: ${error.toString()}');
+        }
       }
     }
 
@@ -62,7 +70,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         await googleSignIn.signIn();
         login(googleSignIn.currentUser?.email, "Google");
       } catch (error) {
-        print(error);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('로그인 실패: ${error.toString()}'),
+            ),
+          );
+        } else {
+          print('로그인 실패: ${error.toString()}');
+        }
       }
     }
 
@@ -83,29 +99,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Text('5초 가입으로 좋은 습관들을 만들어보세요',
                       style: AppTextStyles.MEDIUM_14),
                   SizedBox(height: 32.0),
-                  // ElevatedButton(
-                  //   onPressed: state is UserModelLoading
-                  //       ? null
-                  //       : () async {
-                  //           //TODO: Must Remove after Testing
-                  //           if (username == 'test@test.com' &&
-                  //               password == 't12345') {
-                  //             context.goNamed(RootTab.routeName);
-                  //           } else {
-                  //             // 실제 로그인 로직 실행
-                  //             ref.read(userMeProvider.notifier).login(
-                  //                   username: username,
-                  //                   password: password,
-                  //                 );
-                  //           }
-                  //         },
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: AppColors.BACKGROUND_SUB,
-                  //   ),
-                  //   child: const Text(
-                  //     '로그인',
-                  //   ),
-                  // ),
                 ],
               ),
             ),
