@@ -79,11 +79,9 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
       initialTime: _selectedTime,
     );
 
-    if (selectedTime != null) {
-      setState(() {
-        _selectedTime = selectedTime;
-      });
-    }
+    setState(() {
+      _selectedTime = selectedTime;
+    });
   }
 
   @override

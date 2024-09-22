@@ -86,13 +86,11 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
         initialTime: startTime,
       );
 
-      if (selectedTime != null) {
-        setState(
-          () {
-            startTime = selectedTime;
-          },
-        );
-      }
+      setState(
+        () {
+          startTime = selectedTime;
+        },
+      );
     }
 
     return DefaultLayout(
@@ -131,11 +129,9 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                           initialRepeatCycle: formatRoutineType(selectedDays),
                           initialWeekDays: selectedDays);
 
-                      if (selectedDaysData != null) {
-                        setState(() {
-                          selectedDays = selectedDaysData;
-                        });
-                      }
+                      setState(() {
+                        selectedDays = selectedDaysData ?? [];
+                      });
                     },
                     routineId: 0,
                     title: '주기',
