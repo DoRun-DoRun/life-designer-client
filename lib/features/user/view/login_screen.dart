@@ -11,10 +11,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../common/layout/default_layout.dart';
+
+String? decodeAndExtractEmail(String identityToken) {
+  try {
+    // identityToken을 디코드
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(identityToken);
+
+    // 이메일 정보 추출
+    String? email = decodedToken['email'];
+
+    if (email != null) {
+      return email;
+    }
+  } catch (error) {
+    print('Failed to decode JWT: $error');
+  }
+  return null;
+}
 
 class LoginScreen extends ConsumerStatefulWidget {
   static String get routeName => 'login';
@@ -140,11 +158,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Platform.isIOS
                     ? GestureDetector(
                         onTap: () {
-                          SignInWithApple.getAppleIDCredential(scopes: [
-                            // 사용할 사용자 정보 범위
-                          ]).then((AuthorizationCredentialAppleID user) {
+                          SignInWithApple.getAppleIDCredential(
+                            scopes: [AppleIDAuthorizationScopes.email],
+                          ).then((AuthorizationCredentialAppleID user) {
+                            print(user.identityToken);
+
                             if (user.email != null) {
                               login(user.email, "Apple");
+                            } else if (user.identityToken != null) {
+                              login(
+                                decodeAndExtractEmail(user.identityToken!),
+                                "Apple",
+                              );
                             }
                             // 로그인 후 로직
                           }).onError((error, stackTrace) {
