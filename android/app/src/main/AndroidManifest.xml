@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="life_designer_client"
+        android:label="Life Designer"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
