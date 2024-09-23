@@ -57,7 +57,7 @@ class _RoutineCreateProgressScreenState
           progress = 1.0;
           timer.cancel();
 
-          context.pushReplacement('/');
+          context.go('/');
         }
       });
     });

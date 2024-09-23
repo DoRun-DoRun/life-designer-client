@@ -7,7 +7,6 @@ import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
-import 'package:dorun_app_flutter/features/routine/view/routine_create_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -63,12 +62,7 @@ class RoutineScreen extends ConsumerWidget {
             backgroundColor: AppColors.BRAND,
             shape: const CircleBorder(),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const RoutineCreateScreen(),
-                ),
-              );
+              context.push('/routine_create');
             },
             child: const Icon(Icons.add),
           ),
@@ -108,13 +102,7 @@ class RoutineScreen extends ConsumerWidget {
                       child: routines.isEmpty
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const RoutineCreateScreen(),
-                                  ),
-                                );
+                                context.push('/routine_create');
                               },
                               child: const SizedBox(
                                 width: double.infinity,

@@ -7,20 +7,21 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/view/components/repeat_button.dart';
 import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
-import 'package:dorun_app_flutter/features/routine/view/routine_create_progress_screen.dart';
 import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/constant/data.dart';
 
 class RoutineCreateScreen extends StatefulWidget {
   static String get routeName => 'routineCreate';
-  final RoutineTemplate? routineTemplate;
+  final RoutineTemplate? routine;
 
-  const RoutineCreateScreen({super.key, this.routineTemplate});
+  const RoutineCreateScreen({super.key, this.routine});
 
   @override
   State<RoutineCreateScreen> createState() => _RoutineCreateScreenState();
@@ -44,8 +45,8 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
   void initState() {
     super.initState();
 
-    if (widget.routineTemplate != null) {
-      _routineGoal = widget.routineTemplate!.goal;
+    if (widget.routine != null) {
+      _routineGoal = widget.routine!.goal;
       _textController.text = _routineGoal!;
     }
   }
@@ -216,16 +217,14 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                 _repeatCycle != null)
               CustomButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RoutineCreateProgressScreen(
-                        routineGoal: _routineGoal!,
-                        startTime: _selectedTime!,
-                        weekDays: createRepeatDays(_repeatCycle!, _weekDays),
-                        alertTime: _alertTime,
-                        subRoutines: widget.routineTemplate?.subRoutines,
-                      ),
+                  context.go(
+                    '/routine_create_progress',
+                    extra: RoutineCreateProgressArgs(
+                      routineGoal: _routineGoal!,
+                      startTime: _selectedTime!,
+                      weekDays: createRepeatDays(_repeatCycle!, _weekDays),
+                      alertTime: _alertTime,
+                      subRoutines: widget.routine?.subRoutines,
                     ),
                   );
                 },

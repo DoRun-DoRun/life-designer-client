@@ -7,6 +7,8 @@ import 'package:dorun_app_flutter/features/routine/view/routine_proceed_screen.d
 import 'package:dorun_app_flutter/features/routine/view/routine_review_edit_screen.dart';
 import 'package:dorun_app_flutter/features/routine/view/routine_review_screen.dart';
 import 'package:dorun_app_flutter/features/search/model/search_model.dart';
+import 'package:dorun_app_flutter/features/search/view/template_detail_add_screen.dart';
+import 'package:dorun_app_flutter/features/search/view/template_detail_screen.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,70 +45,86 @@ class AuthProvider extends ChangeNotifier {
         GoRoute(
           path: '/routine_create',
           name: RoutineCreateScreen.routeName,
-          builder: (context, state) => const RoutineCreateScreen(),
-          routes: [
-            GoRoute(
-              path: 'routine_create_progress',
-              name: RoutineCreateProgressScreen.routeName,
-              builder: (context, state) {
-                final args = state.extra as Map<String, dynamic>? ?? {};
-                return RoutineCreateProgressScreen(
-                  routineGoal: args['routineGoal'] as String? ?? 'Default Goal',
-                  startTime: args['startTime'] as Duration,
-                  weekDays:
-                      args['weekDays'] as List<bool>? ?? List.filled(7, false),
-                  alertTime: args['alertTime'] as Duration?,
-                  subRoutines: args['subRoutines'] as List<SubRoutineTemplate>?,
-                );
-              },
-            ),
-          ],
+          builder: (context, state) {
+            RoutineTemplate? routine;
+
+            routine = state.extra as RoutineTemplate?;
+            return RoutineCreateScreen(
+              routine: routine,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/routine_create_progress',
+          name: RoutineCreateProgressScreen.routeName,
+          builder: (context, state) {
+            final args = state.extra as RoutineCreateProgressArgs;
+
+            return RoutineCreateProgressScreen(
+              routineGoal: args.routineGoal,
+              startTime: args.startTime,
+              weekDays: args.weekDays,
+              alertTime: args.alertTime,
+              subRoutines: args.subRoutines,
+            );
+          },
         ),
         GoRoute(
           path: '/routine_proceed/:id',
           name: RoutineProceedScreen.routeName,
-          builder: (context, state) {
-            final id = state.pathParameters['id']!;
-            return RoutineProceedScreen(id: int.parse(id));
-          },
+          builder: (context, state) => RoutineProceedScreen(
+            id: int.parse(state.pathParameters['id']!),
+          ),
         ),
         GoRoute(
           path: '/routine_review_edit/:id',
           name: RoutineReviewEditScreen.routeName,
-          builder: (context, state) {
-            final id = state.pathParameters['id']!;
-            return RoutineReviewEditScreen(
-              id: int.parse(id),
-              routineHistory: state.extra as RoutineHistory,
-            );
-          },
+          builder: (context, state) => RoutineReviewEditScreen(
+            id: int.parse(state.pathParameters['id']!),
+            routineHistory: state.extra as RoutineHistory,
+          ),
         ),
         GoRoute(
           path: '/routine_edit',
           name: RoutineEditScreen.routeName,
-          builder: (context, state) {
-            return RoutineEditScreen(
-              routine: state.extra as DetailRoutineModel,
-            );
-          },
+          builder: (context, state) => RoutineEditScreen(
+            routine: state.extra as DetailRoutineModel,
+          ),
         ),
         GoRoute(
           path: '/routine_review/:id',
           name: RoutineReviewScreen.routeName,
-          builder: (context, state) {
-            final id = state.pathParameters['id']!;
-            return RoutineReviewScreen(
-              id: int.parse(id),
-              routineHistory: state.extra as RoutineHistory,
-            );
-          },
+          builder: (context, state) => RoutineReviewScreen(
+            id: int.parse(state.pathParameters['id']!),
+            routineHistory: state.extra as RoutineHistory,
+          ),
         ),
         GoRoute(
           path: '/routine_detail/:id',
           name: RoutineDetailScreen.routeName,
+          builder: (context, state) => RoutineDetailScreen(
+            id: int.parse(state.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/template_detail',
+          name: TemplateDetailScreen.routeName,
           builder: (context, state) {
-            final id = state.pathParameters['id']!;
-            return RoutineDetailScreen(id: int.parse(id));
+            final routine = state.extra as RoutineTemplate;
+            return TemplateDetailScreen(
+              routine: routine,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/template_detail_add',
+          name: TemplateDetailAddScreen.routeName,
+          builder: (context, state) {
+            final args = state.extra as Map<String, dynamic>;
+            return TemplateDetailAddScreen(
+              routine: args['routine']! as RoutineTemplate,
+              selectedRoutine: args['selectedRoutine']! as SubRoutineTemplate,
+            );
           },
         ),
         GoRoute(

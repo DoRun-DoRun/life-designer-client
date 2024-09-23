@@ -236,3 +236,19 @@ class SubRoutineReviewModel {
 
   Map<String, dynamic> toJson() => _$SubRoutineReviewModelToJson(this);
 }
+
+class RoutineCreateProgressArgs {
+  final String routineGoal;
+  final Duration startTime;
+  final List<bool> weekDays;
+  final Duration? alertTime;
+  final List<SubRoutineTemplate>? subRoutines;
+
+  RoutineCreateProgressArgs({
+    required this.routineGoal,
+    required this.startTime,
+    required this.weekDays,
+    this.alertTime,
+    this.subRoutines,
+  });
+}
