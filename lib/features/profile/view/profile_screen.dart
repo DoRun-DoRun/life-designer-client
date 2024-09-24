@@ -238,7 +238,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.read(userMeProvider) as UserModel;
+    // final user = ref.read(userMeProvider) as UserModel;
     final userRepository = ref.watch(userRepositoryProvider);
 
     void showYearPicker(
@@ -478,23 +478,23 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.camera_alt,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
+                    // Positioned(
+                    //   right: 0,
+                    //   bottom: 0,
+                    //   child: Container(
+                    //     width: 30,
+                    //     height: 30,
+                    //     decoration: const BoxDecoration(
+                    //       color: Colors.black,
+                    //       shape: BoxShape.circle,
+                    //     ),
+                    //     child: const Icon(
+                    //       Icons.camera_alt,
+                    //       size: 20,
+                    //       color: Colors.white,
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
               ),
