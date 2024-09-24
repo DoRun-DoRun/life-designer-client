@@ -72,12 +72,12 @@ class ProfileScreen extends ConsumerWidget {
                           children: [
                             Text(user.name ?? '이름없는 루티너',
                                 style: AppTextStyles.REGULAR_14),
-                            Text(
-                              user.email,
-                              style: AppTextStyles.REGULAR_12.copyWith(
-                                color: AppColors.TEXT_SUB,
-                              ),
-                            ),
+                            // Text(
+                            //   user.email,
+                            //   style: AppTextStyles.REGULAR_12.copyWith(
+                            //     color: AppColors.TEXT_SUB,
+                            //   ),
+                            // ),
                           ],
                         )
                       ],
@@ -506,16 +506,16 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   GapColumn(
                     gap: 24,
                     children: [
-                      Text(
-                        "이메일",
-                        style: AppTextStyles.MEDIUM_12
-                            .copyWith(color: AppColors.TEXT_SUB),
-                      ),
-                      Text(
-                        user.email,
-                        style: AppTextStyles.REGULAR_16
-                            .copyWith(color: AppColors.TEXT_SUB),
-                      ),
+                      // Text(
+                      //   "이메일",
+                      //   style: AppTextStyles.MEDIUM_12
+                      //       .copyWith(color: AppColors.TEXT_SUB),
+                      // ),
+                      // Text(
+                      //   user.email,
+                      //   style: AppTextStyles.REGULAR_16
+                      //       .copyWith(color: AppColors.TEXT_SUB),
+                      // ),
                       InputBox(controller: nameController, hintText: '이름'),
                       ReadOnlyBox(
                         hintText: "성별",
