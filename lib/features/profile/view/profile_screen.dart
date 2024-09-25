@@ -68,10 +68,9 @@ class ProfileScreen extends ConsumerWidget {
                             color: Colors.white,
                           ),
                         ),
-                        GapColumn(
+                        const GapColumn(
                           children: [
-                            Text(user.name ?? '이름없는 루티너',
-                                style: AppTextStyles.REGULAR_14),
+                            Text('사용자 계정 설정', style: AppTextStyles.REGULAR_14),
                             // Text(
                             //   user.email,
                             //   style: AppTextStyles.REGULAR_12.copyWith(
@@ -119,10 +118,10 @@ class ProfileScreen extends ConsumerWidget {
                         'https://life-designer.notion.site/104ddd0f35ba80d59d94ee77e8bdadd2'),
                   ),
                 ),
-                const ProfileListItem(
-                  text: "앱버전 1.0.1",
-                  isUpdate: false,
-                ),
+                // const ProfileListItem(
+                //   text: "앱버전 1.0.1",
+                //   isUpdate: false,
+                // ),
               ],
             ),
             Column(
@@ -516,7 +515,11 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       //   style: AppTextStyles.REGULAR_16
                       //       .copyWith(color: AppColors.TEXT_SUB),
                       // ),
-                      InputBox(controller: nameController, hintText: '이름'),
+                      InputBox(
+                        controller: nameController,
+                        hintText: '이름',
+                        focused: nameController.text != '',
+                      ),
                       ReadOnlyBox(
                         hintText: "성별",
                         inputText: selectedGender,
@@ -584,8 +587,8 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     ],
                   ),
                   CustomButton(
-                    onPressed: () {
-                      userRepository.updateUser(
+                    onPressed: () async {
+                      await userRepository.updateUser(
                         name: nameController.text,
                         age: selectedAge,
                         job: selectedJob,
@@ -593,7 +596,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         challenges: selectedDifficulties,
                       );
                       ref.invalidate(userMeProvider);
-                      context.pop();
+                      if (context.mounted) context.pop();
                     },
                     title: "수정하기",
                     backgroundColor: AppColors.BRAND,

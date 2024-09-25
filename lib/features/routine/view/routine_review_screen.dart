@@ -40,11 +40,11 @@ class _RoutineReviewScreenState extends ConsumerState<RoutineReviewScreen> {
     final TextEditingController textController = TextEditingController();
 
     return DefaultLayout(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SingleChildScrollView(
-            child: PaddingContainer(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            PaddingContainer(
               child: Column(
                 children: [
                   const SizedBox(height: 24),
@@ -117,45 +117,47 @@ class _RoutineReviewScreenState extends ConsumerState<RoutineReviewScreen> {
                 ],
               ),
             ),
-          ),
-          if (selectedText != '')
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: textController,
-              builder: (context, value, child) {
-                return PaddingContainer(
-                  child: CustomButton(
-                    onPressed: () async {
-                      final routineRepository =
-                          ref.read(routineRepositoryProvider);
-                      try {
-                        await routineRepository.createRoutineReview(
-                          RoutineReviewModel(
-                            routineId: widget.id,
-                            overallRating: mapTextToOverallRating(selectedText),
-                            comments: textController.text,
-                            subRoutineReviews: convertToSubRoutineReviews(
-                              widget.routineHistory,
+            if (selectedText != '')
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: textController,
+                builder: (context, value, child) {
+                  return PaddingContainer(
+                    child: CustomButton(
+                      onPressed: () async {
+                        final routineRepository =
+                            ref.read(routineRepositoryProvider);
+                        try {
+                          await routineRepository.createRoutineReview(
+                            RoutineReviewModel(
+                              routineId: widget.id,
+                              overallRating:
+                                  mapTextToOverallRating(selectedText),
+                              comments: textController.text,
+                              subRoutineReviews: convertToSubRoutineReviews(
+                                widget.routineHistory,
+                              ),
                             ),
-                          ),
-                        );
+                          );
 
-                        ref.invalidate(routineListProvider);
-                        context.go('/');
-                      } catch (e) {
-                        print('Failed to create routine: $e');
-                      }
-                    },
-                    title: value.text.isEmpty ? '건너뛰기' : '확인',
-                    backgroundColor: value.text.isEmpty
-                        ? AppColors.BACKGROUND_SUB
-                        : AppColors.BRAND,
-                    foregroundColor:
-                        value.text.isEmpty ? AppColors.TEXT_SUB : Colors.white,
-                  ),
-                );
-              },
-            ),
-        ],
+                          ref.invalidate(routineListProvider);
+                          context.go('/');
+                        } catch (e) {
+                          print('Failed to create routine: $e');
+                        }
+                      },
+                      title: value.text.isEmpty ? '건너뛰기' : '확인',
+                      backgroundColor: value.text.isEmpty
+                          ? AppColors.BACKGROUND_SUB
+                          : AppColors.BRAND,
+                      foregroundColor: value.text.isEmpty
+                          ? AppColors.TEXT_SUB
+                          : Colors.white,
+                    ),
+                  );
+                },
+              ),
+          ],
+        ),
       ),
     );
   }

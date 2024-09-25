@@ -207,6 +207,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       controller: _textController,
                       hintText: '루틴 목표',
                       onSubmitted: _setRoutineGoal,
+                      focused: _textController.text != '',
                     ),
                   ],
                 ),

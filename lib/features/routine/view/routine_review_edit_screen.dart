@@ -59,7 +59,7 @@ class RoutineReviewEditScreen extends StatelessWidget {
                       subTitle: data.state == RoutineHistoryState.passed
                           ? "건너뜀"
                           : '${data.duration ~/ 60}분 ${data.duration % 60}초',
-                      actionIcon: Icons.edit,
+                      actionIcon: null,
                       isDone: data.state == RoutineHistoryState.passed,
                     );
                   }).toList(),

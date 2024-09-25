@@ -8,10 +8,12 @@ class InputBox extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final ValueChanged<String>? onSubmitted;
+  final bool focused;
 
   const InputBox({
     super.key,
     required this.controller,
+    this.focused = false,
     this.hintText = '',
     this.onSubmitted,
   });
@@ -22,11 +24,12 @@ class InputBox extends StatefulWidget {
 
 class InputBoxState extends State<InputBox> {
   final FocusNode _focusNode = FocusNode();
-  bool _isFocused = false;
+  late bool _isFocused;
 
   @override
   void initState() {
     super.initState();
+    _isFocused = widget.focused;
     _focusNode.addListener(() {
       setState(() {
         _isFocused = _focusNode.hasFocus || widget.controller.text.isNotEmpty;
