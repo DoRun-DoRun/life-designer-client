@@ -10,6 +10,8 @@ import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:dorun_app_flutter/features/search/view/template_detail_add_screen.dart';
 import 'package:dorun_app_flutter/features/search/view/template_detail_screen.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
+import 'package:dorun_app_flutter/features/user/view/onboarding_screen.dart';
+import 'package:dorun_app_flutter/features/user/view/user_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -137,6 +139,20 @@ class AuthProvider extends ChangeNotifier {
           name: LoginScreen.routeName,
           builder: (_, __) => const LoginScreen(),
         ),
+        GoRoute(
+          path: '/onBoarding',
+          name: OnboardingScreen.routeName,
+          builder: (context, state) => OnboardingScreen(
+            id: int.parse(state.pathParameters['id']!),
+          ),
+          routes: [
+            GoRoute(
+              path: 'userInfo',
+              name: UserInfoScreen.routeName,
+              builder: (_, __) => const UserInfoScreen(),
+            ),
+          ],
+        ),
       ];
 
   void logout() {
@@ -155,6 +171,13 @@ class AuthProvider extends ChangeNotifier {
     if (user == null) {
       print('User is Null');
       return logginIn ? null : '/login';
+    }
+
+    if (user is UserModel && user.memberStatus == 'Register') {
+      print(user.memberStatus);
+      return logginIn || state.matchedLocation == '/splash'
+          ? '/onBoarding'
+          : null;
     }
 
     if (user is UserModel) {

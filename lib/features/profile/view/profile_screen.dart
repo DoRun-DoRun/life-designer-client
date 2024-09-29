@@ -1,3 +1,4 @@
+import 'package:dorun_app_flutter/common/component/custom_bottom_sheet.dart';
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/custom_toggle.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
@@ -13,7 +14,6 @@ import 'package:dorun_app_flutter/features/user/model/user_model.dart';
 import 'package:dorun_app_flutter/features/user/provider/auth_provider.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
 import 'package:dorun_app_flutter/features/user/repository/user_repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -240,219 +240,6 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     // final user = ref.read(userMeProvider) as UserModel;
     final userRepository = ref.watch(userRepositoryProvider);
 
-    void showYearPicker(
-      BuildContext context,
-      ValueChanged<int> onYearSelected, {
-      int startYear = 1900,
-    }) {
-      final currentYear = DateTime.now().year;
-      int selectedYear = currentYear - 20;
-
-      showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            decoration: const BoxDecoration(
-                color: Colors.white, borderRadius: AppRadius.ROUNDED_16),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
-            height: 420,
-            child: GapColumn(
-              gap: 32,
-              children: [
-                const Text("태어난 연도를 알려주세요.", style: AppTextStyles.BOLD_20),
-                Expanded(
-                  child: CupertinoPicker(
-                    itemExtent: 32.0,
-                    scrollController: FixedExtentScrollController(
-                      initialItem: currentYear - startYear - 20,
-                    ),
-                    onSelectedItemChanged: (int index) {
-                      selectedYear = startYear + index;
-                    },
-                    children: List<Widget>.generate(
-                      currentYear - startYear + 1,
-                      (int index) {
-                        return Center(
-                          child: Text('${startYear + index}'),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                CustomButton(
-                    onPressed: () {
-                      onYearSelected(selectedYear);
-                      Navigator.pop(context);
-                    },
-                    title: "선택완료",
-                    foregroundColor: Colors.white,
-                    backgroundColor: AppColors.BRAND),
-              ],
-            ),
-          );
-        },
-      );
-    }
-
-    void showSelectionSheet(BuildContext context, List<String> options,
-        ValueChanged<String> onSelected, String text, String selectedOption) {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            decoration: const BoxDecoration(
-                color: Colors.white, borderRadius: AppRadius.ROUNDED_16),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(text, style: AppTextStyles.BOLD_20),
-                const SizedBox(height: 36),
-                GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: options.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // 2열로 배치
-                    mainAxisSpacing: 16.0,
-                    crossAxisSpacing: 16.0,
-                    childAspectRatio: 3.0, // 각 항목의 가로 세로 비율
-                  ),
-                  itemBuilder: (context, index) {
-                    final option = options[index];
-                    final isSelected = option == selectedOption;
-
-                    return GestureDetector(
-                      onTap: () {
-                        onSelected(option);
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.BRAND_SUB
-                              : AppColors.BACKGROUND_SUB,
-                          borderRadius: AppRadius.ROUNDED_16,
-                        ),
-                        child: Center(
-                          child: Text(
-                            option,
-                            style: AppTextStyles.MEDIUM_16.copyWith(
-                              color: isSelected
-                                  ? AppColors.BRAND
-                                  : AppColors.TEXT_SECONDARY,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          );
-        },
-      );
-    }
-
-    void showSelectionMulitySheet(
-      BuildContext context,
-      List<String> options,
-      ValueChanged<List<String>> onSelected,
-    ) {
-      List<String> tempSelected = selectedDifficulties;
-
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return Container(
-            decoration: const BoxDecoration(
-                color: Colors.white, borderRadius: AppRadius.ROUNDED_16),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
-            child: StatefulBuilder(
-              builder: (context, setState) {
-                return GapColumn(
-                  mainAxisSize: MainAxisSize.min,
-                  gap: 36,
-                  children: [
-                    const Text("평소 계획을 지키면서 어려운점이 있나요?",
-                        style: AppTextStyles.BOLD_20),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      itemCount: options.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // 2열로 배치
-                        mainAxisSpacing: 16.0,
-                        crossAxisSpacing: 16.0,
-                        childAspectRatio: 3.0, // 각 항목의 가로 세로 비율
-                      ),
-                      itemBuilder: (context, index) {
-                        final option = options[index];
-                        final isSelected = tempSelected.contains(option);
-
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (isSelected) {
-                                tempSelected.remove(option);
-                              } else {
-                                if (tempSelected.length < 3) {
-                                  tempSelected.add(option);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('최대 3개까지 선택할 수 있습니다.'),
-                                    ),
-                                  );
-                                }
-                              }
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.BRAND_SUB
-                                  : AppColors.BACKGROUND_SUB,
-                              borderRadius: AppRadius.ROUNDED_16,
-                            ),
-                            child: Center(
-                              child: Text(
-                                option,
-                                style: AppTextStyles.MEDIUM_16.copyWith(
-                                  color: isSelected
-                                      ? AppColors.BRAND
-                                      : AppColors.TEXT_SECONDARY,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    CustomButton(
-                      onPressed: () {
-                        onSelected(tempSelected);
-                        Navigator.pop(context);
-                      },
-                      title: "선택완료",
-                      foregroundColor: tempSelected.isNotEmpty
-                          ? Colors.white
-                          : AppColors.TEXT_INVERT,
-                      backgroundColor: tempSelected.isNotEmpty
-                          ? AppColors.BRAND
-                          : AppColors.BACKGROUND_SUB,
-                    ),
-                  ],
-                );
-              },
-            ),
-          );
-        },
-      );
-    }
-
     return DefaultLayout(
       title: "프로필 수정",
       child: SingleChildScrollView(
@@ -532,16 +319,17 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         },
                       ),
                       ReadOnlyBox(
-                          hintText: "나이",
-                          inputText: selectedAge != '' ? '$selectedAge살' : '',
-                          onTap: () {
-                            showYearPicker(context, (value) {
-                              setState(() {
-                                selectedAge =
-                                    (DateTime.now().year - value).toString();
-                              });
+                        hintText: "나이",
+                        inputText: selectedAge != '' ? '$selectedAge살' : '',
+                        onTap: () {
+                          showYearPicker(context, (value) {
+                            setState(() {
+                              selectedAge =
+                                  (DateTime.now().year - value).toString();
                             });
-                          }),
+                          });
+                        },
+                      ),
                       ReadOnlyBox(
                         hintText: "직업",
                         inputText: selectedJob,
@@ -581,7 +369,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             setState(() {
                               selectedDifficulties = selectedValues;
                             });
-                          });
+                          }, selectedDifficulties);
                         },
                       ),
                     ],

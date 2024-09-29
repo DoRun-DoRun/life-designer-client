@@ -297,3 +297,155 @@ Future<Duration?> showTimeSelectionModal(BuildContext context,
     },
   );
 }
+
+void showYearPicker(
+  BuildContext context,
+  ValueChanged<int> onYearSelected, {
+  int startYear = 1900,
+}) {
+  final currentYear = DateTime.now().year;
+  int selectedYear = currentYear - 20;
+
+  showModalBottomSheet(
+    context: context,
+    builder: (context) {
+      return Container(
+        decoration: const BoxDecoration(
+            color: Colors.white, borderRadius: AppRadius.ROUNDED_16),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+        height: 420,
+        child: GapColumn(
+          gap: 32,
+          children: [
+            const Text("태어난 연도를 알려주세요.", style: AppTextStyles.BOLD_20),
+            Expanded(
+              child: CupertinoPicker(
+                itemExtent: 32.0,
+                scrollController: FixedExtentScrollController(
+                  initialItem: currentYear - startYear - 20,
+                ),
+                onSelectedItemChanged: (int index) {
+                  selectedYear = startYear + index;
+                },
+                children: List<Widget>.generate(
+                  currentYear - startYear + 1,
+                  (int index) {
+                    return Center(
+                      child: Text('${startYear + index}'),
+                    );
+                  },
+                ),
+              ),
+            ),
+            CustomButton(
+                onPressed: () {
+                  onYearSelected(selectedYear);
+                  Navigator.pop(context);
+                },
+                title: "선택완료",
+                foregroundColor: Colors.white,
+                backgroundColor: AppColors.BRAND),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void showSelectionMulitySheet(
+  BuildContext context,
+  List<String> options,
+  ValueChanged<List<String>> onSelected,
+  List<String> selectedDifficulties,
+) {
+  List<String> tempSelected = selectedDifficulties;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) {
+      return Container(
+        decoration: const BoxDecoration(
+            color: Colors.white, borderRadius: AppRadius.ROUNDED_16),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return GapColumn(
+              mainAxisSize: MainAxisSize.min,
+              gap: 36,
+              children: [
+                const Text("평소 계획을 지키면서 어려운점이 있나요?",
+                    style: AppTextStyles.BOLD_20),
+                GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: options.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2열로 배치
+                    mainAxisSpacing: 16.0,
+                    crossAxisSpacing: 16.0,
+                    childAspectRatio: 3.0, // 각 항목의 가로 세로 비율
+                  ),
+                  itemBuilder: (context, index) {
+                    final option = options[index];
+                    final isSelected = tempSelected.contains(option);
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (isSelected) {
+                            tempSelected.remove(option);
+                          } else {
+                            if (tempSelected.length < 3) {
+                              tempSelected.add(option);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('최대 3개까지 선택할 수 있습니다.'),
+                                ),
+                              );
+                            }
+                          }
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.BRAND_SUB
+                              : AppColors.BACKGROUND_SUB,
+                          borderRadius: AppRadius.ROUNDED_16,
+                        ),
+                        child: Center(
+                          child: Text(
+                            option,
+                            style: AppTextStyles.MEDIUM_16.copyWith(
+                              color: isSelected
+                                  ? AppColors.BRAND
+                                  : AppColors.TEXT_SECONDARY,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                CustomButton(
+                  onPressed: () {
+                    onSelected(tempSelected);
+                    Navigator.pop(context);
+                  },
+                  title: "선택완료",
+                  foregroundColor: tempSelected.isNotEmpty
+                      ? Colors.white
+                      : AppColors.TEXT_INVERT,
+                  backgroundColor: tempSelected.isNotEmpty
+                      ? AppColors.BRAND
+                      : AppColors.BACKGROUND_SUB,
+                ),
+              ],
+            );
+          },
+        ),
+      );
+    },
+  );
+}

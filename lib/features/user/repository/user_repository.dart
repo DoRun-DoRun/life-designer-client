@@ -39,6 +39,7 @@ abstract class UserRepository {
     @Field('job') String? job,
     @Field('challenges') List<String>? challenges,
     @Field('gender') String? gender,
+    @Field('memberStatus') String? memberStatus,
   });
 
   @PUT('/withdraw')
