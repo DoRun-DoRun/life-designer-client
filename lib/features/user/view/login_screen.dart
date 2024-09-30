@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
+import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/secure_storage/secure_storage.dart';
@@ -14,6 +15,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../common/layout/default_layout.dart';
 
@@ -179,6 +181,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         },
                         child: const LoginButton(socialType: SocialType.apple))
                     : Container(),
+                GestureDetector(
+                  onTap: () async {
+                    String? storedUUID = await getUUID();
+
+                    if (storedUUID == null) {
+                      var uuid = const Uuid();
+                      String newUUID = uuid.v4();
+
+                      await saveUUID(newUUID);
+
+                      login(newUUID, 'Guest');
+                    } else {
+                      login(storedUUID, 'Guest');
+                    }
+                  },
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 24),
+                      child: Text(
+                        "Guest로 계속하기",
+                        style: AppTextStyles.MEDIUM_14.copyWith(
+                          color: AppColors.TEXT_SECONDARY,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

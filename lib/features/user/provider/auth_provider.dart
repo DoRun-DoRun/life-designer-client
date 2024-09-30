@@ -142,9 +142,7 @@ class AuthProvider extends ChangeNotifier {
         GoRoute(
           path: '/onBoarding',
           name: OnboardingScreen.routeName,
-          builder: (context, state) => OnboardingScreen(
-            id: int.parse(state.pathParameters['id']!),
-          ),
+          builder: (_, __) => const OnboardingScreen(),
           routes: [
             GoRoute(
               path: 'userInfo',
