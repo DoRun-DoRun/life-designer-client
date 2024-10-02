@@ -26,11 +26,17 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
   DateTime _focusedDate = DateTime.now();
   late Future<List<CalendarModel>> calendarDataFuture;
   DateTime _tempSelectedDate = DateTime.now();
-  Future<Map<String, CalendarModel>>? _calendarDataFuture; // Future를 캐시하기 위한 변수
+  late Future<Map<String, CalendarModel>>?
+      _calendarDataFuture; // Future를 캐시하기 위한 변수
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _calendarDataFuture = _getCalendarData(); // 초기 Future 설정
   }
 
