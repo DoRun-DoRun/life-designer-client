@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/custom_icon.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
@@ -12,7 +10,6 @@ import 'package:dorun_app_flutter/features/statistics/repository/statistics_repo
 import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -29,10 +26,19 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
   DateTime _focusedDate = DateTime.now();
   late Future<List<CalendarModel>> calendarDataFuture;
   DateTime _tempSelectedDate = DateTime.now();
+  Future<Map<String, CalendarModel>>? _calendarDataFuture; // Future를 캐시하기 위한 변수
 
   @override
   void initState() {
     super.initState();
+    _calendarDataFuture = _getCalendarData(); // 초기 Future 설정
+  }
+
+  Future<Map<String, CalendarModel>> _getCalendarData() {
+    final statisticsRepository = ref.watch(statisticsRepositoryProvider);
+
+    return statisticsRepository.getCalendarData(
+        _focusedDate.month, _focusedDate.year);
   }
 
   void _onDaySelected(DateTime selectedDay) {
@@ -45,7 +51,7 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
     setState(() {
       _focusedDate =
           DateTime(_focusedDate.year, _focusedDate.month + increment, 1);
-      calendarDataFuture = getCalendarData();
+      _calendarDataFuture = _getCalendarData();
     });
   }
 
@@ -98,8 +104,11 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       setState(() {
                         _selectedDate = _tempSelectedDate;
                         _focusedDate = DateTime(
-                            _tempSelectedDate.year, _tempSelectedDate.month, 1);
-                        calendarDataFuture = getCalendarData();
+                          _tempSelectedDate.year,
+                          _tempSelectedDate.month,
+                          1,
+                        );
+                        _calendarDataFuture = _getCalendarData();
                       });
                       Navigator.pop(context);
                     },
@@ -111,32 +120,42 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
         });
   }
 
-  Future<List<CalendarModel>> getCalendarData() async {
-    final routeFromJsonFile =
-        await rootBundle.loadString('asset/json/calendar_mock.json');
+  // Future<List<CalendarModel>> getCalendarData() async {
+  //   final routeFromJsonFile =
+  //       await rootBundle.loadString('asset/json/calendar_mock.json');
 
-    final List<dynamic> parsedJson = json.decode(routeFromJsonFile);
-    return parsedJson
-        .map((json) => CalendarModel.fromJson(json as Map<String, dynamic>))
-        .toList();
-  }
+  //   final List<dynamic> parsedJson = json.decode(routeFromJsonFile);
+  //   return parsedJson
+  //       .map((json) => CalendarModel.fromJson(json as Map<String, dynamic>))
+  //       .toList();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final statisticsRepository = ref.watch(statisticsRepositoryProvider);
-
     return FutureBuilder(
-      future: statisticsRepository.getCalendarData(
-          _selectedDate.month, _selectedDate.year),
+      future: _calendarDataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return PaddingContainer(
-            child: Column(
-              children: [
-                _buildHeader(),
-                _buildCalendar(null),
-              ],
-            ),
+          return Column(
+            children: [
+              PaddingContainer(
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    _buildCalendar(null),
+                  ],
+                ),
+              ),
+              const Divider(height: 0),
+              DailyRoutineReportContainer(
+                selectedDate: _selectedDate,
+                calendarData: CalendarModel(
+                  completed: [],
+                  failed: [],
+                  passed: [],
+                ),
+              ),
+            ],
           );
         }
 
@@ -159,7 +178,11 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                 ),
               ),
               const Divider(height: 0),
-              const DailyRoutineReportContainer(),
+              DailyRoutineReportContainer(
+                selectedDate: _selectedDate,
+                calendarData: calendarData[_selectedDate.day.toString()] ??
+                    CalendarModel(completed: [], failed: [], passed: []),
+              ),
             ],
           );
         } else {
@@ -244,11 +267,13 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
         // calendarData가 null인 경우 기본 UI 제공
         if (calendarData == null) {
-          return date.isAfter(DateTime(
-            DateTime.now().year,
-            DateTime.now().month,
-            DateTime.now().day,
-          ))
+          return date.isAfter(
+            DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+            ),
+          )
               ? CustomIcon(
                   size: 32,
                   text: day.toString(),
@@ -268,7 +293,12 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
             CalendarModel(completed: [], failed: [], passed: []);
 
         // 완료 여부 확인
-        final isComplete = calendarModel.completed.isNotEmpty;
+        final completeProgress =
+            (calendarModel.completed.length + calendarModel.passed.length) /
+                (calendarModel.completed.length +
+                    calendarModel.failed.length +
+                    calendarModel.passed.length);
+        final isComplete = completeProgress == 1;
 
         return GestureDetector(
           onTap: () => _onDaySelected(date),
@@ -278,8 +308,11 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
               shape: BoxShape.circle,
             ),
             child: date.isAfter(
-              DateTime(DateTime.now().year, DateTime.now().month,
-                  DateTime.now().day - 1),
+              DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day - 1,
+              ),
             )
                 ? CustomIcon(
                     size: 32,
@@ -288,13 +321,10 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                     secondaryColor: Colors.black,
                   )
                 : calendarModel.completed.isNotEmpty ||
-                        calendarModel.failed.isNotEmpty ||
                         calendarModel.passed.isNotEmpty
                     ? CustomIcon(
                         size: 32,
-                        progress: isComplete
-                            ? 0
-                            : 0.5, // 임의 progress 값 (필요에 따라 수정 가능)
+                        progress: completeProgress,
                         primaryColor:
                             isComplete ? AppColors.BRAND : Colors.transparent,
                         secondaryColor:

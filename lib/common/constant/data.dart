@@ -12,6 +12,8 @@ final ip = Platform.isIOS ? simulatorIp : emulatorIp;
 
 enum RepeatCycle { daily, weekdays, weekends, custom }
 
+List<String> weekdays = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+
 // const routineMockDataJson = [
 //   {
 //     "id": 1,

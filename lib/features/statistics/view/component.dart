@@ -7,6 +7,7 @@ import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/features/statistics/model/calendar_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/header_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
 import 'package:dorun_app_flutter/features/statistics/repository/statistics_repository.dart';
@@ -348,10 +349,9 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
   String getWeekRange() {
     DateTime now = DateTime.now();
     int currentWeekday = now.weekday;
-    DateTime startOfWeek =
-        now.subtract(Duration(days: currentWeekday - 1)); // Monday
-    DateTime endOfWeek = now
-        .add(Duration(days: DateTime.daysPerWeek - currentWeekday)); // Sunday
+    DateTime startOfWeek = now.subtract(Duration(days: currentWeekday - 1));
+    DateTime endOfWeek =
+        now.add(Duration(days: DateTime.daysPerWeek - currentWeekday));
 
     DateFormat formatter = DateFormat('MM.dd');
     String formattedStartOfWeek = formatter.format(startOfWeek);
@@ -439,7 +439,14 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
 }
 
 class DailyRoutineReportContainer extends StatefulWidget {
-  const DailyRoutineReportContainer({super.key});
+  final DateTime selectedDate;
+  final CalendarModel calendarData;
+
+  const DailyRoutineReportContainer({
+    super.key,
+    required this.selectedDate,
+    required this.calendarData,
+  });
 
   @override
   DailyRoutineReportContainerState createState() =>
@@ -458,6 +465,9 @@ class DailyRoutineReportContainerState
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate =
+        DateFormat('MM월 dd일 EEEE', 'ko_KR').format(widget.selectedDate);
+
     return PaddingContainer(
       child: GapColumn(
         gap: 24,
@@ -470,16 +480,21 @@ class DailyRoutineReportContainerState
                 GapRow(
                   gap: 16,
                   children: [
-                    const Text("22일 월요일", style: AppTextStyles.REGULAR_14),
+                    Text(formattedDate, style: AppTextStyles.REGULAR_14),
                     Row(
                       children: [
                         Text(
-                          "완료 1",
+                          '성공 ${widget.calendarData.completed.length}',
                           style: AppTextStyles.BOLD_16
                               .copyWith(color: AppColors.TEXT_BRAND),
                         ),
-                        const SizedBox(width: 10),
-                        const Text("실패 2", style: AppTextStyles.BOLD_16),
+                        const SizedBox(width: 8),
+                        Text("실패 ${widget.calendarData.failed.length}",
+                            style: AppTextStyles.MEDIUM_16),
+                        const SizedBox(width: 8),
+                        Text("넘김 ${widget.calendarData.passed.length}",
+                            style: AppTextStyles.MEDIUM_16
+                                .copyWith(color: AppColors.TEXT_INVERT)),
                       ],
                     ),
                   ],
@@ -494,20 +509,32 @@ class DailyRoutineReportContainerState
             ),
           ),
           if (_isExpanded)
-            const GapColumn(
+            GapColumn(
               gap: 24,
               children: [
-                IconListView(
-                  text: '아침 조깅하기',
-                  icon: Icons.check,
+                ...widget.calendarData.completed.map(
+                  (item) => IconListView(
+                    text: item,
+                    icon: Icons.check,
+                    color: AppColors.BRAND,
+                  ),
                 ),
-                IconListView(
-                  text: '아침 조깅하기',
-                  icon: Icons.close,
-                  color: AppColors.BRAND_SUB,
+                ...widget.calendarData.failed.map(
+                  (item) => IconListView(
+                    text: item,
+                    icon: Icons.close,
+                    color: AppColors.TEXT_INVERT,
+                  ),
+                ),
+                ...widget.calendarData.passed.map(
+                  (item) => IconListView(
+                    text: item,
+                    icon: Icons.keyboard_double_arrow_right,
+                    color: AppColors.BRAND_SUB,
+                  ),
                 ),
               ],
-            ),
+            )
         ],
       ),
     );
