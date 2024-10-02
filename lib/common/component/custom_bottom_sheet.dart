@@ -374,8 +374,20 @@ void showSelectionMulitySheet(
               mainAxisSize: MainAxisSize.min,
               gap: 36,
               children: [
-                const Text("평소 계획을 지키면서 어려운점이 있나요?",
-                    style: AppTextStyles.BOLD_20),
+                GapColumn(
+                  gap: 12,
+                  children: [
+                    const Text(
+                      "평소 계획을 지키면서 어려운점이 있나요?",
+                      style: AppTextStyles.BOLD_20,
+                    ),
+                    Text(
+                      "최대 3개까지 선택해주세요",
+                      style: AppTextStyles.MEDIUM_14
+                          .copyWith(color: AppColors.TEXT_SECONDARY),
+                    ),
+                  ],
+                ),
                 GridView.builder(
                   shrinkWrap: true,
                   itemCount: options.length,

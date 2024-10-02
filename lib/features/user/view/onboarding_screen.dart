@@ -21,7 +21,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   bool _isQuestion = false;
 
   final List<String> messages = [
-    "안녕하세요! 저와 대화하려면 화면을 클릭해주세요!",
+    "안녕하세요! 저와 대화하려면 저를 클릭해주세요!",
     "반가워요! 저는 루틴 설계를 도와주는 루틴 디자이너, 루디에요!",
     "앞으로 사용자님이 루틴을 통해 원하시는 일들을 이룰 수 있도록 돕는 업무를 맡고 있어요!",
     "혹시... 루틴에 대해서 알고 계신가요?",
@@ -37,6 +37,18 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     super.initState();
     _currentIndex = widget.id ?? 0;
     _startLoading();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // MediaQuery, Theme 등 상속된 위젯에 대한 작업은 여기서 처리
+    // final mediaQueryData = MediaQuery.of(context);
+    // mediaQueryData를 사용한 초기화 작업을 여기서 수행
+
+    precacheImage(const AssetImage('asset/images/hello.gif'), context);
+    precacheImage(const AssetImage('asset/images/congrate.gif'), context);
+    precacheImage(const AssetImage('asset/images/idle-character.png'), context);
   }
 
   void _startLoading() async {
@@ -117,11 +129,14 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
                   Center(
-                    child: Image.asset('asset/images/create-character.png'),
+                    child: (_currentIndex <= 1)
+                        ? Image.asset('asset/images/hello.gif')
+                        : _currentIndex == 6
+                            ? Image.asset('asset/images/congrate.gif')
+                            : Image.asset('asset/images/idle-character.png'),
                   ),
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 60),
                 ],
               ),
             ),

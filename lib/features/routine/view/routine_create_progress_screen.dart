@@ -49,7 +49,7 @@ class _RoutineCreateProgressScreenState
   }
 
   void startProgress() {
-    timer = Timer.periodic(const Duration(milliseconds: 20), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
       double stepIncrement = 1.0 / 100;
       setState(() {
         progress += stepIncrement;
@@ -124,7 +124,7 @@ class _RoutineCreateProgressScreenState
                       const AlwaysStoppedAnimation<Color?>(AppColors.BRAND),
                   minHeight: 5,
                 ),
-                Center(child: Image.asset('asset/images/create-character.png'))
+                Center(child: Image.asset('asset/images/working.gif'))
               ],
             ),
           ],
