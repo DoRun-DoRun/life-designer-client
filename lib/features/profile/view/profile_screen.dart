@@ -8,7 +8,6 @@ import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/data_utils.dart';
 import 'package:dorun_app_flutter/features/profile/view/edit_profile_screen.dart';
-import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/user/model/user_model.dart';
 import 'package:dorun_app_flutter/features/user/provider/auth_provider.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
@@ -21,7 +20,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final user = ref.watch(userMeProvider) as UserModel;
+    final user = ref.watch(userMeProvider);
 
     Future<void> launchURL(url) async {
       if (await canLaunchUrl(url)) {
@@ -31,123 +30,123 @@ class ProfileScreen extends ConsumerWidget {
       }
     }
 
-    return DefaultLayout(
-      title: 'MY',
-      child: SingleChildScrollView(
-        child: GapColumn(
-          gap: 16,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const EditProfileScreen()),
-                );
-              },
-              child: PaddingContainer(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GapRow(
-                      gap: 16,
-                      children: [
-                        Container(
-                          width: 64,
-                          height: 64,
-                          decoration: const BoxDecoration(
-                            color: AppColors.TEXT_INVERT,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.person_outline,
-                            size: 42,
-                            color: Colors.white,
-                          ),
-                        ),
-                        GapColumn(
-                          children: [
-                            Text(user.name == '' ? '익명의 루티너' : user.name!,
-                                style: AppTextStyles.REGULAR_14),
-                            Text(
-                              processEmail(user.email),
-                              style: AppTextStyles.REGULAR_12.copyWith(
-                                color: AppColors.TEXT_SUB,
-                              ),
+    if (user is UserModel) {
+      return DefaultLayout(
+        title: 'MY',
+        child: SingleChildScrollView(
+          child: GapColumn(
+            gap: 16,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const EditProfileScreen()),
+                  );
+                },
+                child: PaddingContainer(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GapRow(
+                        gap: 16,
+                        children: [
+                          Container(
+                            width: 64,
+                            height: 64,
+                            decoration: const BoxDecoration(
+                              color: AppColors.TEXT_INVERT,
+                              shape: BoxShape.circle,
                             ),
-                          ],
-                        )
-                      ],
-                    ),
-                    const Icon(
-                      Icons.chevron_right,
-                      size: 30,
-                      color: AppColors.TEXT_INVERT,
-                    )
-                  ],
+                            child: const Icon(
+                              Icons.person_outline,
+                              size: 42,
+                              color: Colors.white,
+                            ),
+                          ),
+                          GapColumn(
+                            children: [
+                              Text(user.name == '' ? '익명의 루티너' : user.name!,
+                                  style: AppTextStyles.REGULAR_14),
+                              Text(
+                                processEmail(user.email),
+                                style: AppTextStyles.REGULAR_12.copyWith(
+                                  color: AppColors.TEXT_SUB,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      const Icon(
+                        Icons.chevron_right,
+                        size: 30,
+                        color: AppColors.TEXT_INVERT,
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            // ProfileListItem(
-            //   text: "시스템 설정",
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (context) => const SystemSettingScreen()),
-            //     );
-            //   },
-            // ),
-            Column(
-              children: [
-                ProfileListItem(
-                  text: "공지 사항",
-                  onTap: () => launchURL(
-                    Uri.parse('https://life-designer.notion.site/'),
+              // ProfileListItem(
+              //   text: "시스템 설정",
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (context) => const SystemSettingScreen()),
+              //     );
+              //   },
+              // ),
+              Column(
+                children: [
+                  ProfileListItem(
+                    text: "공지 사항",
+                    onTap: () => launchURL(
+                      Uri.parse('https://life-designer.notion.site/'),
+                    ),
                   ),
-                ),
-                // const ProfileListItem(text: "업데이트 정보"),
-                // const ProfileListItem(text: "FAQ"),
-                // const ProfileListItem(text: "피드백"),
-                ProfileListItem(
-                  text: "이용약관",
-                  onTap: () => launchURL(
-                    Uri.parse(
-                        'https://life-designer.notion.site/104ddd0f35ba80d59d94ee77e8bdadd2'),
+                  // const ProfileListItem(text: "업데이트 정보"),
+                  // const ProfileListItem(text: "FAQ"),
+                  // const ProfileListItem(text: "피드백"),
+                  ProfileListItem(
+                    text: "이용약관",
+                    onTap: () => launchURL(
+                      Uri.parse(
+                          'https://life-designer.notion.site/104ddd0f35ba80d59d94ee77e8bdadd2'),
+                    ),
                   ),
-                ),
-                // const ProfileListItem(
-                //   text: "앱버전 1.0.1",
-                //   isUpdate: false,
-                // ),
-              ],
-            ),
-            Column(
-              children: [
-                ProfileListItem(
-                  onTap: () => {
-                    ref.invalidate(routineListProvider),
-                    ref.invalidate(userMeProvider),
-                    ref.read(authProvider.notifier).logout(),
-                  },
-                  text: "로그아웃",
-                  color: AppColors.TEXT_SUB,
-                ),
-                ProfileListItem(
-                  onTap: () => {
-                    ref.invalidate(routineListProvider),
-                    ref.invalidate(userMeProvider),
-                    ref.read(authProvider.notifier).signOut()
-                  },
-                  text: "회원탈퇴",
-                  color: const Color(0xFFFF0000),
-                ),
-              ],
-            )
-          ],
+                  // const ProfileListItem(
+                  //   text: "앱버전 1.0.1",
+                  //   isUpdate: false,
+                  // ),
+                ],
+              ),
+              Column(
+                children: [
+                  ProfileListItem(
+                    onTap: () => {
+                      ref.read(authProvider.notifier).logout(),
+                    },
+                    text: "로그아웃",
+                    color: AppColors.TEXT_SUB,
+                  ),
+                  ProfileListItem(
+                    onTap: () => {
+                      ref.read(authProvider.notifier).signOut(),
+                    },
+                    text: "회원탈퇴",
+                    color: const Color(0xFFFF0000),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return const Center(child: Text('User Data is not available'));
+    }
   }
 }
 

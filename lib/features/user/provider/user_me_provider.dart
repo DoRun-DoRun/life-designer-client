@@ -14,10 +14,10 @@ final userMeProvider =
     final storage = ref.watch(secureStorageProvider);
 
     return UserMeStateNotifier(
-      authRepository: authRepository,
-      repository: userRepository,
-      storage: storage,
-    );
+        authRepository: authRepository,
+        repository: userRepository,
+        storage: storage,
+        ref: ref);
   },
 );
 
@@ -25,6 +25,7 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
   final AuthRepository authRepository;
   final UserRepository repository;
   final FlutterSecureStorage storage;
+  final Ref ref;
 
   @override
   set state(UserModelBase? value) {
@@ -36,6 +37,7 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     required this.authRepository,
     required this.repository,
     required this.storage,
+    required this.ref,
   }) : super(UserModelLoading()) {
     getMe();
   }
@@ -73,6 +75,10 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
         storage.delete(key: ACCESS_TOKEN_KEY),
       ],
     );
+    ref.invalidate(userMeProvider);
+    ref.invalidate(authRepositoryProvider);
+    ref.invalidate(userRepositoryProvider);
+    ref.invalidate(secureStorageProvider);
   }
 
   Future<void> signOut() async {
@@ -80,15 +86,16 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       await repository.deleteUser();
 
       state = null;
-      // TODO
-      // 기타 캐시 invalidate 처리하기
-
       await Future.wait(
         [
           storage.delete(key: REFRESH_TOKEN_KEY),
           storage.delete(key: ACCESS_TOKEN_KEY),
         ],
       );
+      ref.invalidate(userMeProvider);
+      ref.invalidate(authRepositoryProvider);
+      ref.invalidate(userRepositoryProvider);
+      ref.invalidate(secureStorageProvider);
     } catch (error) {
       print('Error fetching user data: $error');
       state = null;
