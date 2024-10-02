@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../common/constant/data.dart';

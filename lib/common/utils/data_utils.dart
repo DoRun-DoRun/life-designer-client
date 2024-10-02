@@ -53,3 +53,16 @@ class Debouncer {
     _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }
+
+String processEmail(String email) {
+  if (!email.contains('@')) {
+    return '게스트 계정';
+  }
+
+  if (email.split('@').length > 1 &&
+      email.split('@')[1].contains('privaterelay')) {
+    return '공개되지 않은 이메일';
+  }
+
+  return email;
+}
