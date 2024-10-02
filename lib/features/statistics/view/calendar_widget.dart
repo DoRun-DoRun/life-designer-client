@@ -8,29 +8,31 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/features/statistics/model/calendar_model.dart';
+import 'package:dorun_app_flutter/features/statistics/repository/statistics_repository.dart';
+import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class CalendarWidget extends StatefulWidget {
+class CalendarWidget extends ConsumerStatefulWidget {
   const CalendarWidget({super.key});
 
   @override
   CalendarWidgetState createState() => CalendarWidgetState();
 }
 
-class CalendarWidgetState extends State<CalendarWidget> {
+class CalendarWidgetState extends ConsumerState<CalendarWidget> {
   DateTime _selectedDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   DateTime _focusedDate = DateTime.now();
-  DateTime _tempSelectedDate = DateTime.now();
   late Future<List<CalendarModel>> calendarDataFuture;
+  DateTime _tempSelectedDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    calendarDataFuture = getCalendarData();
   }
 
   void _onDaySelected(DateTime selectedDay) {
@@ -121,30 +123,49 @@ class CalendarWidgetState extends State<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return PaddingContainer(
-      child: Column(
-        children: [
-          _buildHeader(),
-          // _buildDaysOfWeek(),
-          FutureBuilder<List<CalendarModel>>(
-            future: calendarDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return _buildCalendar(null);
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
+    final statisticsRepository = ref.watch(statisticsRepositoryProvider);
 
-              if (snapshot.hasData) {
-                return _buildCalendar(snapshot.data!);
-              } else {
-                return const Center(child: Text('noData'));
-              }
-            },
-          ),
-        ],
-      ),
+    return FutureBuilder(
+      future: statisticsRepository.getCalendarData(
+          _selectedDate.month, _selectedDate.year),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return PaddingContainer(
+            child: Column(
+              children: [
+                _buildHeader(),
+                _buildCalendar(null),
+              ],
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (snapshot.hasData) {
+          final calendarData = snapshot.data!;
+
+          return Column(
+            children: [
+              PaddingContainer(
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    // _buildDaysOfWeek(),
+                    _buildCalendar(calendarData),
+                  ],
+                ),
+              ),
+              const Divider(height: 0),
+              const DailyRoutineReportContainer(),
+            ],
+          );
+        } else {
+          return const Center(child: Text("No Data"));
+        }
+      },
     );
   }
 
@@ -197,7 +218,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
   //   );
   // }
 
-  Widget _buildCalendar(List<CalendarModel>? calendarData) {
+  Widget _buildCalendar(Map<String, CalendarModel>? calendarData) {
     final firstDayOfMonth = DateTime(_focusedDate.year, _focusedDate.month, 1);
     final lastDayOfMonth =
         DateTime(_focusedDate.year, _focusedDate.month + 1, 0);
@@ -221,14 +242,13 @@ class CalendarWidgetState extends State<CalendarWidget> {
         final date = DateTime(_focusedDate.year, _focusedDate.month, day);
         final isSelected = date == _selectedDate;
 
+        // calendarData가 null인 경우 기본 UI 제공
         if (calendarData == null) {
-          return date.isAfter(
-            DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              DateTime.now().day,
-            ),
-          )
+          return date.isAfter(DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+          ))
               ? CustomIcon(
                   size: 32,
                   text: day.toString(),
@@ -243,15 +263,12 @@ class CalendarWidgetState extends State<CalendarWidget> {
                 );
         }
 
-        final calendarModel = calendarData.firstWhere(
-          (item) =>
-              item.date.year == date.year &&
-              item.date.month == date.month &&
-              item.date.day == date.day,
-          orElse: () => CalendarModel(date, 0.0, 0, 0),
-        );
+        // 날짜에 해당하는 CalendarModel을 가져옴
+        final calendarModel = calendarData[day.toString()] ??
+            CalendarModel(completed: [], failed: [], passed: []);
 
-        final isComplete = calendarModel.dailyProgress == 1;
+        // 완료 여부 확인
+        final isComplete = calendarModel.completed.isNotEmpty;
 
         return GestureDetector(
           onTap: () => _onDaySelected(date),
@@ -260,23 +277,24 @@ class CalendarWidgetState extends State<CalendarWidget> {
               color: isSelected ? AppColors.BRAND_SUB : Colors.transparent,
               shape: BoxShape.circle,
             ),
-            child: (date.isAfter(
-              DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day - 1,
-              ),
-            ))
+            child: date.isAfter(
+              DateTime(DateTime.now().year, DateTime.now().month,
+                  DateTime.now().day - 1),
+            )
                 ? CustomIcon(
                     size: 32,
                     text: day.toString(),
                     primaryColor: Colors.transparent,
                     secondaryColor: Colors.black,
                   )
-                : calendarModel.dailyProgress > 0
+                : calendarModel.completed.isNotEmpty ||
+                        calendarModel.failed.isNotEmpty ||
+                        calendarModel.passed.isNotEmpty
                     ? CustomIcon(
                         size: 32,
-                        progress: isComplete ? 0 : calendarModel.dailyProgress,
+                        progress: isComplete
+                            ? 0
+                            : 0.5, // 임의 progress 값 (필요에 따라 수정 가능)
                         primaryColor:
                             isComplete ? AppColors.BRAND : Colors.transparent,
                         secondaryColor:
@@ -287,8 +305,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
                         size: 32,
                         text: day.toString(),
                         primaryColor: Colors.transparent,
-                        secondaryColor:
-                            isComplete ? Colors.black : AppColors.TEXT_SUB,
+                        secondaryColor: AppColors.TEXT_SUB,
                       ),
           ),
         );

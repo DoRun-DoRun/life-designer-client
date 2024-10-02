@@ -49,50 +49,30 @@ class StatisticsScreen extends StatelessWidget {
   }
 }
 
-class StatisticsPeriodScreen extends StatelessWidget {
+class StatisticsPeriodScreen extends ConsumerWidget {
   const StatisticsPeriodScreen({super.key});
 
-  Future<WeeklyModel> getPeriodStatData() async {
-    final routeFromJsonFile =
-        await rootBundle.loadString('asset/json/weekly_mock.json');
+  // Future<WeeklyModel> getPeriodStatData() async {
+  //   final routeFromJsonFile =
+  //       await rootBundle.loadString('asset/json/weekly_mock.json');
 
-    final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
-    return WeeklyModel.fromJson(jsonData);
-  }
+  //   final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
+  //   return WeeklyModel.fromJson(jsonData);
+  // }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<WeeklyModel>(
-      future: getPeriodStatData(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        if (snapshot.hasData) {
-          return SingleChildScrollView(
-            child: GapColumn(
-              gap: 24,
-              children: [
-                StreakContainer(periodStatData: snapshot.data!),
-                const Column(
-                  children: [
-                    CalendarWidget(),
-                    Divider(height: 0),
-                    DailyRoutineReportContainer(),
-                  ],
-                ),
-                WeeklyRoutineReportContainer(periodStatData: snapshot.data!),
-                RoutineFeedbackContainer(periodStatData: snapshot.data!)
-              ],
-            ),
-          );
-        } else {
-          return const Center(child: Text('noData'));
-        }
-      },
+  Widget build(BuildContext context, ref) {
+    return const SingleChildScrollView(
+      child: GapColumn(
+        gap: 24,
+        children: [
+          StreakContainer(),
+          CalendarWidget(),
+
+          // WeeklyRoutineReportContainer(periodStatData: snapshot.data!),
+          // RoutineFeedbackContainer(periodStatData: snapshot.data!)
+        ],
+      ),
     );
   }
 }
@@ -149,41 +129,26 @@ class StatisticsRoutineDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<WeeklyModel>(
-        future: getWeeklyData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (snapshot.hasData) {
-            return DefaultLayout(
-                title: '루틴별 통계',
-                child: SingleChildScrollView(
-                  child: GapColumn(
-                    gap: 24,
-                    children: [
-                      StreakContainer(
-                        periodStatData: snapshot.data!,
-                      ),
-                      const Column(
-                        children: [
-                          CalendarWidget(),
-                          Divider(height: 0),
-                          ConductRoutineHistory()
-                          // DailyRoutineReportContainer(),
-                        ],
-                      ),
-                      const RoutineReview(),
-                    ],
-                  ),
-                ));
-          } else {
-            return const Center(child: Text('nodata'));
-          }
-        });
+    return const DefaultLayout(
+      title: '루틴별 통계',
+      child: SingleChildScrollView(
+        child: GapColumn(
+          gap: 24,
+          children: [
+            StreakContainer(),
+            Column(
+              children: [
+                CalendarWidget(),
+                Divider(height: 0),
+                ConductRoutineHistory()
+                // DailyRoutineReportContainer(),
+              ],
+            ),
+            RoutineReview(),
+          ],
+        ),
+      ),
+    );
   }
 }
 

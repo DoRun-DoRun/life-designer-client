@@ -48,7 +48,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 
     precacheImage(const AssetImage('asset/images/hello.gif'), context);
     precacheImage(const AssetImage('asset/images/congrate.gif'), context);
-    precacheImage(const AssetImage('asset/images/idle-character.png'), context);
+    precacheImage(const AssetImage('asset/images/working.gif'), context);
   }
 
   void _startLoading() async {
@@ -134,7 +134,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                         ? Image.asset('asset/images/hello.gif')
                         : _currentIndex == 6
                             ? Image.asset('asset/images/congrate.gif')
-                            : Image.asset('asset/images/idle-character.png'),
+                            : Image.asset('asset/images/working.gif'),
                   ),
                   const SizedBox(height: 60),
                 ],

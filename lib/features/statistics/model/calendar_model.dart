@@ -2,25 +2,19 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'calendar_model.g.dart';
 
-abstract class CalendarModelBase {}
-
 @JsonSerializable()
-class CalendarModel extends CalendarModelBase {
-  final DateTime date;
-  final double dailyProgress;
+class CalendarModel {
+  final List<String> completed;
+  final List<String> failed;
+  final List<String> passed;
 
-  final int sucessRoutine;
-  final int failedRoutine;
-  // final int passedRoutine;
-
-  CalendarModel(
-    this.date,
-    this.dailyProgress,
-    this.sucessRoutine,
-    this.failedRoutine,
-    // this.passedRoutine,
-  );
+  CalendarModel({
+    required this.completed,
+    required this.failed,
+    required this.passed,
+  });
 
   factory CalendarModel.fromJson(Map<String, dynamic> json) =>
       _$CalendarModelFromJson(json);
+  Map<String, dynamic> toJson() => _$CalendarModelToJson(this);
 }
