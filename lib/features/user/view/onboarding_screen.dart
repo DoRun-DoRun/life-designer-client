@@ -42,9 +42,6 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // MediaQuery, Theme 등 상속된 위젯에 대한 작업은 여기서 처리
-    // final mediaQueryData = MediaQuery.of(context);
-    // mediaQueryData를 사용한 초기화 작업을 여기서 수행
 
     precacheImage(const AssetImage('asset/images/hello.gif'), context);
     precacheImage(const AssetImage('asset/images/congrate.gif'), context);
@@ -94,7 +91,6 @@ class OnboardingScreenState extends State<OnboardingScreen> {
     } else {
       setState(() {
         context.go('/onBoarding/userInfo');
-        // context.goNamed(UserInfoScreen.routeName);
       });
     }
   }
@@ -103,84 +99,98 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: _isLoading ? null : _nextMessage,
+      body: GestureDetector(
+        onTap: _isLoading ? null : _nextMessage,
+        child: Column(
+          children: [
+            Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 32,
-                      horizontal: 56,
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        if (_currentIndex < messages.length)
-                          ChatBubble(
-                            text: _isLoading ? '' : messages[_currentIndex],
-                            isLoading: _isLoading,
-                            loadingDots: _loadingIndex,
-                          ),
-                      ],
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 32,
+                        horizontal: 32,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          if (_currentIndex < messages.length)
+                            ChatBubble(
+                              text: _isLoading ? '' : messages[_currentIndex],
+                              isLoading: _isLoading,
+                              loadingDots: _loadingIndex,
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                   Center(
                     child: (_currentIndex <= 1)
-                        ? Image.asset('asset/images/hello.gif')
+                        ? Image.asset(
+                            'asset/images/hello.gif',
+                            fit: BoxFit.contain,
+                            width: MediaQuery.of(context).size.width * 0.7,
+                          )
                         : _currentIndex == 6
-                            ? Image.asset('asset/images/congrate.gif')
-                            : Image.asset('asset/images/working.gif'),
+                            ? Image.asset(
+                                'asset/images/congrate.gif',
+                                fit: BoxFit.contain,
+                                width: MediaQuery.of(context).size.width * 0.7,
+                              )
+                            : Image.asset(
+                                'asset/images/working.gif',
+                                fit: BoxFit.contain,
+                                width: MediaQuery.of(context).size.width * 0.7,
+                              ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 48),
                 ],
               ),
             ),
-          ),
-          Container(
-            height: 103,
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: _isQuestion
-                ? GapRow(
-                    gap: 16,
-                    children: [
-                      Expanded(
-                        child: CustomButton(
-                          backgroundColor: AppColors.BRAND_SUB,
-                          foregroundColor: AppColors.BRAND,
-                          title: '모른다',
-                          onPressed: () {
-                            setState(() {
-                              _currentIndex++;
-                              _isQuestion = false;
-                              _startLoading();
-                            });
-                          },
+            Container(
+              height: 103,
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: _isQuestion
+                  ? GapRow(
+                      gap: 16,
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            backgroundColor: AppColors.BRAND_SUB,
+                            foregroundColor: AppColors.BRAND,
+                            title: '모른다',
+                            onPressed: () {
+                              setState(() {
+                                _currentIndex++;
+                                _isQuestion = false;
+                                _startLoading();
+                              });
+                            },
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: CustomButton(
-                          backgroundColor: AppColors.BRAND,
-                          foregroundColor: Colors.white,
-                          title: '알고있다',
-                          onPressed: () {
-                            setState(() {
-                              _currentIndex = 6;
-                              _isQuestion = false;
-                              _startLoading();
-                            });
-                          },
+                        Expanded(
+                          child: CustomButton(
+                            backgroundColor: AppColors.BRAND,
+                            foregroundColor: Colors.white,
+                            title: '알고있다',
+                            onPressed: () {
+                              setState(() {
+                                _currentIndex = 6;
+                                _isQuestion = false;
+                                _startLoading();
+                              });
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                : null,
-          )
-        ],
+                      ],
+                    )
+                  : null,
+            )
+          ],
+        ),
       ),
     );
   }

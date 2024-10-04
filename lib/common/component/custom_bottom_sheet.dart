@@ -378,7 +378,7 @@ void showSelectionMulitySheet(
                   gap: 12,
                   children: [
                     const Text(
-                      "평소 계획을 지키면서 어려운점이 있나요?",
+                      "계획을 지키면서 어려운점이 있나요?",
                       style: AppTextStyles.BOLD_20,
                     ),
                     Text(

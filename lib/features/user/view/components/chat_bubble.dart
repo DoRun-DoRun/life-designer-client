@@ -82,7 +82,7 @@ class ChatBubble extends StatelessWidget {
                 : Text(
                     text,
                     style: AppTextStyles.BOLD_20
-                        .copyWith(color: Colors.white, height: 2),
+                        .copyWith(color: Colors.white, height: 1.7),
                     textAlign: TextAlign.start,
                   ),
           ),

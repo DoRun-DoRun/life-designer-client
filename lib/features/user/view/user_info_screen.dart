@@ -45,7 +45,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
     } else if (_selectedJob == null) {
       return guideQuestions[3];
     } else {
-      return "평소 계획을 지키면서 어려운점이 있으신가요?";
+      return "계획을 지키면서 어려운점이 있으신가요?";
     }
   }
 
