@@ -340,9 +340,9 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                       style: AppTextStyles.BOLD_20,
                       children: <TextSpan>[
                         TextSpan(
-                          text: double.parse(progress.differentInWeeks) < 0
-                              ? '${(double.parse(progress.differentInWeeks) * 100).toInt().abs()}% 조금\n부족했어요'
-                              : '${(double.parse(progress.differentInWeeks) * 100).toInt()}% 더\n달성했어요',
+                          text: double.parse(progress.differentInWeeks!) < 0
+                              ? '${(double.parse(progress.differentInWeeks!) * 100).toInt().abs()}% 조금\n부족했어요'
+                              : '${(double.parse(progress.differentInWeeks!) * 100).toInt()}% 더\n달성했어요',
                           style: const TextStyle(color: AppColors.TEXT_BRAND),
                         ),
                       ],
@@ -352,8 +352,8 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                 ],
               ),
               CircularProgress(
-                progressNow: double.parse(progress.lastWeekProgresds),
-                progressBefore: double.parse(progress.twoWeeksAgoProgress),
+                progressNow: double.parse(progress.lastWeekProgresds!),
+                progressBefore: double.parse(progress.twoWeeksAgoProgress!),
               )
             ],
           ),

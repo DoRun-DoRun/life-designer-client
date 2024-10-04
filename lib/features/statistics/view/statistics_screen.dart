@@ -65,7 +65,17 @@ class StatisticsPeriodScreen extends ConsumerWidget {
           const CalendarWidget(),
           reportData.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('Error: $error')),
+            error: (error, stack) => const Center(
+              child: PaddingContainer(
+                verticalSize: 48,
+                child: Center(
+                  child: Text(
+                    "사용자님의 데이터를 수집하고 있어요.\n루틴 수행 2주 이후에 보고서를 제공해드릴 수 있어요.",
+                    style: AppTextStyles.MEDIUM_16,
+                  ),
+                ),
+              ),
+            ),
             data: (report) {
               return GapColumn(
                 gap: 24,
