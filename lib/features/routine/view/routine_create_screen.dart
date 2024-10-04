@@ -9,7 +9,6 @@ import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/view/components/repeat_button.dart';
-import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
 import 'package:dorun_app_flutter/features/search/model/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -38,7 +37,8 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
     '이루고자 하시는 루틴이 무엇인가요?',
     '몇시에 시작하시나요?',
     '어느 요일에 반복하시나요?',
-    '시작 전에 알람 드릴까요?'
+    '어느 요일에 반복하시나요?',
+    // '시작 전에 알람 드릴까요?'
   ];
 
   @override
@@ -103,20 +103,21 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                   children: <Widget>[
                     Text(getCurrentGuideQuestion(),
                         style: AppTextStyles.BOLD_20),
-                    if (_routineGoal != null &&
-                        _selectedTime != null &&
-                        _repeatCycle != null)
-                      ReadOnlyBox(
-                        hintText: '알림 시간',
-                        inputText: formattedAlertTime(_alertTime),
-                        onTap: () async {
-                          _alertTime = await setAlertTime(
-                            context: context,
-                            initialTime: _alertTime,
-                          );
-                          setState(() {});
-                        },
-                      ),
+                    // TODO 알림 설정 추가하기
+                    // if (_routineGoal != null &&
+                    //     _selectedTime != null &&
+                    //     _repeatCycle != null)
+                    //   ReadOnlyBox(
+                    //     hintText: '알림 시간',
+                    //     inputText: formattedAlertTime(_alertTime),
+                    //     onTap: () async {
+                    //       _alertTime = await setAlertTime(
+                    //         context: context,
+                    //         initialTime: _alertTime,
+                    //       );
+                    //       setState(() {});
+                    //     },
+                    //   ),
                     if (_routineGoal != null && _selectedTime != null)
                       GapColumn(
                         gap: 16,
