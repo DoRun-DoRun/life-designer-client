@@ -8,6 +8,7 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
+import 'package:dorun_app_flutter/features/statistics/provider/statistic_provider.dart';
 import 'package:dorun_app_flutter/features/statistics/view/calendar_widget.dart';
 import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/material.dart';
@@ -52,25 +53,35 @@ class StatisticsScreen extends StatelessWidget {
 class StatisticsPeriodScreen extends ConsumerWidget {
   const StatisticsPeriodScreen({super.key});
 
-  // Future<WeeklyModel> getPeriodStatData() async {
-  //   final routeFromJsonFile =
-  //       await rootBundle.loadString('asset/json/weekly_mock.json');
-
-  //   final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
-  //   return WeeklyModel.fromJson(jsonData);
-  // }
-
   @override
   Widget build(BuildContext context, ref) {
-    return const SingleChildScrollView(
+    final reportData = ref.watch(reportDataProvider);
+
+    return SingleChildScrollView(
       child: GapColumn(
         gap: 24,
         children: [
-          StreakContainer(),
-          CalendarWidget(),
-
-          // WeeklyRoutineReportContainer(periodStatData: snapshot.data!),
-          // RoutineFeedbackContainer(periodStatData: snapshot.data!)
+          const StreakContainer(),
+          const CalendarWidget(),
+          reportData.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Error: $error')),
+            data: (report) {
+              return GapColumn(
+                gap: 24,
+                children: [
+                  WeeklyRoutineReportContainer(
+                    current: report.current,
+                    progress: report.progress,
+                  ),
+                  RoutineFeedbackContainer(
+                    maxFailedRoutineLastWeek: report.maxFailedRoutineLastWeek,
+                    routineWeeklyReport: report.routineWeeklyReport,
+                  ),
+                ],
+              );
+            },
+          )
         ],
       ),
     );
@@ -84,26 +95,30 @@ class StatisticsRoutineScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final routineListAsyncValue = ref.watch(routineListProvider);
 
+    return const PaddingContainer(child: Center(child: Text("준비중입니다.")));
+
     return PaddingContainer(
       child: routineListAsyncValue.when(
         data: (routines) {
-          return GapColumn(
-            gap: 24,
-            children: routines.map((routine) {
-              return ListItem(
-                routineId: routine.id,
-                title: routine.name,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          StatisticsRoutineDetail(routineId: routine.id),
-                    ),
-                  );
-                },
-              );
-            }).toList(),
+          return SingleChildScrollView(
+            child: GapColumn(
+              gap: 24,
+              children: routines.map((routine) {
+                return ListItem(
+                  routineId: routine.id,
+                  title: routine.name,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            StatisticsRoutineDetail(routineId: routine.id),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -145,43 +160,6 @@ class StatisticsRoutineDetail extends StatelessWidget {
               ],
             ),
             RoutineReview(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class StatisticsWeeklyDetail extends StatelessWidget {
-  const StatisticsWeeklyDetail({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultLayout(
-      title: "주간기록",
-      leftIcon: IconButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        icon: const Icon(
-          Icons.chevron_left,
-          size: 30,
-        ),
-      ),
-      child: const PaddingContainer(
-        child: GapColumn(
-          gap: 32,
-          children: [
-            GapColumn(
-              gap: 8,
-              children: [
-                Text("홍길동 님의\n일주일 루틴이에요", style: AppTextStyles.BOLD_20),
-                Text("04.21 ~ 04.27", style: AppTextStyles.REGULAR_14),
-              ],
-            ),
-            WeeklyRoutine(routineId: "0"),
-            WeeklyRoutine(routineId: "0"),
-            WeeklyRoutine(routineId: "0"),
           ],
         ),
       ),

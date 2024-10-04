@@ -9,20 +9,52 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/features/statistics/model/calendar_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/header_model.dart';
-import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
+import 'package:dorun_app_flutter/features/statistics/model/report_model.dart';
 import 'package:dorun_app_flutter/features/statistics/repository/statistics_repository.dart';
-import 'package:dorun_app_flutter/features/statistics/view/statistics_screen.dart';
+import 'package:dorun_app_flutter/features/statistics/view/statistics_weekly_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class WeeklyRoutine extends StatelessWidget {
-  final String routineId;
+  final MaxFailedRoutine maxFailedRoutineLastWeek;
+  final Map<String, String> routineWeeklyReport;
 
   const WeeklyRoutine({
     super.key,
-    required this.routineId,
+    required this.maxFailedRoutineLastWeek,
+    required this.routineWeeklyReport,
   });
+
+  IconData _getIconForStatus(String status) {
+    switch (status) {
+      case "실패함":
+        return Icons.close;
+      case "완료됨":
+        return Icons.check;
+      case "건너뜀":
+        return Icons.keyboard_double_arrow_right;
+      case "삭제됨":
+        return Icons.delete;
+      default:
+        return Icons.circle; // 기본적으로 아무것도 표시하지 않을 때 (생성되지 않음)
+    }
+  }
+
+  Color _getColorForStatus(String status) {
+    switch (status) {
+      case "실패함":
+        return AppColors.BRAND_SUB;
+      case "완료됨":
+        return AppColors.BRAND;
+      case "건너뜀":
+        return AppColors.TEXT_INVERT;
+      case "삭제됨":
+        return AppColors.TEXT_SECONDARY;
+      default:
+        return AppColors.TEXT_INVERT;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,124 +63,50 @@ class WeeklyRoutine extends StatelessWidget {
         color: AppColors.BACKGROUND_SUB,
         borderRadius: AppRadius.ROUNDED_16,
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(16.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: GapColumn(
           gap: 16,
           children: [
             Text(
-              "아침 조깅하기",
+              maxFailedRoutineLastWeek.goal, // 목표 표시
               style: AppTextStyles.BOLD_14,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GapColumn(
+              children: routineWeeklyReport.entries.map((entry) {
+                // 날짜 파싱
+                DateTime date = DateTime.parse(entry.key);
+                String dayOfWeek =
+                    DateFormat.E('ko_KR').format(date); // 요일 가져오기
+                String dayOfMonth = DateFormat.d().format(date); // 날짜 가져오기
+
+                // 상태에 따른 아이콘
+                IconData icon = _getIconForStatus(entry.value);
+
+                // 상태가 "생성되지않음"인 경우에는 아이콘 대신 날짜 텍스트만 표시
+                return GapColumn(
                   gap: 4,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CustomIcon(
-                      text: "07",
-                      primaryColor: AppColors.TEXT_INVERT,
-                      size: 28,
-                    ),
+                    entry.value == "생성되지않음" || entry.value == "일정없음"
+                        ? CustomIcon(
+                            text: dayOfMonth, // 아이콘 대신 날짜 표시
+                            primaryColor: AppColors.TEXT_INVERT,
+                            size: 28,
+                          )
+                        : CustomIcon(
+                            icon: icon,
+                            primaryColor: _getColorForStatus(entry.value),
+                            size: 28,
+                          ),
                     Text(
-                      "월",
+                      dayOfWeek, // 요일 표시
                       style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      icon: Icons.check,
-                      primaryColor: AppColors.BRAND,
-                      size: 28,
                     ),
-                    Text(
-                      "화",
-                      style: AppTextStyles.REGULAR_12,
-                    )
                   ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      icon: Icons.close,
-                      primaryColor: AppColors.BRAND_SUB,
-                      size: 28,
-                    ),
-                    Text(
-                      "수",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      text: "11",
-                      primaryColor: AppColors.TEXT_INVERT,
-                      size: 28,
-                    ),
-                    Text(
-                      "목",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      text: "12",
-                      primaryColor: AppColors.TEXT_INVERT,
-                      size: 28,
-                    ),
-                    Text(
-                      "금",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      text: "13",
-                      primaryColor: AppColors.TEXT_INVERT,
-                      size: 28,
-                    ),
-                    Text(
-                      "토",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-                GapColumn(
-                  gap: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      text: "14",
-                      primaryColor: AppColors.TEXT_INVERT,
-                      size: 28,
-                    ),
-                    Text(
-                      "일",
-                      style: AppTextStyles.REGULAR_12,
-                    )
-                  ],
-                ),
-              ],
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -304,11 +262,13 @@ class CirclePainter extends CustomPainter {
 }
 
 class RoutineFeedbackContainer extends StatelessWidget {
-  final WeeklyModel periodStatData;
+  final MaxFailedRoutine maxFailedRoutineLastWeek;
+  final Map<String, String> routineWeeklyReport;
 
   const RoutineFeedbackContainer({
     super.key,
-    required this.periodStatData,
+    required this.maxFailedRoutineLastWeek,
+    required this.routineWeeklyReport,
   });
 
   @override
@@ -320,17 +280,17 @@ class RoutineFeedbackContainer extends StatelessWidget {
           GapColumn(
             gap: 8,
             children: [
-              Text(periodStatData.feedBackRoutineTitle,
-                  style: AppTextStyles.BOLD_20),
+              const Text("가장 어려워한 루틴", style: AppTextStyles.BOLD_20),
               Text(
-                periodStatData.feedBackRoutineDetail,
+                "단순한 루틴의 달성률이 통계적으로 더 높게 나타나요. 조금 더 간단하게 해보는 건 어떨까요?",
                 style: AppTextStyles.REGULAR_14
                     .copyWith(color: AppColors.TEXT_SUB),
               ),
             ],
           ),
           WeeklyRoutine(
-            routineId: periodStatData.feedBackRoutineId,
+            maxFailedRoutineLastWeek: maxFailedRoutineLastWeek,
+            routineWeeklyReport: routineWeeklyReport,
           )
         ],
       ),
@@ -339,11 +299,13 @@ class RoutineFeedbackContainer extends StatelessWidget {
 }
 
 class WeeklyRoutineReportContainer extends StatelessWidget {
-  final WeeklyModel periodStatData;
+  final Current current;
+  final Progress progress;
 
   const WeeklyRoutineReportContainer({
     super.key,
-    required this.periodStatData,
+    required this.current,
+    required this.progress,
   });
 
   String getWeekRange() {
@@ -362,9 +324,6 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int difference = (periodStatData.currentWeeklyProgress * 100).toInt() -
-        (periodStatData.pastWeeklyProgress * 100).toInt();
-
     return PaddingContainer(
       child: GapColumn(
         gap: 24,
@@ -381,9 +340,11 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                       style: AppTextStyles.BOLD_20,
                       children: <TextSpan>[
                         TextSpan(
-                          text: '$difference% 더 \n달성했어요',
+                          text: double.parse(progress.differentInWeeks) < 0
+                              ? '${(double.parse(progress.differentInWeeks) * 100).toInt().abs()}% 조금\n부족했어요'
+                              : '${(double.parse(progress.differentInWeeks) * 100).toInt()}% 더\n달성했어요',
                           style: const TextStyle(color: AppColors.TEXT_BRAND),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -391,8 +352,8 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                 ],
               ),
               CircularProgress(
-                progressNow: periodStatData.currentWeeklyProgress,
-                progressBefore: periodStatData.pastWeeklyProgress,
+                progressNow: double.parse(progress.lastWeekProgresds),
+                progressBefore: double.parse(progress.twoWeeksAgoProgress),
               )
             ],
           ),
@@ -404,8 +365,7 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                 icon: Icons.check,
                 color: AppColors.BRAND,
               ),
-              Text('${periodStatData.sucessRoutine}개',
-                  style: AppTextStyles.BOLD_16)
+              Text('${current.completed}개', style: AppTextStyles.BOLD_16)
             ],
           ),
           Row(
@@ -416,8 +376,18 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                 icon: Icons.close,
                 color: AppColors.BRAND_SUB,
               ),
-              Text('${periodStatData.failedRoutine}개',
-                  style: AppTextStyles.BOLD_16)
+              Text('${current.failed}개', style: AppTextStyles.BOLD_16)
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const IconListView(
+                text: '건너뛴 루틴',
+                icon: Icons.keyboard_double_arrow_right,
+                color: AppColors.TEXT_INVERT,
+              ),
+              Text('${current.passed}개', style: AppTextStyles.BOLD_16)
             ],
           ),
           CustomButton(

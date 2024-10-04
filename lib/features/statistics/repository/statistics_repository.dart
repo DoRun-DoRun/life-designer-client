@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:dorun_app_flutter/features/statistics/model/calendar_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/header_model.dart';
+import 'package:dorun_app_flutter/features/statistics/model/report_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -32,4 +33,12 @@ abstract class StatisticsRepository {
     @Query('month') int month,
     @Query('year') int year,
   );
+
+  @GET('/report')
+  @Headers({'accessToken': 'true'})
+  Future<ReportModel> getReportData();
+
+  @GET('/report-details')
+  @Headers({'accessToken': 'true'})
+  Future<List<ReportDetail>> getReportDetails();
 }
