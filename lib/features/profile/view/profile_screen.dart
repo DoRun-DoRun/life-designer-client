@@ -52,26 +52,26 @@ class ProfileScreen extends ConsumerWidget {
                       GapRow(
                         gap: 16,
                         children: [
-                          Container(
-                            width: 64,
-                            height: 64,
-                            decoration: const BoxDecoration(
-                              color: AppColors.TEXT_INVERT,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.person_outline,
-                              size: 42,
-                              color: Colors.white,
-                            ),
-                          ),
+                          // Container(
+                          //   width: 64,
+                          //   height: 64,
+                          //   decoration: const BoxDecoration(
+                          //     color: AppColors.TEXT_INVERT,
+                          //     shape: BoxShape.circle,
+                          //   ),
+                          //   child: const Icon(
+                          //     Icons.person_outline,
+                          //     size: 42,
+                          //     color: Colors.white,
+                          //   ),
+                          // ),
                           GapColumn(
                             children: [
                               Text(user.name == '' ? '익명의 루티너' : user.name!,
-                                  style: AppTextStyles.REGULAR_14),
+                                  style: AppTextStyles.REGULAR_16),
                               Text(
                                 processEmail(user.email),
-                                style: AppTextStyles.REGULAR_12.copyWith(
+                                style: AppTextStyles.REGULAR_14.copyWith(
                                   color: AppColors.TEXT_SUB,
                                 ),
                               ),

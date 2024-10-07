@@ -54,45 +54,45 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         child: GapColumn(
           gap: 24,
           children: [
-            PaddingContainer(
-              width: double.infinity,
-              child: Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        color: AppColors.TEXT_INVERT,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.person_outline,
-                        size: 90,
-                        color: Colors.white,
-                      ),
-                    ),
-                    // Positioned(
-                    //   right: 0,
-                    //   bottom: 0,
-                    //   child: Container(
-                    //     width: 30,
-                    //     height: 30,
-                    //     decoration: const BoxDecoration(
-                    //       color: Colors.black,
-                    //       shape: BoxShape.circle,
-                    //     ),
-                    //     child: const Icon(
-                    //       Icons.camera_alt,
-                    //       size: 20,
-                    //       color: Colors.white,
-                    //     ),
-                    //   ),
-                    // )
-                  ],
-                ),
-              ),
-            ),
+            // PaddingContainer(
+            //   width: double.infinity,
+            //   child: Center(
+            //     child: Stack(
+            //       children: [
+            //         Container(
+            //           width: 120,
+            //           height: 120,
+            //           decoration: const BoxDecoration(
+            //             color: AppColors.TEXT_INVERT,
+            //             shape: BoxShape.circle,
+            //           ),
+            //           child: const Icon(
+            //             Icons.person_outline,
+            //             size: 90,
+            //             color: Colors.white,
+            //           ),
+            //         ),
+            //         // Positioned(
+            //         //   right: 0,
+            //         //   bottom: 0,
+            //         //   child: Container(
+            //         //     width: 30,
+            //         //     height: 30,
+            //         //     decoration: const BoxDecoration(
+            //         //       color: Colors.black,
+            //         //       shape: BoxShape.circle,
+            //         //     ),
+            //         //     child: const Icon(
+            //         //       Icons.camera_alt,
+            //         //       size: 20,
+            //         //       color: Colors.white,
+            //         //     ),
+            //         //   ),
+            //         // )
+            //       ],
+            //     ),
+            //   ),
+            // ),
             PaddingContainer(
               child: GapColumn(
                 gap: 36,
