@@ -13,6 +13,7 @@ import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -36,6 +37,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
   int currentIndex = 0;
   Timer? timer;
   int remainingTime = 0;
+  bool isAlret = false;
   TimerState timerState = TimerState.stop;
 
   @override
@@ -84,6 +86,10 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         remainingTime--;
+        if (remainingTime <= 0 && isAlret == false) {
+          playNotificationSoundForDuration();
+          isAlret = true;
+        }
       });
     });
   }
@@ -127,6 +133,8 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
   }
 
   void handleTimerState(TimerHandleState timerHandleState) {
+    isAlret = false;
+
     switch (timerHandleState) {
       case TimerHandleState.complete:
         completeTimer();
@@ -144,6 +152,20 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
         startTimer();
         break;
     }
+  }
+
+  void playNotificationSoundForDuration() {
+    FlutterRingtonePlayer().play(
+      android: AndroidSounds.alarm,
+      ios: IosSounds.alarm,
+      looping: true, // 소리가 반복되도록 설정
+      volume: 1.0,
+    );
+
+    // 3초 후에 소리를 정지
+    Future.delayed(const Duration(seconds: 3), () {
+      FlutterRingtonePlayer().stop();
+    });
   }
 
   @override
