@@ -5,6 +5,7 @@ import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/calendar_model.dart';
 import 'package:dorun_app_flutter/features/statistics/repository/statistics_repository.dart';
 import 'package:dorun_app_flutter/features/statistics/view/component.dart';
@@ -14,7 +15,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class CalendarWidget extends ConsumerStatefulWidget {
-  const CalendarWidget({super.key});
+  final RoutineModel? routine;
+
+  const CalendarWidget({super.key, this.routine});
 
   @override
   CalendarWidgetState createState() => CalendarWidgetState();
@@ -37,14 +40,24 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _calendarDataFuture = _getCalendarData(); // 초기 Future 설정
+    _calendarDataFuture = _getCalendarData();
   }
 
   Future<Map<String, CalendarModel>> _getCalendarData() {
     final statisticsRepository = ref.watch(statisticsRepositoryProvider);
 
-    return statisticsRepository.getCalendarData(
-        _focusedDate.month, _focusedDate.year);
+    if (widget.routine != null) {
+      return statisticsRepository.getRoutineCalendarData(
+        widget.routine!.id,
+        _focusedDate.month,
+        _focusedDate.year,
+      );
+    } else {
+      return statisticsRepository.getCalendarData(
+        _focusedDate.month,
+        _focusedDate.year,
+      );
+    }
   }
 
   void _onDaySelected(DateTime selectedDay) {
@@ -126,16 +139,6 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
         });
   }
 
-  // Future<List<CalendarModel>> getCalendarData() async {
-  //   final routeFromJsonFile =
-  //       await rootBundle.loadString('asset/json/calendar_mock.json');
-
-  //   final List<dynamic> parsedJson = json.decode(routeFromJsonFile);
-  //   return parsedJson
-  //       .map((json) => CalendarModel.fromJson(json as Map<String, dynamic>))
-  //       .toList();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -184,11 +187,18 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                 ),
               ),
               const Divider(height: 0),
-              DailyRoutineReportContainer(
-                selectedDate: _selectedDate,
-                calendarData: calendarData[_selectedDate.day.toString()] ??
-                    CalendarModel(completed: [], failed: [], passed: []),
-              ),
+              widget.routine == null
+                  ? DailyRoutineReportContainer(
+                      selectedDate: _selectedDate,
+                      calendarData:
+                          calendarData[_selectedDate.day.toString()] ??
+                              CalendarModel(
+                                completed: [],
+                                failed: [],
+                                passed: [],
+                              ),
+                    )
+                  : const ConductRoutineHistory()
             ],
           );
         } else {

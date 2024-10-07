@@ -7,10 +7,10 @@ import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/calendar_model.dart';
-import 'package:dorun_app_flutter/features/statistics/model/header_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/report_model.dart';
-import 'package:dorun_app_flutter/features/statistics/repository/statistics_repository.dart';
+import 'package:dorun_app_flutter/features/statistics/provider/statistic_provider.dart';
 import 'package:dorun_app_flutter/features/statistics/view/statistics_weekly_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -340,9 +340,9 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                       style: AppTextStyles.BOLD_20,
                       children: <TextSpan>[
                         TextSpan(
-                          text: double.parse(progress.differentInWeeks!) < 0
-                              ? '${(double.parse(progress.differentInWeeks!) * 100).toInt().abs()}% 조금\n부족했어요'
-                              : '${(double.parse(progress.differentInWeeks!) * 100).toInt()}% 더\n달성했어요',
+                          text: double.parse(progress.differentInWeeks) < 0
+                              ? '${(double.parse(progress.differentInWeeks) * 100).toInt().abs()}% 조금\n부족했어요'
+                              : '${(double.parse(progress.differentInWeeks) * 100).toInt()}% 더\n달성했어요',
                           style: const TextStyle(color: AppColors.TEXT_BRAND),
                         ),
                       ],
@@ -352,8 +352,8 @@ class WeeklyRoutineReportContainer extends StatelessWidget {
                 ],
               ),
               CircularProgress(
-                progressNow: double.parse(progress.lastWeekProgresds!),
-                progressBefore: double.parse(progress.twoWeeksAgoProgress!),
+                progressNow: double.parse(progress.lastWeekProgresds),
+                progressBefore: double.parse(progress.twoWeeksAgoProgress),
               )
             ],
           ),
@@ -512,75 +512,71 @@ class DailyRoutineReportContainerState
 }
 
 class StreakContainer extends ConsumerWidget {
-  const StreakContainer({
-    super.key,
-  });
+  final RoutineModel? routine;
+
+  const StreakContainer({super.key, this.routine});
 
   @override
   Widget build(BuildContext context, ref) {
-    final statisticsRepository = ref.watch(statisticsRepositoryProvider);
+    final bool isRoutine = routine != null;
 
-    return FutureBuilder<HeaderModel>(
-      future: statisticsRepository.getStatistics(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasData) {
-          final statistics = snapshot.data!;
+    final statisticsAsyncValue = isRoutine
+        ? ref.watch(streakProvider(routine!.id))
+        : ref.watch(statisticsProvider);
 
-          return PaddingContainer(
-            child: GapColumn(
-              gap: 24,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    text: '지금까지 ',
-                    style: AppTextStyles.BOLD_20,
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '연속 ${statistics.recentStreak}일 ',
-                        style: AppTextStyles.BOLD_20
-                            .copyWith(color: AppColors.TEXT_BRAND),
-                      ),
-                      TextSpan(
-                        text:
-                            '동안 \n루틴을 ${(statistics.recentPerformanceRate).toInt()}% 달성했어요',
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('최고 연속 달성', style: AppTextStyles.REGULAR_14),
-                    Text('${statistics.maxStreak}일',
-                        style: AppTextStyles.BOLD_16),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('누적 달성', style: AppTextStyles.REGULAR_14),
-                    Text(
-                      '${statistics.totalProcessDays}일',
-                      style: AppTextStyles.BOLD_16,
+    return statisticsAsyncValue.when(
+      data: (statistics) {
+        return PaddingContainer(
+          child: GapColumn(
+            gap: 24,
+            children: [
+              RichText(
+                text: TextSpan(
+                  text: '지금까지 ',
+                  style: AppTextStyles.MEDIUM_20,
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: '연속 ${statistics.recentStreak}일 ',
+                      style: AppTextStyles.BOLD_20
+                          .copyWith(color: AppColors.TEXT_BRAND),
                     ),
+                    TextSpan(text: isRoutine ? '동안\n' : '동안\n루틴을 '),
+                    TextSpan(
+                      text: isRoutine
+                          ? routine!.name
+                          : '${(statistics.recentPerformanceRate!).toInt()}%',
+                      style: AppTextStyles.BOLD_20,
+                    ),
+                    TextSpan(text: isRoutine ? '\n루틴을 수행했어요' : '수행했어요'),
                   ],
                 ),
-              ],
-            ),
-          );
-        }
-
-        if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        }
-
-        return const Center(child: Text("No data"));
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('최고 연속 달성', style: AppTextStyles.REGULAR_14),
+                  Text('${statistics.maxStreak}일',
+                      style: AppTextStyles.BOLD_16),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('누적 달성', style: AppTextStyles.REGULAR_14),
+                  Text(
+                    '${statistics.totalProcessDays}일',
+                    style: AppTextStyles.BOLD_16,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
       },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(
+        child: Text('Error: $error'),
+      ),
     );
   }
 }

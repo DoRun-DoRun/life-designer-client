@@ -1,18 +1,15 @@
-import 'dart:convert';
-
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
 import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
-import 'package:dorun_app_flutter/features/statistics/model/weekly_model.dart';
 import 'package:dorun_app_flutter/features/statistics/provider/statistic_provider.dart';
 import 'package:dorun_app_flutter/features/statistics/view/calendar_widget.dart';
 import 'package:dorun_app_flutter/features/statistics/view/component.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class StatisticsScreen extends StatelessWidget {
@@ -70,7 +67,7 @@ class StatisticsPeriodScreen extends ConsumerWidget {
                 verticalSize: 48,
                 child: Center(
                   child: Text(
-                    "사용자님의 데이터를 수집하고 있어요.\n루틴 수행 2주 이후에 보고서를 제공해드릴 수 있어요.",
+                    "현재 사용자님의 데이터를 수집하고 있어요.\n루틴 수행 2주 이후에 보고서를 제공해드릴 수 있어요.",
                     style: AppTextStyles.MEDIUM_16,
                   ),
                 ),
@@ -105,8 +102,6 @@ class StatisticsRoutineScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final routineListAsyncValue = ref.watch(routineListProvider);
 
-    return const PaddingContainer(child: Center(child: Text("준비중입니다.")));
-
     return PaddingContainer(
       child: routineListAsyncValue.when(
         data: (routines) {
@@ -122,7 +117,7 @@ class StatisticsRoutineScreen extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            StatisticsRoutineDetail(routineId: routine.id),
+                            StatisticsRoutineDetail(routine: routine),
                       ),
                     );
                   },
@@ -140,36 +135,26 @@ class StatisticsRoutineScreen extends ConsumerWidget {
 }
 
 class StatisticsRoutineDetail extends StatelessWidget {
-  final int routineId;
+  final RoutineModel routine;
 
-  const StatisticsRoutineDetail({super.key, required this.routineId});
-
-  Future<WeeklyModel> getWeeklyData() async {
-    final routeFromJsonFile =
-        await rootBundle.loadString('asset/json/weekly_mock.json');
-
-    final jsonData = json.decode(routeFromJsonFile) as Map<String, dynamic>;
-    return WeeklyModel.fromJson(jsonData);
-  }
+  const StatisticsRoutineDetail({super.key, required this.routine});
 
   @override
   Widget build(BuildContext context) {
-    return const DefaultLayout(
+    return DefaultLayout(
       title: '루틴별 통계',
       child: SingleChildScrollView(
         child: GapColumn(
           gap: 24,
           children: [
-            StreakContainer(),
+            StreakContainer(routine: routine),
             Column(
               children: [
-                CalendarWidget(),
-                Divider(height: 0),
-                ConductRoutineHistory()
+                CalendarWidget(routine: routine),
                 // DailyRoutineReportContainer(),
               ],
             ),
-            RoutineReview(),
+            const RoutineReview(),
           ],
         ),
       ),

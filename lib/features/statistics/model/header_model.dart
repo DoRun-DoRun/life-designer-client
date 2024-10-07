@@ -7,13 +7,13 @@ class HeaderModel {
   final int maxStreak;
   final int recentStreak;
   final int totalProcessDays;
-  final double recentPerformanceRate;
+  final double? recentPerformanceRate;
 
   HeaderModel({
     required this.maxStreak,
     required this.recentStreak,
     required this.totalProcessDays,
-    required this.recentPerformanceRate,
+    this.recentPerformanceRate,
   });
 
   factory HeaderModel.fromJson(Map<String, dynamic> json) =>
