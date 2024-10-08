@@ -23,18 +23,19 @@ final statisticsProvider = FutureProvider<HeaderModel>((ref) {
   return repository.getStatistics();
 });
 
+final routineCalendarProvider =
+    FutureProvider.family<Map<String, RoutineCalendarModel>, CalendarParams>(
+        (ref, params) {
+  final repository = ref.watch(statisticsRepositoryProvider);
+  return repository.getRoutineCalendarData(
+      params.routineId!, params.month, params.year);
+});
+
 final calendarProvider =
     FutureProvider.family<Map<String, CalendarModel>, CalendarParams>(
         (ref, params) {
   final repository = ref.watch(statisticsRepositoryProvider);
-
-  // routineId가 null이 아니면 getRoutineCalendarData를, null이면 getCalendarData를 호출
-  if (params.routineId != null) {
-    return repository.getRoutineCalendarData(
-        params.routineId!, params.month, params.year);
-  } else {
-    return repository.getCalendarData(params.month, params.year);
-  }
+  return repository.getCalendarData(params.month, params.year);
 });
 
 // Parameters for provider

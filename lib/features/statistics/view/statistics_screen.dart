@@ -148,13 +148,7 @@ class StatisticsRoutineDetail extends StatelessWidget {
           gap: 24,
           children: [
             StreakContainer(routine: routine),
-            Column(
-              children: [
-                CalendarWidget(routine: routine),
-                // DailyRoutineReportContainer(),
-              ],
-            ),
-            const RoutineReview(),
+            CalendarWidget(routine: routine),
           ],
         ),
       ),

@@ -48,7 +48,7 @@ abstract class StatisticsRepository {
 
   @GET('/routine/{id}/calendar')
   @Headers({'accessToken': 'true'})
-  Future<Map<String, CalendarModel>> getRoutineCalendarData(
+  Future<Map<String, RoutineCalendarModel>> getRoutineCalendarData(
     @Path('id') int routineId,
     @Query('month') int month,
     @Query('year') int year,

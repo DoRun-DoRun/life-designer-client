@@ -133,3 +133,11 @@ RepeatCycle formatRoutineType(List<bool> days) {
     return RepeatCycle.custom;
   }
 }
+
+String formatDate(String isoDate) {
+  DateTime dateTime = DateTime.parse(isoDate);
+
+  DateFormat formatter = DateFormat('yyyy년 MM월 dd일(E) HH시 mm분', 'ko_KR');
+
+  return formatter.format(dateTime);
+}

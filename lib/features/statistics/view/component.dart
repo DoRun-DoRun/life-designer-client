@@ -7,6 +7,7 @@ import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
+import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/calendar_model.dart';
 import 'package:dorun_app_flutter/features/statistics/model/report_model.dart';
@@ -645,13 +646,20 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
 }
 
 class RoutineReview extends StatelessWidget {
+  final CalendarRoutineReviewModel? routineReview;
+
   const RoutineReview({
     super.key,
+    this.routineReview,
   });
 
   @override
   Widget build(BuildContext context) {
-    return const PaddingContainer(
+    if (routineReview == null) {
+      return const Text("수행된 루틴이 없습니다.");
+    }
+
+    return PaddingContainer(
       child: GapColumn(
         gap: 16,
         children: [
@@ -661,17 +669,20 @@ class RoutineReview extends StatelessWidget {
               GapColumn(
                 gap: 2,
                 children: [
-                  Text("루틴 회고", style: AppTextStyles.BOLD_20),
-                  Text("2024. 04. 22", style: AppTextStyles.REGULAR_12),
+                  const Text("루틴 회고", style: AppTextStyles.BOLD_20),
+                  Text(formatDate(routineReview!.createdAt.toString()),
+                      style: AppTextStyles.REGULAR_12),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 80,
               )
             ],
           ),
           Text(
-            "루틴 회고 텍스트가 들어가는 공간입니다. 루틴 회고 텍스트가 들어가는 공간입니다. 루틴 회고 텍스트가 들어가는 공간입니다. 루틴 회고 텍스트가 들어가는 공간입니다. 루틴 회고 텍스트가 들어가는 공간입니다. 루틴 회고 텍스트가 들어가는 공간입니다. 루틴 회고 텍스트가 들어가는 공간입니다. 루틴 회고 텍스트가 들어가는 공간입니다. ",
+            (routineReview!.comments == "")
+                ? "작성된 회고가 없습니다."
+                : routineReview!.comments,
             style: AppTextStyles.REGULAR_12,
           )
         ],

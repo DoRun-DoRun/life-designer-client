@@ -29,8 +29,8 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
   DateTime _focusedDate = DateTime.now();
   late Future<List<CalendarModel>> calendarDataFuture;
   DateTime _tempSelectedDate = DateTime.now();
-  late Future<Map<String, CalendarModel>>?
-      _calendarDataFuture; // Future를 캐시하기 위한 변수
+  late Future<Map<String, CalendarModel>>? _calendarDataFuture;
+  late Future<Map<String, RoutineCalendarModel>>? _routineCalendarDataFuture;
 
   @override
   void initState() {
@@ -40,24 +40,30 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _calendarDataFuture = _getCalendarData();
+    if (widget.routine != null) {
+      _routineCalendarDataFuture = _getRoutineCalendarData();
+    } else {
+      _calendarDataFuture = _getCalendarData();
+    }
   }
 
   Future<Map<String, CalendarModel>> _getCalendarData() {
     final statisticsRepository = ref.watch(statisticsRepositoryProvider);
 
-    if (widget.routine != null) {
-      return statisticsRepository.getRoutineCalendarData(
-        widget.routine!.id,
-        _focusedDate.month,
-        _focusedDate.year,
-      );
-    } else {
-      return statisticsRepository.getCalendarData(
-        _focusedDate.month,
-        _focusedDate.year,
-      );
-    }
+    return statisticsRepository.getCalendarData(
+      _focusedDate.month,
+      _focusedDate.year,
+    );
+  }
+
+  Future<Map<String, RoutineCalendarModel>> _getRoutineCalendarData() {
+    final statisticsRepository = ref.watch(statisticsRepositoryProvider);
+
+    return statisticsRepository.getRoutineCalendarData(
+      widget.routine!.id,
+      _focusedDate.month,
+      _focusedDate.year,
+    );
   }
 
   void _onDaySelected(DateTime selectedDay) {
@@ -142,7 +148,9 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _calendarDataFuture,
+      future: widget.routine == null
+          ? _calendarDataFuture
+          : _routineCalendarDataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Column(
@@ -173,7 +181,16 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
         }
 
         if (snapshot.hasData) {
-          final calendarData = snapshot.data!;
+          Map<String, CalendarModel> calendarData;
+          Map<String, RoutineCalendarModel> routineCalendarData =
+              snapshot.data! as Map<String, RoutineCalendarModel>;
+
+          if (widget.routine != null) {
+            calendarData = parseCalendarData(
+                snapshot.data! as Map<String, RoutineCalendarModel>);
+          } else {
+            calendarData = snapshot.data! as Map<String, CalendarModel>;
+          }
 
           return Column(
             children: [
@@ -198,7 +215,14 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                                 passed: [],
                               ),
                     )
-                  : const ConductRoutineHistory()
+                  : const ConductRoutineHistory(),
+              const SizedBox(height: 24),
+              if (widget.routine != null)
+                RoutineReview(
+                  routineReview:
+                      routineCalendarData[_selectedDate.day.toString()]
+                          ?.routineReview,
+                ),
             ],
           );
         } else {
@@ -358,4 +382,43 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
       },
     );
   }
+}
+
+Map<String, CalendarModel> parseCalendarData(
+    Map<String, RoutineCalendarModel> inputData) {
+  Map<String, CalendarModel> calendarData = {};
+
+  // 입력 데이터를 순회하면서 상태를 확인
+  inputData.forEach((key, value) {
+    String status = value.status;
+
+    // 새로운 CalendarModel 객체 생성
+    CalendarModel calendarModel = CalendarModel(
+      completed: [],
+      failed: [],
+      passed: [],
+    );
+
+    // 상태에 따라 값을 리스트에 추가
+    switch (status) {
+      case "완료됨":
+        calendarModel.completed.add(key);
+        break;
+      case "실패함":
+        calendarModel.failed.add(key);
+        break;
+      case "일정없음":
+        calendarModel.passed.add(key);
+        break;
+      default:
+        calendarModel.passed.add(key);
+        // 상태가 다른 값인 경우, 필요에 따라 처리하거나 생략할 수 있음
+        break;
+    }
+
+    // calendarData에 해당 일자의 CalendarModel 저장
+    calendarData[key] = calendarModel;
+  });
+
+  return calendarData;
 }
