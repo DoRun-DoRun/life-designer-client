@@ -3,7 +3,7 @@ description: "Dorun App Flutter"
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+7
+version: 1.0.2+8
 
 environment:
   sdk: '>=3.2.4 <4.0.0'
@@ -42,6 +42,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   flutter_ringtone_player: ^4.0.0+3
   flutter_local_notifications: ^17.2.3
+  flutter_launcher_icons: ^0.14.1
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,7 @@ flutter:
   assets:
     - asset/json/
     - asset/images/
+    - asset/icon/
     - .env
     # - asset/images/background/
     # - asset/images/character/

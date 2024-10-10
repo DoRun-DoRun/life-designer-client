@@ -2,9 +2,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="Life Designer"
+        android:label="라이프 디자이너"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+>
         <activity
             android:name=".MainActivity"
             android:exported="true"
