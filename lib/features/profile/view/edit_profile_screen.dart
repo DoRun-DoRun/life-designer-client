@@ -161,18 +161,16 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         inputText: selectedDifficulties.join(', '),
                         onTap: () {
                           showSelectionMulitySheet(context, [
-                            "의욕 떨어짐",
-                            "목표가 너무 큼",
+                            "목표 불명확",
+                            "꾸준함 부족",
+                            "과도한 이상화",
+                            "일정 변화",
+                            "동기 저하",
                             "시간 부족",
-                            "갑작스런 일",
-                            "지속하기 어려움",
-                            "우선순위 정하기",
-                            "주변의 도움 부족",
-                            "유혹에 약함",
-                            "결과가 안 보임",
-                            "스트레스 받음",
-                            "자원 부족",
-                            "계획이 애매함",
+                            "실패 두려움",
+                            "완벽주의",
+                            "즉각적인 결과 욕구",
+                            "자책감",
                           ], (selectedValues) {
                             setState(() {
                               selectedDifficulties = selectedValues;
