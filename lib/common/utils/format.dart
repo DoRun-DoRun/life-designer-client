@@ -83,6 +83,19 @@ String formatTime(int seconds) {
   return isNegative ? "-$formattedTime" : formattedTime;
 }
 
+String formatSeconds(int seconds) {
+  int minutes = seconds ~/ 60;
+  int remainingSeconds = seconds % 60;
+
+  String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
+
+  if (minutes == 0) {
+    return '$formattedSeconds\uCD08'; // "00초" 형태
+  } else {
+    return '$minutes\uBD84 $formattedSeconds\uCD08'; // "3분 01초" 형태
+  }
+}
+
 String formatTimeRange(int startTimeInSeconds, int durationInSeconds) {
   final startTime =
       DateTime(0, 0, 0).add(Duration(seconds: startTimeInSeconds));

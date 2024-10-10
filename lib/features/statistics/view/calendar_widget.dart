@@ -76,7 +76,11 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
     setState(() {
       _focusedDate =
           DateTime(_focusedDate.year, _focusedDate.month + increment, 1);
-      _calendarDataFuture = _getCalendarData();
+      if (widget.routine != null) {
+        _routineCalendarDataFuture = _getRoutineCalendarData();
+      } else {
+        _calendarDataFuture = _getCalendarData();
+      }
     });
   }
 
@@ -133,7 +137,12 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                           _tempSelectedDate.month,
                           1,
                         );
-                        _calendarDataFuture = _getCalendarData();
+                        if (widget.routine != null) {
+                          _routineCalendarDataFuture =
+                              _getRoutineCalendarData();
+                        } else {
+                          _calendarDataFuture = _getCalendarData();
+                        }
                       });
                       Navigator.pop(context);
                     },
@@ -182,12 +191,13 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
         if (snapshot.hasData) {
           Map<String, CalendarModel> calendarData;
-          Map<String, RoutineCalendarModel> routineCalendarData =
-              snapshot.data! as Map<String, RoutineCalendarModel>;
+          late Map<String, RoutineCalendarModel> routineCalendarData;
 
           if (widget.routine != null) {
             calendarData = parseCalendarData(
                 snapshot.data! as Map<String, RoutineCalendarModel>);
+            routineCalendarData =
+                snapshot.data! as Map<String, RoutineCalendarModel>;
           } else {
             calendarData = snapshot.data! as Map<String, CalendarModel>;
           }
@@ -215,13 +225,16 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                                 passed: [],
                               ),
                     )
-                  : const ConductRoutineHistory(),
+                  : ConductRoutineHistory(
+                      routineData:
+                          routineCalendarData[_selectedDate.day.toString()]!,
+                    ),
               const SizedBox(height: 24),
               if (widget.routine != null)
                 RoutineReview(
                   routineReview:
-                      routineCalendarData[_selectedDate.day.toString()]
-                          ?.routineReview,
+                      routineCalendarData[_selectedDate.day.toString()]!
+                          .routineReview,
                 ),
             ],
           );
@@ -404,7 +417,7 @@ Map<String, CalendarModel> parseCalendarData(
       case "완료됨":
         calendarModel.completed.add(key);
         break;
-      case "실패함":
+      case "실패함" || "생성되지않음":
         calendarModel.failed.add(key);
         break;
       case "일정없음":

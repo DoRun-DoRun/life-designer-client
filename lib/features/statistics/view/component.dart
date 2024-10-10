@@ -583,7 +583,9 @@ class StreakContainer extends ConsumerWidget {
 }
 
 class ConductRoutineHistory extends StatefulWidget {
-  const ConductRoutineHistory({super.key});
+  final RoutineCalendarModel routineData;
+
+  const ConductRoutineHistory({super.key, required this.routineData});
 
   @override
   ConductRoutineHistoryState createState() => ConductRoutineHistoryState();
@@ -600,6 +602,10 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.routineData.details == null) {
+      return Container();
+    }
+
     return PaddingContainer(
       child: GapColumn(
         gap: 24,
@@ -616,28 +622,34 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
                       style: AppTextStyles.REGULAR_16,
                     ),
                     Text(
-                      "82분 41초",
+                      formatSeconds(widget.routineData.totalTime!),
                       style: AppTextStyles.BOLD_16.copyWith(
                         color: AppColors.TEXT_BRAND,
                       ),
                     ),
                   ],
                 ),
-                Icon(_isExpanded
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down),
+                Icon(
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                ),
               ],
             ),
           ),
           if (_isExpanded)
-            const GapColumn(
+            GapColumn(
               gap: 24,
-              children: [
-                ListItem(routineId: 0, title: "창문열기"),
-                ListItem(routineId: 0, title: "창문열기"),
-                ListItem(routineId: 0, title: "창문열기"),
-                ListItem(routineId: 0, title: "창문열기"),
-              ],
+              children: widget.routineData.details!
+                  .map(
+                    (routine) => ListItem(
+                      routinEmoji: routine.emoji,
+                      routineId: routine.id,
+                      title: routine.goal,
+                      subTitle: formatSeconds(routine.timeSpent),
+                    ),
+                  )
+                  .toList(),
             ),
         ],
       ),
@@ -655,13 +667,17 @@ class RoutineReview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(routineReview);
     if (routineReview == null) {
-      return const Text("수행된 루틴이 없습니다.");
+      return const Padding(
+        padding: EdgeInsets.all(32.0),
+        child: Text("수행된 루틴이 없습니다."),
+      );
     }
 
     return PaddingContainer(
       child: GapColumn(
-        gap: 16,
+        gap: 24,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -674,9 +690,7 @@ class RoutineReview extends StatelessWidget {
                       style: AppTextStyles.REGULAR_12),
                 ],
               ),
-              const SizedBox(
-                height: 80,
-              )
+              const SizedBox(height: 80)
             ],
           ),
           Text(
@@ -684,7 +698,8 @@ class RoutineReview extends StatelessWidget {
                 ? "작성된 회고가 없습니다."
                 : routineReview!.comments,
             style: AppTextStyles.REGULAR_12,
-          )
+          ),
+          const SizedBox(height: 24)
         ],
       ),
     );
