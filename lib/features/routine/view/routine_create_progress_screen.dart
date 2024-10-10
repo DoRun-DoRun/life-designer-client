@@ -40,6 +40,7 @@ class _RoutineCreateProgressScreenState
     extends ConsumerState<RoutineCreateProgressScreen> {
   double progress = 0.0;
   Timer? timer;
+  bool routineCreated = false;
 
   @override
   void initState() {
@@ -50,13 +51,16 @@ class _RoutineCreateProgressScreenState
 
   void startProgress() {
     timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      double stepIncrement = 1.0 / 100;
+      double stepIncrement = routineCreated ? (1.0 / 100) : (1.0 / 1000);
       setState(() {
         progress += stepIncrement;
-        if (progress >= 1) {
+        if (progress >= 0.9 && !routineCreated) {
+          progress = 0.9;
+        } else if (progress >= 1.0 && routineCreated) {
           progress = 1.0;
           timer.cancel();
 
+          // 타이머가 완료되면 Main 화면으로 이동
           context.go('/');
         }
       });
@@ -64,8 +68,8 @@ class _RoutineCreateProgressScreenState
   }
 
   String convertTimeOfDayToString(TimeOfDay timeOfDay) {
-    final formattedTime =
-        "${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}";
+    const formattedTime =
+        "\${timeOfDay.hour.toString().padLeft(2, '0')}:\${timeOfDay.minute.toString().padLeft(2, '0')}";
     return formattedTime;
   }
 
@@ -85,11 +89,12 @@ class _RoutineCreateProgressScreenState
 
       if (!mounted) return;
 
+      routineCreated = true;
       ref.invalidate(routineListProvider);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to create routine: $e')),
+          const SnackBar(content: Text('Failed to create routine: \$e')),
         );
       }
     }

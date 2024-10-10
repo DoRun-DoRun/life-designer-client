@@ -22,7 +22,10 @@ abstract class RoutineRepository {
 
   @POST('/')
   @Headers({'accessToken': 'true'})
-  Future createRoutine(@Body() CreateRoutineModel createRoutineModel);
+  Future createRoutine(
+    @Body() CreateRoutineModel createRoutineModel, {
+    @Query('util') String util = 'gpt',
+  });
 
   @GET('/')
   @Headers({'accessToken': 'true'})
