@@ -124,7 +124,13 @@ class _RoutineCreateProgressScreenState
                       const AlwaysStoppedAnimation<Color?>(AppColors.BRAND),
                   minHeight: 5,
                 ),
-                Center(child: Image.asset('asset/images/working.gif'))
+                Center(
+                  child: Image.asset(
+                    'asset/images/working.gif',
+                    fit: BoxFit.contain,
+                    width: MediaQuery.of(context).size.width * 0.7,
+                  ),
+                )
               ],
             ),
           ],

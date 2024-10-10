@@ -52,7 +52,7 @@ class ListItem extends StatelessWidget {
                     style: AppTextStyles.EMOJI,
                   ),
                   Text(
-                    title,
+                    title.length > 10 ? '${title.substring(0, 10)}...' : title,
                     style: AppTextStyles.MEDIUM_16.copyWith(
                       color: isDone
                           ? AppColors.TEXT_INVERT

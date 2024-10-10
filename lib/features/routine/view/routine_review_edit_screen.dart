@@ -30,41 +30,45 @@ class RoutineReviewEditScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          PaddingContainer(
-            child: GapColumn(
-              gap: 24,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    text: '수행시간: ',
-                    style: AppTextStyles.REGULAR_16,
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: calculateTotalDuration(routineHistory),
-                        style: AppTextStyles.BOLD_16
-                            .copyWith(color: AppColors.TEXT_BRAND),
+          Expanded(
+            child: PaddingContainer(
+              child: SingleChildScrollView(
+                child: GapColumn(
+                  gap: 24,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: '수행시간: ',
+                        style: AppTextStyles.REGULAR_16,
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: calculateTotalDuration(routineHistory),
+                            style: AppTextStyles.BOLD_16
+                                .copyWith(color: AppColors.TEXT_BRAND),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                GapColumn(
-                  gap: 16,
-                  children: routineHistory.histories.map((data) {
-                    SubRoutineModel subRoutine = data.subRoutine;
+                    ),
+                    GapColumn(
+                      gap: 16,
+                      children: routineHistory.histories.map((data) {
+                        SubRoutineModel subRoutine = data.subRoutine;
 
-                    return ListItem(
-                      routineId: subRoutine.routineId,
-                      title: subRoutine.goal,
-                      routinEmoji: subRoutine.emoji,
-                      subTitle: data.state == RoutineHistoryState.passed
-                          ? "건너뜀"
-                          : '${data.duration ~/ 60}분 ${data.duration % 60}초',
-                      actionIcon: null,
-                      isDone: data.state == RoutineHistoryState.passed,
-                    );
-                  }).toList(),
+                        return ListItem(
+                          routineId: subRoutine.routineId,
+                          title: subRoutine.goal,
+                          routinEmoji: subRoutine.emoji,
+                          subTitle: data.state == RoutineHistoryState.passed
+                              ? "건너뜀"
+                              : '${data.duration ~/ 60}분 ${data.duration % 60}초',
+                          actionIcon: null,
+                          isDone: data.state == RoutineHistoryState.passed,
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           PaddingContainer(

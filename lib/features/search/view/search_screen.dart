@@ -100,13 +100,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 )
               ],
             ),
-            Center(
-              child: Text(
-                '서비스 준비 중',
-                style: AppTextStyles.REGULAR_16
-                    .copyWith(color: AppColors.TEXT_SUB),
-              ),
-            ),
+            const Center(child: Text('현재 개발중이에요')),
           ],
         ),
       ),

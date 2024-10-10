@@ -122,10 +122,7 @@ class _RoutineCreateScreenState extends State<RoutineCreateScreen> {
                       GapColumn(
                         gap: 16,
                         children: [
-                          const Text(
-                            "반복 요일",
-                            style: AppTextStyles.MEDIUM_12,
-                          ),
+                          const Text("반복 요일", style: AppTextStyles.MEDIUM_12),
                           GapRow(
                             gap: 16,
                             children: [

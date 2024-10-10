@@ -100,6 +100,8 @@ class StatisticsRoutineScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return const Center(child: Text("현재 개발중이에요"));
+
     final routineListAsyncValue = ref.watch(routineListProvider);
 
     return PaddingContainer(

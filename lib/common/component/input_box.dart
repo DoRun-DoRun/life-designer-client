@@ -61,6 +61,7 @@ class InputBoxState extends State<InputBox> {
           controller: widget.controller,
           focusNode: _focusNode,
           onSubmitted: widget.onSubmitted,
+          maxLength: 20,
           decoration: InputDecoration(
             filled: true,
             fillColor: AppColors.BACKGROUND_SUB,
