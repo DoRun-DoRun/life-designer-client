@@ -20,7 +20,12 @@ void initialization() async {
 }
 
 Future<void> scheduleRoutineNotification(
-    int id, String routineName, DateTime scheduledTime) async {
+  int id,
+  String title,
+  String body,
+  int startTime,
+  int notificationTime,
+) async {
   NotificationDetails details = const NotificationDetails(
     iOS: DarwinNotificationDetails(
       presentAlert: true,
@@ -35,13 +40,17 @@ Future<void> scheduleRoutineNotification(
     ),
   );
 
+  final now = DateTime.now();
+  final scheduledTime = DateTime(now.year, now.month, now.day).add(
+    Duration(seconds: startTime - notificationTime),
+  );
   final tz.TZDateTime tzScheduledTime =
       tz.TZDateTime.from(scheduledTime, tz.local);
 
   await local.zonedSchedule(
     id,
-    "루틴 알림",
-    "$routineName을 시작할 시간이에요!",
+    title,
+    body,
     tzScheduledTime,
     details,
     uiLocalNotificationDateInterpretation:

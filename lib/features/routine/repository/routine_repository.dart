@@ -24,7 +24,7 @@ abstract class RoutineRepository {
   @Headers({'accessToken': 'true'})
   Future createRoutine(
     @Body() CreateRoutineModel createRoutineModel, {
-    @Query('util') String util = 'gpt',
+    @Query('util') String util,
   });
 
   @GET('/')

@@ -6,6 +6,7 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/common/utils/notification.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +43,20 @@ class RoutineScreen extends ConsumerWidget {
 
     return routineListAsyncValue.when(
       data: (routines) {
+        for (var routine in routines) {
+          if (routine.isToday &&
+              !routine.isFinished &&
+              routine.notificationTime != null) {
+            scheduleRoutineNotification(
+              routine.id,
+              '루틴 알림: ${routine.name}',
+              '곧 시작될 루틴입니다!',
+              routine.startTime,
+              routine.notificationTime!,
+            );
+          }
+        }
+
         final completedCount =
             routines.where((routine) => routine.isFinished).length;
         final totalCount = routines.where((routine) => routine.isToday).length;

@@ -76,9 +76,9 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     TextEditingController textEditingController =
         TextEditingController(text: widget.routine.name);
 
-    void updateServerWithToggleValue(bool newValue) {
-      print("API 호출 - 알람 상태: $newValue");
-    }
+    // void updateServerWithToggleValue(bool newValue) {
+    //   print("API 호출 - 알람 상태: $newValue");
+    // }
 
     Future<void> setStartTime(BuildContext context) async {
       Duration? selectedTime = await showTimeSelectionModal(
