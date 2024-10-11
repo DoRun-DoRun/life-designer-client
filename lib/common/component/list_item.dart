@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ListItem extends StatelessWidget {
-  final int routineId;
+  final int? routineId;
   final String title;
   final String subTitle;
   final String routinEmoji;
@@ -18,7 +18,7 @@ class ListItem extends StatelessWidget {
 
   const ListItem({
     super.key,
-    required this.routineId,
+    this.routineId,
     required this.title,
     this.subTitle = '',
     this.routinEmoji = '',

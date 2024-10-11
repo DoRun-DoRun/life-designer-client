@@ -55,6 +55,7 @@ class RoutineModel {
   final String name;
   final bool isToday;
   final List<bool> repeatDays;
+  final int? notificationTime;
 
   RoutineModel({
     required this.id,
@@ -63,6 +64,7 @@ class RoutineModel {
     required this.name,
     required this.isToday,
     required this.repeatDays,
+    required this.notificationTime,
   });
   factory RoutineModel.fromJson(Map<String, dynamic> json) =>
       _$RoutineModelFromJson(json);

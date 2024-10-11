@@ -12,6 +12,7 @@ import 'package:dorun_app_flutter/common/utils/format.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:dorun_app_flutter/features/routine/repository/routine_repository.dart';
+import 'package:dorun_app_flutter/features/routine/view/components/set_alert_time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -65,7 +66,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
     startTime = Duration(seconds: widget.routine.startTime);
     alertTime = widget.routine.notificationTime != null
         ? Duration(seconds: widget.routine.notificationTime!)
-        : const Duration(seconds: -1);
+        : null;
     selectedDays = widget.routine.repeatDays;
   }
 
@@ -139,40 +140,38 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                 ],
               ),
             ),
-            // TODO 알람 추가하기
-            // PaddingContainer(
-            //   child: GapColumn(
-            //     gap: 16,
-            //     children: [
-            //       const Text(
-            //         '알림',
-            //         style: AppTextStyles.BOLD_20,
-            //       ),
-            //       const SizedBox(height: 16),
-            //       // CustomToggle(
-            //       //   title: '알림',
-            //       //   textStyle: AppTextStyles.BOLD_20,
-            //       //   padding: 0,
-            //       //   isSwitched: widget.routine.notificationTime != null,
-            //       //   onToggle: updateServerWithToggleValue,
-            //       // ),
-            //       ListItem(
-            //         onTap: () async {
-            //           alertTime = await setAlertTime(
-            //             context: context,
-            //             initialTime: alertTime,
-            //           );
-            //           setState(() {});
-            //         },
-            //         routineId: 0,
-            //         title: '시간',
-            //         subTitle: alertTime?.inSeconds == -1
-            //             ? '알림 없음'
-            //             : formattedAlertTime(alertTime),
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            PaddingContainer(
+              child: GapColumn(
+                gap: 16,
+                children: [
+                  const Text(
+                    '알림',
+                    style: AppTextStyles.BOLD_20,
+                  ),
+                  const SizedBox(height: 16),
+                  // CustomToggle(
+                  //   title: '알림',
+                  //   textStyle: AppTextStyles.BOLD_20,
+                  //   padding: 0,
+                  //   isSwitched: widget.routine.notificationTime != null,
+                  //   onToggle: updateServerWithToggleValue,
+                  // ),
+                  ListItem(
+                    onTap: () async {
+                      alertTime = await setAlertTime(
+                        context: context,
+                        initialTime: alertTime,
+                      );
+                      setState(() {});
+                    },
+                    title: '시간',
+                    subTitle: alertTime?.inSeconds == -1
+                        ? '알림 없음'
+                        : formattedAlertTime(alertTime),
+                  ),
+                ],
+              ),
+            ),
             PaddingContainer(
               child: GapRow(
                 gap: 24,
@@ -227,6 +226,7 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                         goal: textEditingController.text,
                         startTime: startTime?.inSeconds ?? 0,
                         repeatDays: selectedDays,
+                        notificationTime: alertTime?.inSeconds,
                       ),
                     );
                     context.go('/');
