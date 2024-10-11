@@ -298,8 +298,8 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
     final firstDayOfMonth = DateTime(_focusedDate.year, _focusedDate.month, 1);
     final lastDayOfMonth =
         DateTime(_focusedDate.year, _focusedDate.month + 1, 0);
-    final daysBefore = firstDayOfMonth.weekday - 1;
-    final daysAfter = 7 - lastDayOfMonth.weekday;
+    final daysBefore = firstDayOfMonth.weekday % 7;
+    final daysAfter = (7 - lastDayOfMonth.weekday) % 7;
     final daysInMonth = List.generate(lastDayOfMonth.day, (index) => index + 1);
 
     return GridView.builder(
@@ -364,7 +364,7 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
               DateTime(
                 DateTime.now().year,
                 DateTime.now().month,
-                DateTime.now().day - 1,
+                DateTime.now().day,
               ),
             )
                 ? CustomIcon(

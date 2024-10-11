@@ -104,10 +104,13 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
   void completeTimer() {
     setState(() {
       final int originTime = routine!.subRoutines[currentIndex].duration;
+      RoutineHistoryState historyState = RoutineHistoryState.complete;
 
       routineHistory!.setDurtaionTime(originTime - remainingTime, currentIndex);
-      routineHistory!
-          .setRoutineState(RoutineHistoryState.complete, currentIndex);
+      if (originTime - remainingTime == 0) {
+        historyState = RoutineHistoryState.passed;
+      }
+      routineHistory!.setRoutineState(historyState, currentIndex);
 
       if (routineHistory!.histories.length > currentIndex + 1) {
         remainingTime = routineHistory!.histories[currentIndex + 1].duration;

@@ -5,6 +5,7 @@ import 'package:dorun_app_flutter/common/constant/data.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -460,4 +461,84 @@ void showSelectionMulitySheet(
       );
     },
   );
+}
+
+Future<SubRoutineHistory> showCombinedBottomSheet(
+    BuildContext context, SubRoutineHistory data) async {
+  Duration? initialTime = Duration(
+    minutes: data.duration ~/ 60,
+    seconds: data.duration % 60,
+  );
+
+  Duration? tempSelectedTime = initialTime;
+
+  await showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return SizedBox(
+            height: 350,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  const Text(
+                    '수행된 루틴 기록 수정',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: CupertinoTimerPicker(
+                      mode: CupertinoTimerPickerMode.ms,
+                      initialTimerDuration: initialTime,
+                      minuteInterval: 1,
+                      onTimerDurationChanged: (Duration newDuration) {
+                        setState(() {
+                          tempSelectedTime = newDuration;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  CustomButton(
+                    onPressed: () {
+                      Duration selectedTime =
+                          tempSelectedTime ?? const Duration(minutes: 10);
+                      Navigator.of(context).pop({
+                        'selectedTime': selectedTime,
+                        'selectedOption':
+                            selectedTime.inSeconds == 0 ? "건너뜀" : "",
+                      });
+                    },
+                    backgroundColor: AppColors.BRAND_SUB,
+                    foregroundColor: AppColors.BRAND,
+                    title: "저장",
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  ).then((result) {
+    if (result != null) {
+      Duration selectedTime = result['selectedTime'];
+      String selectedOption = result['selectedOption'];
+
+      if (selectedOption == '건너뜀') {
+        data.state = RoutineHistoryState.passed;
+      } else {
+        data.duration = selectedTime.inSeconds;
+        data.state = RoutineHistoryState.complete;
+      }
+    }
+  });
+
+  return data;
 }

@@ -1,3 +1,4 @@
+import 'package:dorun_app_flutter/common/component/custom_bottom_sheet.dart';
 import 'package:dorun_app_flutter/common/component/custom_button.dart';
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
@@ -10,7 +11,7 @@ import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class RoutineReviewEditScreen extends StatelessWidget {
+class RoutineReviewEditScreen extends StatefulWidget {
   static String get routeName => 'routinReviewEditScreen';
   final int id;
   final RoutineHistory routineHistory;
@@ -18,6 +19,12 @@ class RoutineReviewEditScreen extends StatelessWidget {
   const RoutineReviewEditScreen(
       {super.key, required this.id, required this.routineHistory});
 
+  @override
+  State<RoutineReviewEditScreen> createState() =>
+      _RoutineReviewEditScreenState();
+}
+
+class _RoutineReviewEditScreenState extends State<RoutineReviewEditScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
@@ -42,7 +49,7 @@ class RoutineReviewEditScreen extends StatelessWidget {
                         style: AppTextStyles.REGULAR_16,
                         children: <TextSpan>[
                           TextSpan(
-                            text: calculateTotalDuration(routineHistory),
+                            text: calculateTotalDuration(widget.routineHistory),
                             style: AppTextStyles.BOLD_16
                                 .copyWith(color: AppColors.TEXT_BRAND),
                           ),
@@ -51,7 +58,7 @@ class RoutineReviewEditScreen extends StatelessWidget {
                     ),
                     GapColumn(
                       gap: 16,
-                      children: routineHistory.histories.map((data) {
+                      children: widget.routineHistory.histories.map((data) {
                         SubRoutineModel subRoutine = data.subRoutine;
 
                         return ListItem(
@@ -61,8 +68,12 @@ class RoutineReviewEditScreen extends StatelessWidget {
                           subTitle: data.state == RoutineHistoryState.passed
                               ? "건너뜀"
                               : '${data.duration ~/ 60}분 ${data.duration % 60}초',
-                          actionIcon: null,
+                          actionIcon: Icons.edit,
                           isDone: data.state == RoutineHistoryState.passed,
+                          onTap: () async {
+                            await showCombinedBottomSheet(context, data);
+                            setState(() {});
+                          },
                         );
                       }).toList(),
                     ),
@@ -75,7 +86,8 @@ class RoutineReviewEditScreen extends StatelessWidget {
             child: CustomButton(
               title: '확인',
               onPressed: () {
-                context.push('/routine_review/$id', extra: routineHistory);
+                context.push('/routine_review/${widget.id}',
+                    extra: widget.routineHistory);
               },
               backgroundColor: AppColors.BRAND_SUB,
               foregroundColor: AppColors.TEXT_BRAND,

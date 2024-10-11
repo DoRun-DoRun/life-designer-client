@@ -19,7 +19,7 @@ String formattedProcessTime(Duration? time) {
   if (time == null) return formattedTime;
 
   if (time.inHours > 0) {
-    formattedTime = '${time.inHours}시간 ${time.inMinutes ~/ 60}분';
+    formattedTime = '${time.inHours}시간 ${time.inMinutes % 60}분';
   } else {
     formattedTime = '${time.inMinutes}분';
   }
@@ -148,7 +148,7 @@ RepeatCycle formatRoutineType(List<bool> days) {
 }
 
 String formatDate(String isoDate) {
-  DateTime dateTime = DateTime.parse(isoDate);
+  DateTime dateTime = DateTime.parse(isoDate).toLocal();
 
   DateFormat formatter = DateFormat('yyyy년 MM월 dd일(E) HH시 mm분', 'ko_KR');
 
