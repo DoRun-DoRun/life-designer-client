@@ -1,9 +1,11 @@
 import 'package:dorun_app_flutter/common/provider/go_router.dart';
+import 'package:dorun_app_flutter/common/utils/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +17,17 @@ Future<void> main() async {
     // javaScriptAppKey: '$YOUR_JAVASCRIPT_APP_KEY',
   );
 
-  runApp(
-    const ProviderScope(
-      child: _App(),
-    ),
-  );
+  void permissionWithNotification() async {
+    if (await Permission.notification.isDenied &&
+        !await Permission.notification.isPermanentlyDenied) {
+      await [Permission.notification].request();
+    }
+  }
+
+  permissionWithNotification();
+  initialization();
+
+  runApp(const ProviderScope(child: _App()));
 }
 
 class _App extends ConsumerWidget {
