@@ -85,6 +85,7 @@ class _RoutineCreateProgressScreenState
           notificationTime: widget.alertTime?.inSeconds,
           subRoutines: widget.subRoutines,
         ),
+        util: widget.subRoutines == null ? 'gpt' : '',
       );
 
       if (!mounted) return;
