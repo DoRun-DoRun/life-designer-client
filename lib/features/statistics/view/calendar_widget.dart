@@ -195,11 +195,11 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
           if (widget.routine != null) {
             calendarData = parseCalendarData(
-                snapshot.data! as Map<String, RoutineCalendarModel>);
+                snapshot.data as Map<String, RoutineCalendarModel>);
             routineCalendarData =
-                snapshot.data! as Map<String, RoutineCalendarModel>;
+                snapshot.data as Map<String, RoutineCalendarModel>;
           } else {
-            calendarData = snapshot.data! as Map<String, CalendarModel>;
+            calendarData = snapshot.data as Map<String, CalendarModel>;
           }
 
           return Column(
@@ -227,14 +227,14 @@ class CalendarWidgetState extends ConsumerState<CalendarWidget> {
                     )
                   : ConductRoutineHistory(
                       routineData:
-                          routineCalendarData[_selectedDate.day.toString()]!,
+                          routineCalendarData[_selectedDate.day.toString()],
                     ),
               const SizedBox(height: 24),
               if (widget.routine != null)
                 RoutineReview(
                   routineReview:
-                      routineCalendarData[_selectedDate.day.toString()]!
-                          .routineReview,
+                      routineCalendarData[_selectedDate.day.toString()]
+                          ?.routineReview,
                 ),
             ],
           );

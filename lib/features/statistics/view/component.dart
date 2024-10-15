@@ -583,7 +583,7 @@ class StreakContainer extends ConsumerWidget {
 }
 
 class ConductRoutineHistory extends StatefulWidget {
-  final RoutineCalendarModel routineData;
+  final RoutineCalendarModel? routineData;
 
   const ConductRoutineHistory({super.key, required this.routineData});
 
@@ -602,7 +602,7 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.routineData.details == null) {
+    if (widget.routineData?.details == null) {
       return Container();
     }
 
@@ -622,7 +622,7 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
                       style: AppTextStyles.REGULAR_16,
                     ),
                     Text(
-                      formatSeconds(widget.routineData.totalTime!),
+                      formatSeconds(widget.routineData!.totalTime!),
                       style: AppTextStyles.BOLD_16.copyWith(
                         color: AppColors.TEXT_BRAND,
                       ),
@@ -640,7 +640,7 @@ class ConductRoutineHistoryState extends State<ConductRoutineHistory> {
           if (_isExpanded)
             GapColumn(
               gap: 24,
-              children: widget.routineData.details!
+              children: widget.routineData!.details!
                   .map(
                     (routine) => ListItem(
                       routinEmoji: routine.emoji,
