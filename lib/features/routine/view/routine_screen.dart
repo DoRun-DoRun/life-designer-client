@@ -50,7 +50,7 @@ class RoutineScreen extends ConsumerWidget {
             scheduleRoutineNotification(
               routine.id,
               '루틴 알림: ${routine.name}',
-              '곧 시작될 루틴입니다!',
+              '루틴이 곧 시작해요~! 오늘도 화이팅해봐요!',
               routine.startTime,
               routine.notificationTime!,
             );

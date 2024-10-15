@@ -26,35 +26,38 @@ Future<void> scheduleRoutineNotification(
   int startTime,
   int notificationTime,
 ) async {
-  NotificationDetails details = const NotificationDetails(
-    iOS: DarwinNotificationDetails(
+  NotificationDetails details = NotificationDetails(
+    iOS: const DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     ),
     android: AndroidNotificationDetails(
-      "show_test",
-      "show_test",
+      id.toString(),
+      title,
       importance: Importance.max,
       priority: Priority.high,
     ),
   );
 
   final now = DateTime.now();
-  final scheduledTime = DateTime(now.year, now.month, now.day).add(
+  DateTime scheduledTime = DateTime(now.year, now.month, now.day).add(
     Duration(seconds: startTime - notificationTime),
   );
-  final tz.TZDateTime tzScheduledTime =
-      tz.TZDateTime.from(scheduledTime, tz.local);
 
-  await local.zonedSchedule(
-    id,
-    title,
-    body,
-    tzScheduledTime,
-    details,
-    uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
-    matchDateTimeComponents: null,
-  );
+  if (scheduledTime.isAfter(now)) {
+    final tz.TZDateTime tzScheduledTime =
+        tz.TZDateTime.from(scheduledTime, tz.local);
+
+    await local.zonedSchedule(
+      id,
+      title,
+      body,
+      tzScheduledTime,
+      details,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: null,
+    );
+  }
 }
