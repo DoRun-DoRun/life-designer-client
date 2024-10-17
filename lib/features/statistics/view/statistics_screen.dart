@@ -105,6 +105,10 @@ class StatisticsRoutineScreen extends ConsumerWidget {
     return PaddingContainer(
       child: routineListAsyncValue.when(
         data: (routines) {
+          if (routines.isEmpty) {
+            return const Center(child: Text("루틴이 없습니다."));
+          }
+
           return SingleChildScrollView(
             child: GapColumn(
               gap: 24,

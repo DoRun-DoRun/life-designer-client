@@ -32,6 +32,8 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
   String _emoji = '✅';
 
   void _showAddRoutineModal(BuildContext context, SubRoutineModel? subRoutine) {
+    final routineRepository = ref.read(routineRepositoryProvider);
+
     Duration? durationTime =
         subRoutine != null ? Duration(seconds: subRoutine.duration) : null;
 
@@ -115,9 +117,6 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                           Expanded(
                             child: CustomButton(
                               onPressed: () async {
-                                final routineRepository =
-                                    ref.read(routineRepositoryProvider);
-
                                 try {
                                   await routineRepository
                                       .deleteSubRoutine(subRoutine.id);
@@ -136,9 +135,6 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                         Expanded(
                           child: CustomButton(
                             onPressed: () async {
-                              final routineRepository =
-                                  ref.read(routineRepositoryProvider);
-
                               if (!isFormValid) return;
 
                               try {
