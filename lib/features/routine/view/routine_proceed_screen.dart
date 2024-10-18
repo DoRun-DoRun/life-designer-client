@@ -45,6 +45,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
   @override
   void initState() {
     super.initState();
+    cancelNotification(widget.id);
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
@@ -68,6 +69,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    cancelNotification(widget.id);
     timer?.cancel();
     super.dispose();
   }
@@ -137,7 +139,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
       timerState = TimerState.pause;
     });
 
-    cancelRoutineNotification(widget.id);
+    cancelNotification(widget.id);
 
     timer?.cancel();
   }
@@ -158,7 +160,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
         currentIndex++;
         startTimer();
       } else {
-        cancelRoutineNotification(widget.id);
+        cancelNotification(widget.id);
 
         context.go('/routine_review_edit/${widget.id}', extra: routineHistory);
       }
@@ -166,7 +168,7 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
   }
 
   void passedTimer() {
-    cancelRoutineNotification(widget.id);
+    cancelNotification(widget.id);
 
     routineHistory!.setDurtaionTime(0, currentIndex);
     setState(() {

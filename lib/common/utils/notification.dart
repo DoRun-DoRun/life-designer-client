@@ -105,6 +105,7 @@ Future<void> timerNotification(
   }
 }
 
-Future<void> cancelRoutineNotification(int id) async {
+Future<void> cancelNotification(int id) async {
   await local.cancel(id);
+  print("Cancel $id");
 }
