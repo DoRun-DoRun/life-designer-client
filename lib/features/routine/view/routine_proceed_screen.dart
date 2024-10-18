@@ -10,6 +10,7 @@ import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/layout/default_layout.dart';
 import 'package:dorun_app_flutter/common/utils/format.dart';
+import 'package:dorun_app_flutter/common/utils/notification.dart';
 import 'package:dorun_app_flutter/features/routine/model/routine_model.dart';
 import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,6 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
   int currentIndex = 0;
   Timer? timer;
   int remainingTime = 0;
-  bool isAlret = false;
   TimerState timerState = TimerState.stop;
   DateTime? backgroundTime;
 
@@ -87,9 +87,6 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
       final elapsed = DateTime.now().difference(backgroundTime!).inSeconds;
       setState(() {
         remainingTime -= elapsed;
-        if (remainingTime < 0) {
-          remainingTime = 0;
-        }
       });
 
       startTimer();
@@ -115,13 +112,21 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
     setState(() {
       timerState = TimerState.start;
     });
+
+    timerNotification(
+      widget.id,
+      "루틴 완료 알림",
+      "${routine!.subRoutines[currentIndex].goal}가 완료되었습니다.",
+      remainingTime,
+    );
+
     timer?.cancel();
+
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         remainingTime--;
-        if (remainingTime <= 0 && isAlret == false) {
+        if (remainingTime == 0) {
           playNotificationSoundForDuration();
-          isAlret = true;
         }
       });
     });
@@ -131,6 +136,9 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
     setState(() {
       timerState = TimerState.pause;
     });
+
+    cancelRoutineNotification(widget.id);
+
     timer?.cancel();
   }
 
@@ -150,12 +158,16 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
         currentIndex++;
         startTimer();
       } else {
+        cancelRoutineNotification(widget.id);
+
         context.go('/routine_review_edit/${widget.id}', extra: routineHistory);
       }
     });
   }
 
   void passedTimer() {
+    cancelRoutineNotification(widget.id);
+
     routineHistory!.setDurtaionTime(0, currentIndex);
     setState(() {
       if (routineHistory!.histories.length > currentIndex + 1) {
@@ -169,8 +181,6 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
   }
 
   void handleTimerState(TimerHandleState timerHandleState) {
-    isAlret = false;
-
     switch (timerHandleState) {
       case TimerHandleState.complete:
         completeTimer();

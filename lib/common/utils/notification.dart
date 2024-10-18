@@ -7,13 +7,16 @@ final FlutterLocalNotificationsPlugin local = FlutterLocalNotificationsPlugin();
 void initialization() async {
   AndroidInitializationSettings android =
       const AndroidInitializationSettings("@mipmap/ic_launcher");
+
   DarwinInitializationSettings ios = const DarwinInitializationSettings(
     requestSoundPermission: false,
     requestBadgePermission: false,
     requestAlertPermission: false,
   );
+
   InitializationSettings settings =
       InitializationSettings(android: android, iOS: ios);
+
   await local.initialize(settings);
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
@@ -60,4 +63,48 @@ Future<void> scheduleRoutineNotification(
       matchDateTimeComponents: null,
     );
   }
+}
+
+Future<void> timerNotification(
+  int id,
+  String title,
+  String body,
+  int notificationTimeInSeconds,
+) async {
+  NotificationDetails details = NotificationDetails(
+    iOS: const DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    ),
+    android: AndroidNotificationDetails(
+      id.toString(),
+      title,
+      importance: Importance.max,
+      priority: Priority.high,
+    ),
+  );
+
+  final now = DateTime.now();
+  DateTime scheduledTime =
+      now.add(Duration(seconds: notificationTimeInSeconds));
+
+  if (scheduledTime.isAfter(now)) {
+    final tz.TZDateTime tzScheduledTime =
+        tz.TZDateTime.from(scheduledTime, tz.local);
+
+    await local.zonedSchedule(
+      id,
+      title,
+      body,
+      tzScheduledTime,
+      details,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+}
+
+Future<void> cancelRoutineNotification(int id) async {
+  await local.cancel(id);
 }
