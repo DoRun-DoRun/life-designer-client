@@ -17,7 +17,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-enum TimerState { start, pause, stop }
+enum TimerState { start, pause, stop, background }
 
 enum TimerHandleState { rest, passed, complete, pause, start }
 
@@ -31,7 +31,8 @@ class RoutineProceedScreen extends ConsumerStatefulWidget {
       _RoutineProceedScreenState();
 }
 
-class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
+class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
+    with WidgetsBindingObserver {
   DetailRoutineModel? routine;
   RoutineHistory? routineHistory;
   int currentIndex = 0;
@@ -39,11 +40,12 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
   int remainingTime = 0;
   bool isAlret = false;
   TimerState timerState = TimerState.stop;
+  DateTime? backgroundTime;
 
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         ref.read(routineDetailProvider(widget.id).future).then((routineData) {
@@ -61,6 +63,37 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
         });
       },
     );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (timerState != TimerState.start) {
+      return;
+    }
+
+    if (state == AppLifecycleState.paused) {
+      // 백그라운드로 전환되었을 때 현재 시간을 저장
+      backgroundTime = DateTime.now();
+      timer?.cancel();
+    } else if (state == AppLifecycleState.resumed && backgroundTime != null) {
+      // 포그라운드로 돌아왔을 때 시간 차이 계산
+      final elapsed = DateTime.now().difference(backgroundTime!).inSeconds;
+      setState(() {
+        remainingTime -= elapsed;
+        if (remainingTime < 0) {
+          remainingTime = 0;
+        }
+      });
+
+      startTimer();
+    }
   }
 
   void updateRoutineHistory() {
@@ -169,12 +202,6 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen> {
     Future.delayed(const Duration(seconds: 3), () {
       FlutterRingtonePlayer().stop();
     });
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
   }
 
   @override
