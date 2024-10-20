@@ -1,6 +1,7 @@
 import 'package:dorun_app_flutter/common/component/gap_column.dart';
 import 'package:dorun_app_flutter/common/component/gap_row.dart';
 import 'package:dorun_app_flutter/common/component/list_item.dart';
+import 'package:dorun_app_flutter/common/component/padding_container.dart';
 import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
@@ -36,6 +37,12 @@ class RoutineScreen extends ConsumerWidget {
   static String get routeName => 'routine';
 
   const RoutineScreen({super.key});
+
+  Future<void> _refreshRoutines(WidgetRef ref) async {
+    ref.invalidate(routineListProvider);
+
+    await ref.read(routineListProvider.future);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -109,51 +116,57 @@ class RoutineScreen extends ConsumerWidget {
                 ),
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Container(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: routines.isEmpty
-                          ? GestureDetector(
-                              onTap: () {
-                                context.push('/routine_create');
-                              },
-                              child: const SizedBox(
-                                width: double.infinity,
-                                child: Center(
-                                  child: Text("루틴을 생성해주세요",
-                                      style: AppTextStyles.MEDIUM_14),
+                child: RefreshIndicator(
+                  backgroundColor: Colors.white,
+                  color: AppColors.BRAND,
+                  onRefresh: () => _refreshRoutines(ref),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      routines.isEmpty
+                          ? PaddingContainer(
+                              child: GestureDetector(
+                                onTap: () {
+                                  context.push('/routine_create');
+                                },
+                                child: const SizedBox(
+                                  width: double.infinity,
+                                  child: Center(
+                                    child: Text("루틴을 생성해주세요",
+                                        style: AppTextStyles.MEDIUM_14),
+                                  ),
                                 ),
                               ),
                             )
-                          : GapColumn(
-                              gap: AppSpacing.SPACE_16,
-                              children: routines.map((routine) {
-                                return ListItem(
-                                  routineId: routine.id,
-                                  title: routine.name,
-                                  subTitle: routine.isFinished
-                                      ? "완료됨"
-                                      : routine.isToday
-                                          ? formatDateTime(
-                                              Duration(
-                                                seconds: routine.startTime,
-                                              ),
-                                            )
-                                          : getNextDay(routine.repeatDays),
-                                  isButton:
-                                      !routine.isFinished && routine.isToday,
-                                  isDone:
-                                      routine.isFinished || !routine.isToday,
-                                  onTap: () {
-                                    context
-                                        .push('/routine_detail/${routine.id}');
-                                  },
-                                );
-                              }).toList(),
+                          : PaddingContainer(
+                              child: GapColumn(
+                                gap: AppSpacing.SPACE_16,
+                                children: routines.map((routine) {
+                                  return ListItem(
+                                    routineId: routine.id,
+                                    title: routine.name,
+                                    subTitle: routine.isFinished
+                                        ? "완료됨"
+                                        : routine.isToday
+                                            ? formatDateTime(
+                                                Duration(
+                                                  seconds: routine.startTime,
+                                                ),
+                                              )
+                                            : getNextDay(routine.repeatDays),
+                                    isButton:
+                                        !routine.isFinished && routine.isToday,
+                                    isDone:
+                                        routine.isFinished || !routine.isToday,
+                                    onTap: () {
+                                      context.push(
+                                          '/routine_detail/${routine.id}');
+                                    },
+                                  );
+                                }).toList(),
+                              ),
                             ),
-                    ),
+                    ],
                   ),
                 ),
               ),

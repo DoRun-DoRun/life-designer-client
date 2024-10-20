@@ -229,9 +229,12 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                         notificationTime: alertTime?.inSeconds,
                       ),
                     );
-                    context.go('/');
                     ref.invalidate(routineListProvider);
                     ref.invalidate(routineDetailProvider(widget.routine.id));
+
+                    ref.read(routineListProvider);
+
+                    context.go('/');
                   } catch (e) {
                     print('Failed to create routine: $e');
                   }

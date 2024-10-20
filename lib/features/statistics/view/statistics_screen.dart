@@ -50,46 +50,59 @@ class StatisticsScreen extends StatelessWidget {
 class StatisticsPeriodScreen extends ConsumerWidget {
   const StatisticsPeriodScreen({super.key});
 
+  Future<void> _refreshStatistics(WidgetRef ref) async {
+    ref.invalidate(reportDataProvider);
+    ref.invalidate(statisticsProvider);
+
+    await ref.read(reportDataProvider.future);
+    await ref.read(statisticsProvider.future);
+  }
+
   @override
   Widget build(BuildContext context, ref) {
     final reportData = ref.watch(reportDataProvider);
 
-    return SingleChildScrollView(
-      child: GapColumn(
-        gap: 24,
-        children: [
-          const StreakContainer(),
-          const CalendarWidget(),
-          reportData.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => const Center(
-              child: PaddingContainer(
-                verticalSize: 48,
-                child: Center(
-                  child: Text(
-                    "현재 사용자님의 데이터를 수집하고 있어요.\n루틴 수행 2주 이후에 보고서를 제공해드릴 수 있어요.",
-                    style: AppTextStyles.MEDIUM_16,
+    return RefreshIndicator(
+      backgroundColor: Colors.white,
+      color: AppColors.BRAND,
+      onRefresh: () => _refreshStatistics(ref),
+      child: SingleChildScrollView(
+        child: GapColumn(
+          gap: 24,
+          children: [
+            const StreakContainer(),
+            const CalendarWidget(),
+            reportData.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => const Center(
+                child: PaddingContainer(
+                  verticalSize: 48,
+                  child: Center(
+                    child: Text(
+                      "현재 사용자님의 데이터를 수집하고 있어요.\n루틴 수행 2주 이후에 보고서를 제공해드릴 수 있어요.",
+                      style: AppTextStyles.MEDIUM_16,
+                    ),
                   ),
                 ),
               ),
-            ),
-            data: (report) {
-              return GapColumn(
-                gap: 24,
-                children: [
-                  WeeklyRoutineReportContainer(
-                    current: report.current,
-                    progress: report.progress,
-                  ),
-                  RoutineFeedbackContainer(
-                    maxFailedRoutineLastWeek: report.maxFailedRoutineLastWeek,
-                    routineWeeklyReport: report.routineWeeklyReport,
-                  ),
-                ],
-              );
-            },
-          )
-        ],
+              data: (report) {
+                return GapColumn(
+                  gap: 24,
+                  children: [
+                    WeeklyRoutineReportContainer(
+                      current: report.current,
+                      progress: report.progress,
+                    ),
+                    RoutineFeedbackContainer(
+                      maxFailedRoutineLastWeek: report.maxFailedRoutineLastWeek,
+                      routineWeeklyReport: report.routineWeeklyReport,
+                    ),
+                  ],
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }
