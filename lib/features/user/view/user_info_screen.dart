@@ -86,81 +86,92 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                         _selectedAge != null &&
                         _selectedGender != null &&
                         _selectedJob != null)
-                      ReadOnlyBox(
-                        hintText: "계획 중 평소 어려워하는 내용",
-                        inputText: _selectedDifficulties.join(', '),
-                        onTap: () {
-                          showSelectionMulitySheet(context, [
-                            "목표 불명확",
-                            "꾸준함 부족",
-                            "과도한 이상화",
-                            "일정 변화",
-                            "동기 저하",
-                            "시간 부족",
-                            "실패 두려움",
-                            "완벽주의",
-                            "즉각적인 결과 욕구",
-                            "자책감"
-                          ], (selectedValues) {
-                            setState(() {
-                              _selectedDifficulties = selectedValues;
-                            });
-                          }, _selectedDifficulties);
-                        },
-                      ),
+                      Builder(builder: (innerContext) {
+                        return ReadOnlyBox(
+                          hintText: "계획 중 평소 어려워하는 내용",
+                          inputText: _selectedDifficulties.join(', '),
+                          onTap: () {
+                            showSelectionMulitySheet(innerContext, [
+                              "목표 불명확",
+                              "꾸준함 부족",
+                              "과도한 이상화",
+                              "일정 변화",
+                              "동기 저하",
+                              "시간 부족",
+                              "실패 두려움",
+                              "완벽주의",
+                              "즉각적인 결과 욕구",
+                              "자책감"
+                            ], (selectedValues) {
+                              setState(() {
+                                _selectedDifficulties = selectedValues;
+                              });
+                            }, _selectedDifficulties);
+                          },
+                        );
+                      }),
                     if (_selectedName != null &&
                         _selectedAge != null &&
                         _selectedGender != null)
-                      ReadOnlyBox(
-                        hintText: "직업",
-                        inputText: _selectedJob ?? '',
-                        onTap: () {
-                          showSelectionSheet(
-                            context,
-                            ["학생", "직장인", "프리랜서", "자영업자", "취준생", "기타"],
-                            (value) {
-                              setState(() {
-                                _selectedJob = value;
-                              });
-                            },
-                            "하시는 일이 무엇인가요?",
-                            _selectedJob ?? '',
-                          );
-                        },
-                      ),
+                      Builder(builder: (innerContext) {
+                        return ReadOnlyBox(
+                          hintText: "직업",
+                          inputText: _selectedJob ?? '',
+                          onTap: () {
+                            showSelectionSheet(
+                              innerContext,
+                              ["학생", "직장인", "프리랜서", "자영업자", "취준생", "기타"],
+                              (value) {
+                                setState(() {
+                                  _selectedJob = value;
+                                });
+                              },
+                              "하시는 일이 무엇인가요?",
+                              _selectedJob ?? '',
+                            );
+                          },
+                        );
+                      }),
                     if (_selectedName != null && _selectedAge != null)
-                      ReadOnlyBox(
-                        hintText: "성별",
-                        inputText: _selectedGender ?? '',
-                        onTap: () {
-                          showSelectionSheet(
-                            context,
-                            ["남성", "여성"],
-                            (value) {
-                              setState(() {
-                                _selectedGender = value;
-                              });
-                            },
-                            "성별을 알려주세요",
-                            _selectedGender ?? '',
-                          );
-                        },
-                      ),
+                      Builder(builder: (innerContext) {
+                        return ReadOnlyBox(
+                          hintText: "성별",
+                          inputText: _selectedGender ?? '',
+                          onTap: () {
+                            showSelectionSheet(
+                              innerContext,
+                              ["남성", "여성"],
+                              (value) {
+                                setState(() {
+                                  _selectedGender = value;
+                                });
+                              },
+                              "성별을 알려주세요",
+                              _selectedGender ?? '',
+                            );
+                          },
+                        );
+                      }),
                     if (_selectedName != null)
-                      ReadOnlyBox(
-                        hintText: "나이",
-                        inputText: _selectedAge != null && _selectedAge != ''
-                            ? '$_selectedAge살'
-                            : '',
-                        onTap: () {
-                          showYearPicker(context, (value) {
-                            setState(() {
-                              _selectedAge =
-                                  (DateTime.now().year - value).toString();
-                            });
-                          });
-                        },
-                      ),
+                      Builder(builder: (innerContext) {
+                        return ReadOnlyBox(
+                          hintText: "나이",
+                          inputText: _selectedAge != null && _selectedAge != ''
+                              ? '$_selectedAge살'
+                              : '',
+                          onTap: () {
+                            showYearPicker(
+                              innerContext,
+                              (value) {
+                                setState(() {
+                                  _selectedAge =
+                                      (DateTime.now().year - value).toString();
+                                });
+                              },
+                            );
+                          },
+                        );
+                      }),
                     InputBox(
                       controller: _nameController,
                       hintText: '이름',
@@ -171,34 +182,36 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
               ),
             ),
             if (_selectedDifficulties.isEmpty)
-              CustomButton(
-                title: "나중에 입력할래요",
-                onPressed: () {
-                  setState(() {
-                    _selectedName ??= '';
-                    _selectedAge ??= '';
-                    _selectedGender ??= '';
-                    _selectedJob ??= '';
+              Builder(builder: (innerContext) {
+                return CustomButton(
+                  title: "나중에 입력할래요",
+                  onPressed: () {
+                    setState(() {
+                      _selectedName ??= '';
+                      _selectedAge ??= '';
+                      _selectedGender ??= '';
+                      _selectedJob ??= '';
 
-                    showSelectionMulitySheet(context, [
-                      "목표 불명확",
-                      "꾸준함 부족",
-                      "과도한 이상화",
-                      "일정 변화",
-                      "동기 저하",
-                      "시간 부족",
-                      "실패 두려움",
-                      "완벽주의",
-                      "즉각적인 결과 욕구",
-                      "자책감",
-                    ], (selectedValues) {
-                      setState(() {
-                        _selectedDifficulties = selectedValues;
-                      });
-                    }, _selectedDifficulties);
-                  });
-                },
-              ),
+                      showSelectionMulitySheet(innerContext, [
+                        "목표 불명확",
+                        "꾸준함 부족",
+                        "과도한 이상화",
+                        "일정 변화",
+                        "동기 저하",
+                        "시간 부족",
+                        "실패 두려움",
+                        "완벽주의",
+                        "즉각적인 결과 욕구",
+                        "자책감",
+                      ], (selectedValues) {
+                        setState(() {
+                          _selectedDifficulties = selectedValues;
+                        });
+                      }, _selectedDifficulties);
+                    });
+                  },
+                );
+              }),
             if (_selectedAge != null &&
                 _selectedDifficulties.isNotEmpty &&
                 _selectedGender != null &&

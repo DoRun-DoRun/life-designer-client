@@ -13,6 +13,7 @@ void showSelectionSheet(BuildContext context, List<String> options,
     ValueChanged<String> onSelected, String text, String selectedOption) {
   showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -411,11 +412,11 @@ void showSelectionMulitySheet(
                             if (tempSelected.length < 3) {
                               tempSelected.add(option);
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('최대 3개까지 선택할 수 있습니다.'),
-                                ),
-                              );
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   const SnackBar(
+                              //     content: Text('최대 3개까지 선택할 수 있습니다.'),
+                              //   ),
+                              // );
                             }
                           }
                         });

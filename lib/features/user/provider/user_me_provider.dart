@@ -1,5 +1,3 @@
-import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
-import 'package:dorun_app_flutter/features/statistics/provider/statistic_provider.dart';
 import 'package:dorun_app_flutter/features/user/repository/user_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -48,9 +46,9 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
-    print("GET ME");
-
     if (refreshToken == null || accessToken == null) {
+      if (!mounted) return;
+
       state = null;
       return;
     }
@@ -61,16 +59,19 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     try {
       final resp = await repository.getMe();
       print('User data fetched successfully: $resp');
+
+      if (!mounted) return;
       state = resp;
     } catch (error) {
       print('Error fetching user data: $error');
+
+      if (!mounted) return;
       state = null;
     }
   }
 
   Future<void> logout() async {
     state = null;
-    print("로그아웃");
 
     await Future.wait(
       [
@@ -78,15 +79,10 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
         storage.delete(key: ACCESS_TOKEN_KEY),
       ],
     );
-    print("로그아웃A");
 
-    // ref.invalidate(userMeProvider);
     ref.invalidate(authRepositoryProvider);
     ref.invalidate(userRepositoryProvider);
     ref.invalidate(secureStorageProvider);
-    ref.invalidate(routineListProvider);
-    ref.invalidate(reportDataProvider);
-    ref.invalidate(reportDetailsProvider);
   }
 
   Future<void> signOut() async {
@@ -100,13 +96,10 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
           storage.delete(key: ACCESS_TOKEN_KEY),
         ],
       );
-      // ref.invalidate(userMeProvider);
+
       ref.invalidate(authRepositoryProvider);
       ref.invalidate(userRepositoryProvider);
       ref.invalidate(secureStorageProvider);
-      ref.invalidate(routineListProvider);
-      ref.invalidate(reportDataProvider);
-      ref.invalidate(reportDetailsProvider);
     } catch (error) {
       print('Error fetching user data: $error');
       state = null;

@@ -6,7 +6,10 @@ import 'package:dorun_app_flutter/common/constant/colors.dart';
 import 'package:dorun_app_flutter/common/constant/fonts.dart';
 import 'package:dorun_app_flutter/common/constant/spacing.dart';
 import 'package:dorun_app_flutter/common/secure_storage/secure_storage.dart';
+import 'package:dorun_app_flutter/features/routine/provider/routine_provider.dart';
+import 'package:dorun_app_flutter/features/statistics/provider/statistic_provider.dart';
 import 'package:dorun_app_flutter/features/user/provider/user_me_provider.dart';
+import 'package:dorun_app_flutter/features/user/repository/auth_repository.dart';
 import 'package:dorun_app_flutter/features/user/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -61,6 +64,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
         await saveTokens(tokens.accessToken, tokens.refreshToken);
         ref.read(userMeProvider.notifier).getMe();
+
+        ref.invalidate(authRepositoryProvider);
+        ref.invalidate(routineListProvider);
+        ref.invalidate(statisticsProvider);
+        ref.invalidate(reportDataProvider);
+        ref.invalidate(reportDetailsProvider);
       } catch (error) {
         if (mounted) {
           print('로그인 실패: ${error.toString()}');
@@ -77,7 +86,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     const List<String> scopes = <String>[
       'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
     ];
 
     GoogleSignIn googleSignIn = GoogleSignIn(
