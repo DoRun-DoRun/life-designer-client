@@ -38,7 +38,11 @@ class _App extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      theme: ThemeData(fontFamily: 'NotoSans'),
+      theme: ThemeData(
+        fontFamily: 'NotoSans',
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
+      ),
+      color: Colors.white,
       debugShowCheckedModeBanner: false,
       routerDelegate: router.routerDelegate,
       routeInformationParser: router.routeInformationParser,

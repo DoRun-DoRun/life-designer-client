@@ -224,9 +224,9 @@ class _RoutineProceedScreenState extends ConsumerState<RoutineProceedScreen>
 
     return DefaultLayout(
       rightIcon: IconButton(
-        icon: const Icon(Icons.close, size: 30),
+        icon: const Icon(Icons.settings, size: 30),
         onPressed: () {
-          context.go('/');
+          context.push('/routine_detail/${widget.id}');
         },
       ),
       child: GapColumn(

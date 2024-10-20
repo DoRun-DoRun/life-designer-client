@@ -65,8 +65,7 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                   gap: 16,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text("루틴을 어떻게 수행하고 있는지 작성해주세요",
-                        style: AppTextStyles.MEDIUM_16),
+                    const Text("세부 루틴 추가하기", style: AppTextStyles.MEDIUM_16),
                     GestureDetector(
                       onTap: () {
                         setEmoji(bc, setState);
@@ -322,11 +321,16 @@ class _RoutineDetailScreenState extends ConsumerState<RoutineDetailScreen> {
                       ),
                     PaddingContainer(
                       child: GapColumn(
-                        gap: 16,
+                        gap: 8,
                         children: [
                           const Text(
-                            "루틴을 수행하고 있는지 작성해주세요",
+                            "세부 루틴 추가하기",
                             style: AppTextStyles.MEDIUM_16,
+                          ),
+                          Text(
+                            "꾹 눌러서 순서를 바꿀 수 있어요.",
+                            style: AppTextStyles.REGULAR_14
+                                .copyWith(color: AppColors.TEXT_SECONDARY),
                           ),
                           CustomButton(
                             onPressed: () =>
